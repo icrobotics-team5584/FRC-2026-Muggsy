@@ -3,6 +3,9 @@
 #include <frc/geometry/Translation2d.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <units/velocity.h>
+#include <units/acceleration.h>
+#include <units/angular_velocity.h>
+#include <units/angular_acceleration.h>
 #include "utilities/BotVars.h"
 
 namespace DrivebaseConfig {
