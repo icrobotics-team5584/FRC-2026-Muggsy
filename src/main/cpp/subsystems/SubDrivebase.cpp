@@ -487,12 +487,13 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
 
-frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller, bool fieldOriented, 
-  double speedScale) {
-  return Drive([this, speedScale, &controller] {
+frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller,
+  bool fieldOriented, double speedScaling, double rotationScaling) {
+  return Drive([this, speedScaling, rotationScaling, &controller] {
     auto speeds = CalcJoystickSpeeds(controller);
-    speeds.vx = speeds.vx * speedScale;
-    speeds.vy = speeds.vy * speedScale;
+    speeds.vx = speeds.vx * speedScaling;
+    speeds.vy = speeds.vy * speedScaling;
+    speeds.omega = speeds.omega * rotationScaling;
     return frc::ChassisSpeeds{speeds.vx, speeds.vy, speeds.omega};
   }, fieldOriented);
 }
