@@ -7,7 +7,7 @@
 #include "utilities/FieldConstants.h"
 #include "utilities/ShiftHandler.h"
 
-#include <utilities/ICgeometry.h>
+#include <utilities/ICGeometry.h>
 #include <utilities/Logger.h>
 
 ShotPlanner::ShotPlanner(){
@@ -18,7 +18,7 @@ ShotPlanner::ShotPlannerResults ShotPlanner::CalculateShotTarget(frc::Pose2d rob
   auto alliance = frc::DriverStation::GetAlliance();
   if (alliance) {
     if (alliance.value() == frc::DriverStation::kRed) {
-      robotPos = ICgeometry::xPoseFlip(robotPos);
+      robotPos = ICGeometry::xPoseFlip(robotPos);
     }
     Logger::FieldDisplay::GetInstance().DisplayPose("Shot Planner/Robot Position", robotPos);
   }
@@ -74,7 +74,7 @@ ShotPlanner::ShotPlannerResults ShotPlanner::CalculateShotTarget(frc::Pose2d rob
 
     if (alliance) {
       if (alliance.value() == frc::DriverStation::Alliance::kRed) {
-        target = ICgeometry::xTranslationFlip(target);
+        target = ICGeometry::xTranslationFlip(target);
       }
     }
 

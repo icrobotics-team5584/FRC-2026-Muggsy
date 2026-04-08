@@ -19,29 +19,12 @@ namespace canid {
 
     constexpr int PIGEON_2 = 13; 
 
-    constexpr int INTAKE = 14;
-    constexpr int INTAKE_FOLLOWER = 15;
-    constexpr int INDEXER = 16;
-    constexpr int FEEDER = 17;
-    constexpr int DEPLOY = 18;
-    constexpr int HOOD_MOTOR = 19; 
-    constexpr int SHOOTER_MOTOR_1 = 20; 
-    constexpr int SHOOTER_MOTOR_2 = 21;  
-    constexpr int TURRET_MOTOR = 22; 
-
-    constexpr int TURRET_ENCODER_1 = 25;
-    constexpr int TURRET_ENCODER_2 = 24;
-
     constexpr int PDH = 40;
 }
 
 namespace dio {
-    constexpr int BRAKE_COAST_BUTTON = 0;
-    constexpr int TURRET_ENCODER_1 = 1;
-    constexpr int TURRET_ENCODER_2 = 2;
 }
 
 namespace pwm {
-    constexpr int LED = 0;
 }
 
