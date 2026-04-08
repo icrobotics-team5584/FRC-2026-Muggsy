@@ -4,6 +4,7 @@
 
 #include "RobotContainer.h"
 #include "subsystems/SubDrivebase.h"
+#include "utilities/Logger.h"
 #include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer() {
@@ -17,4 +18,16 @@ void RobotContainer::ConfigureBindings() {
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");
+}
+
+frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {
+  return frc2::cmd::Run([this, force, duration] {
+    _driverController.SetRumble(frc::XboxController::RumbleType::kBothRumble, force);
+    Logger::Log("DriverStation/Rumble", true);
+  })
+    .WithTimeout(duration)
+    .FinallyDo([this] {
+      _driverController.SetRumble(frc::XboxController::RumbleType::kBothRumble, 0);
+      Logger::Log("DriverStation/Rumble", false);
+    });
 }
