@@ -2,7 +2,7 @@
 #include "subsystems/SubDrivebase.h"
 #include "utilities/PoseHandler.h"
 #include "utilities/Logger.h"
-#include "utilities/ICgeometry.h"
+#include "utilities/ICGeometry.h"
 
 SubDrivebase::SubDrivebase() {
   Logger::Log("Drivebase/P2P/Rotation Controller", &_rotationP2pController);
@@ -266,7 +266,7 @@ frc2::CommandPtr SubDrivebase::DriveOverBump(frc::ChassisSpeeds fieldRelativeSpe
   )).Unless([this] {
     return frc::RobotBase::IsSimulation();
   }).FinallyDo([this, allianceRelativeEndXY] {
-    auto endPose = ICgeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
+    auto endPose = ICGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
     SetPose(endPose);
   });
 }
@@ -408,7 +408,7 @@ bool SubDrivebase::IsAtPose(
 frc2::CommandPtr SubDrivebase::DriveToPose(std::function<frc::Pose2d()> pose, double speedScaling,
   units::meter_t posErrorTolerance, units::degree_t rotErrorTolerance, bool flipForRedAlliance) {
   auto fieldRelativePose = [pose, flipForRedAlliance] {
-    return flipForRedAlliance ? ICgeometry::GetFieldRelativePose(pose()) : pose();
+    return flipForRedAlliance ? ICGeometry::GetFieldRelativePose(pose()) : pose();
   };
   
   return Drive(
