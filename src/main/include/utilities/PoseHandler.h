@@ -18,9 +18,9 @@ class PoseHandler {
   frc::Pose2d GetSimPose();
 
   // Setters
-  void Update(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states);
+  void AddOdometryMeasurement(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states);
   void SetPose(frc::Pose2d pose, wpi::array<frc::SwerveModulePosition, 4U> states);
-  void UpdateSim(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states, bool resetHeading = false, frc::Rotation2d heading = 0_deg);
+  void AddSimOdometryMeasurement(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states, bool resetHeading = false, frc::Rotation2d heading = 0_deg);
   void AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double,3> dev);
 
  private:

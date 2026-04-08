@@ -38,4 +38,6 @@ namespace DrivebaseConfig {
   // PID constants for translation and rotation controllers
   const frc::PIDController P2P_TRANSLATION_PID{5, 0, 0};
   const frc::PIDController P2P_ROTATION_PID{33, 0, 0};
+
+  static constexpr units::meter_t CENTRE_TO_BUMPER_EDGE = 0.435_m;
 }

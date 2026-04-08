@@ -1,11 +1,17 @@
 #include "utilities/PoseHandler.h"
 #include "utilities/Logger.h"
+#include "utilities/ICgeometry.h"
 
 PoseHandler::PoseHandler() {
 }
 
 frc::Pose2d PoseHandler::GetPose() {
-    return _poseEstimator.GetEstimatedPosition();
+    auto pose = _poseEstimator.GetEstimatedPosition();
+    return {
+        std::clamp(pose.X(), DrivebaseConfig::CENTRE_TO_BUMPER_EDGE, ICgeometry::FIELD_LENGTH - DrivebaseConfig::CENTRE_TO_BUMPER_EDGE),
+        std::clamp(pose.Y(), DrivebaseConfig::CENTRE_TO_BUMPER_EDGE, ICgeometry::FIELD_WIDTH - DrivebaseConfig::CENTRE_TO_BUMPER_EDGE),
+        pose.Rotation()
+    };
 }
 
 frc::Pose2d PoseHandler::GetSimPose() {
@@ -17,12 +23,12 @@ void PoseHandler::SetPose(frc::Pose2d pose, wpi::array<frc::SwerveModulePosition
     _simPoseEstimator.ResetPosition(pose.Rotation().Degrees(), states, pose);
 }
 
-void PoseHandler::Update(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states) {
+void PoseHandler::AddOdometryMeasurement(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states) {
     _poseEstimator.Update(angle, states);
     Logger::FieldDisplay::GetInstance().SetRobotPose(_poseEstimator.GetEstimatedPosition());
 }
 
-void PoseHandler::UpdateSim(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states, bool resetHeading, frc::Rotation2d heading) {
+void PoseHandler::AddSimOdometryMeasurement(frc::Rotation2d angle, wpi::array<frc::SwerveModulePosition, 4U> states, bool resetHeading, frc::Rotation2d heading) {
     _simPoseEstimator.Update(angle, states);
     if (resetHeading) { _simPoseEstimator.ResetRotation(heading); }
     Logger::FieldDisplay::GetInstance().DisplayPose("Sim pose", _simPoseEstimator.GetEstimatedPosition());
