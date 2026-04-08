@@ -23,6 +23,7 @@ namespace canid {
 }
 
 namespace dio {
+    constexpr int BRAKE_COAST_BUTTON = 0;
 }
 
 namespace pwm {
