@@ -26,5 +26,6 @@ namespace dio {
 }
 
 namespace pwm {
+    constexpr int LED = 0;
 }
 
