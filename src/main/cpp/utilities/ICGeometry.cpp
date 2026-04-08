@@ -1,4 +1,4 @@
-#include "utilities/ICgeometry.h"
+#include "utilities/ICGeometry.h"
 #include "utilities/Logger.h"
 #include <frc/DriverStation.h>
 #include <frc/geometry/Pose2d.h>
@@ -7,7 +7,7 @@
 #include <units/angle.h>
 #include <units/length.h>
 
-namespace ICgeometry {
+namespace ICGeometry {
 frc::Pose2d xPoseFlip(frc::Pose2d pose) {
   units::meter_t xdiff = units::math::abs(FIELD_LENGTH / 2 - pose.X());
   units::meter_t x =
@@ -41,9 +41,9 @@ frc::Rotation2d PoseDirection(frc::Pose2d origin, frc::Pose2d destination) {
 
 frc::Pose2d GetFieldRelativePose(frc::Pose2d allianceRelativePose) {
   if(frc::DriverStation::GetAlliance().value_or(frc::DriverStation::kBlue) == frc::DriverStation::kRed) {
-    return ICgeometry::xyPoseFlip(allianceRelativePose);
+    return ICGeometry::xyPoseFlip(allianceRelativePose);
   } else {
     return allianceRelativePose;
   }
 };
-}  // namespace ICgeometry
+}  // namespace ICGeometry
