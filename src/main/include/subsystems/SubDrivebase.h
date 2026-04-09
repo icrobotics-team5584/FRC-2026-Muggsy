@@ -100,7 +100,7 @@ class SubDrivebase : public frc2::SubsystemBase {
     std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
     std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
   /* ------------------------------------------------------------------------------------------------------------- */ 
-  /* Definition=*/
+  /* Definition */
 
   // Gyro
   ctre::phoenix6::hardware::Pigeon2 _gyro{canid::PIGEON_2};

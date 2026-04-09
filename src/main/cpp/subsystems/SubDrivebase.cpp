@@ -151,7 +151,7 @@ void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {
 frc2::CommandPtr SubDrivebase::ZeroRotation(std::function<units::degree_t()> startingAngle) {
   return RunOnce([this, startingAngle] {
     auto startingAngleVal = startingAngle();
-    Logger::Log("Drivebase/ZeroRotation/startingAngle (deg)", startingAngleVal.value());
+    Logger::Log("Drivebase/ZeroRotation/startingAngle", startingAngleVal);
 
     ResetGyroHeading(startingAngleVal);
     frc::Pose2d oldPose = PoseHandler::GetInstance().GetPose();
