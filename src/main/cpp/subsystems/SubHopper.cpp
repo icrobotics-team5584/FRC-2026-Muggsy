@@ -27,6 +27,7 @@ void SubHopper::Periodic() {
 	Logger::Log("Hopper/Has Zeroed", _hasZeroed);
 	Logger::Log("Hopper/Zeroing", _zeroing);
 	Logger::Log("Hopper/On Target", IsAtTarget());
+	Logger::Log("Hopper/Extension", GetHeight());
 }
 
 /* Command Functions*/
