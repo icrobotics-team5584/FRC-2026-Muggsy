@@ -99,14 +99,10 @@ units::meter_t SubClimb::GetHeight() {
 }
 
 units::meter_t SubClimb::ConvertPositionToHeight(units::turn_t pos) {
-    /* For anyone confused about the <2> syntax, see:
-     * https://github.com/nholthaus/units#exponentials-and-square-roots */
     return (pos.value() * _PINION_CIRCUM);
 }
 
 units::turn_t SubClimb::ConvertHeightToPosition(units::meter_t height) {
-    /* For anyone confused about the <2> syntax, see:
-     * https://github.com/nholthaus/units#exponentials-and-square-roots */
 	return 1_tr * (height / _PINION_CIRCUM).value();
 }
 
