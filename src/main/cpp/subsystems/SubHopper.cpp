@@ -1,13 +1,13 @@
 #include <frc2/command/Commands.h>
 #include <units/math.h>
 
-#include "subsystems/SubClimb.h"
+#include "subsystems/SubHopper.h"
 #include "utilities/ICSparkFlex.h"
 #include "utilities/Logger.h"
 #include "Constants.h"
 
 
-SubClimb::SubClimb() {
+SubHopper::SubClimb() {
 	_motor1Config.SmartCurrentLimit(_CURRENT_LIMIT.value());
 	_motor1Config.encoder.PositionConversionFactor(1 / _GEAR_RATIO);
 	_motor1Config.encoder.VelocityConversionFactor(1 / _GEAR_RATIO);
@@ -23,7 +23,7 @@ SubClimb::SubClimb() {
 	Logger::Log("Climber/Motor2", &_motor2);
 }
 
-void SubClimb::Periodic() {
+void SubHopper::Periodic() {
 	if(_hasZeroed == false && _zeroing == false) {
 		_motor1.StopMotor();
 		_motor2.StopMotor();
@@ -36,7 +36,7 @@ void SubClimb::Periodic() {
 		_motor2.OnPosTarget(ConvertHeightToPosition(_TOLERANCE)));
 }
 
-frc2::CommandPtr SubClimb::Zero() {
+frc2::CommandPtr SubHopper::Zero() {
     return frc2::cmd::RunOnce([this] {
 		_zeroing = true;
 		_hasZeroed = false;
@@ -59,7 +59,7 @@ frc2::CommandPtr SubClimb::Zero() {
    	});
 }
 
-frc2::CommandPtr SubClimb::ClimbTo(units::meter_t height) {
+frc2::CommandPtr SubHopper::ClimbTo(units::meter_t height) {
 	return frc2::cmd::RunOnce([this, height] {
     	if(_hasZeroed) {
     		_motor1.SetPositionTarget(ConvertHeightToPosition(height));
@@ -68,7 +68,7 @@ frc2::CommandPtr SubClimb::ClimbTo(units::meter_t height) {
 	});
 }
 
-frc2::CommandPtr SubClimb::MannualClimbDown() {
+frc2::CommandPtr SubHopper::MannualClimbDown() {
 	return frc2::cmd::RunOnce([this] {
     	if(_hasZeroed) {
     		_motor1.SetVoltage(-1_V);
@@ -77,7 +77,7 @@ frc2::CommandPtr SubClimb::MannualClimbDown() {
 	}).WithTimeout(1_ms);
 }
 
-frc2::CommandPtr SubClimb::MannualClimbUp() {
+frc2::CommandPtr SubHopper::MannualClimbUp() {
 	return frc2::cmd::RunOnce([this] {
     	if(_hasZeroed) {
     		_motor1.SetVoltage(1_V);
@@ -86,25 +86,25 @@ frc2::CommandPtr SubClimb::MannualClimbUp() {
 	}).WithTimeout(1_ms);
 }
             
-frc2::CommandPtr SubClimb::ClimbToL1() {
+frc2::CommandPtr SubHopper::ClimbToL1() {
 	return ClimbTo(_L1_HEIGHT);
 }
 
-frc2::CommandPtr SubClimb::Stow() {
+frc2::CommandPtr SubHopper::Stow() {
 	return ClimbTo(_STOW_HEIGHT);
 }
 
-units::meter_t SubClimb::GetHeight() {
+units::meter_t SubHopper::GetHeight() {
 	return ConvertPositionToHeight(_motor1.GetPosition());
 }
 
-units::meter_t SubClimb::ConvertPositionToHeight(units::turn_t pos) {
+units::meter_t SubHopper::ConvertPositionToHeight(units::turn_t pos) {
     /* For anyone confused about the <2> syntax, see:
      * https://github.com/nholthaus/units#exponentials-and-square-roots */
     return (pos.value() * _PINION_CIRCUM);
 }
 
-units::turn_t SubClimb::ConvertHeightToPosition(units::meter_t height) {
+units::turn_t SubHopper::ConvertHeightToPosition(units::meter_t height) {
     /* For anyone confused about the <2> syntax, see:
      * https://github.com/nholthaus/units#exponentials-and-square-roots */
 	return 1_tr * (height / _PINION_CIRCUM).value();

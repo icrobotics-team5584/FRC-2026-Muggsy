@@ -8,13 +8,13 @@
 #include "utilities/ICSparkFlex.h"
 #include "Constants.h"
 
-class SubClimb : public frc2::SubsystemBase {
+class SubHopper : public frc2::SubsystemBase {
 	public:
-    	static SubClimb& GetInstance() {
-			static SubClimb inst;
+    	static SubHopper& GetInstance() {
+			static SubHopper inst;
 			return inst;
     	}	
-    	SubClimb();
+    	SubHopper();
 
     	void Periodic() override;
     	/*void SimulationPeriodic() override; no impl yet*/
