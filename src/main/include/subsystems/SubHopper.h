@@ -30,10 +30,8 @@ class SubHopper : public frc2::SubsystemBase {
 		units::meter_t ConvertPositionToHeight(units::turn_t pos);
 		units::turn_t ConvertHeightToPosition(units::meter_t height);
     	
-		ICSparkFlex _motor1{canid::CLIMBER_MOTOR_1};
-		ICSparkFlex _motor2{canid::CLIMBER_MOTOR_2};
-		rev::spark::SparkFlexConfig _motor1Config;
-		rev::spark::SparkFlexConfig _motor2Config;
+		ICSparkFlex _motor{canid::CLIMBER_MOTOR};
+		rev::spark::SparkFlexConfig _motorConfig;
 		rev::spark::SparkBaseConfig::IdleMode _IDLE_MODE =
 			rev::spark::SparkBaseConfig::IdleMode::kBrake;
 
@@ -43,7 +41,7 @@ class SubHopper : public frc2::SubsystemBase {
 		static constexpr double _P = 1.0;
 		static constexpr double _I = 0.0;
 		static constexpr double _D = 0.0;
-		static constexpr double _GEAR_RATIO = 45;
+		static constexpr double _GEAR_RATIO = 36;
     	
 		static constexpr units::meter_t _UPPER_LIMIT = 205.8_mm;
 		static constexpr units::meter_t _LOWER_LIMIT = 0_m;
