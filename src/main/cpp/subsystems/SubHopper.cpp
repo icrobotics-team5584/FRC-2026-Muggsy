@@ -7,7 +7,7 @@
 #include "Constants.h"
 
 
-SubHopper::SubClimb() {
+SubHopper::SubExtend() {
 	_motor1Config.SmartCurrentLimit(_CURRENT_LIMIT.value());
 	_motor1Config.encoder.PositionConversionFactor(1 / _GEAR_RATIO);
 	_motor1Config.encoder.VelocityConversionFactor(1 / _GEAR_RATIO);
@@ -19,8 +19,8 @@ SubHopper::SubClimb() {
 	_motor1.OverwriteConfig(_motor1Config);
 	_motor2.OverwriteConfig(_motor2Config);
 
-	Logger::Log("Climber/Motor1", &_motor1);
-	Logger::Log("Climber/Motor2", &_motor2);
+	Logger::Log("Hopper/Motor1", &_motor1);
+	Logger::Log("Hopper/Motor2", &_motor2);
 }
 
 void SubHopper::Periodic() {
@@ -29,9 +29,9 @@ void SubHopper::Periodic() {
 		_motor2.StopMotor();
 	}
 
-	Logger::Log("Climber/Has Zeroed", _hasZeroed);
-	Logger::Log("Climber/Zeroing", _zeroing);
-	Logger::Log("Climber/On Target", 
+	Logger::Log("Hopper/Has Zeroed", _hasZeroed);
+	Logger::Log("Hopper/Zeroing", _zeroing);
+	Logger::Log("Hopper/On Target", 
 		_motor1.OnPosTarget(ConvertHeightToPosition(_TOLERANCE)) && 
 		_motor2.OnPosTarget(ConvertHeightToPosition(_TOLERANCE)));
 }
@@ -59,7 +59,7 @@ frc2::CommandPtr SubHopper::Zero() {
    	});
 }
 
-frc2::CommandPtr SubHopper::ClimbTo(units::meter_t height) {
+frc2::CommandPtr SubHopper::ExtendTo(units::meter_t height) {
 	return frc2::cmd::RunOnce([this, height] {
     	if(_hasZeroed) {
     		_motor1.SetPositionTarget(ConvertHeightToPosition(height));
@@ -68,7 +68,7 @@ frc2::CommandPtr SubHopper::ClimbTo(units::meter_t height) {
 	});
 }
 
-frc2::CommandPtr SubHopper::MannualClimbDown() {
+frc2::CommandPtr SubHopper::MannualExtendDown() {
 	return frc2::cmd::RunOnce([this] {
     	if(_hasZeroed) {
     		_motor1.SetVoltage(-1_V);
@@ -77,7 +77,7 @@ frc2::CommandPtr SubHopper::MannualClimbDown() {
 	}).WithTimeout(1_ms);
 }
 
-frc2::CommandPtr SubHopper::MannualClimbUp() {
+frc2::CommandPtr SubHopper::MannualExtendUp() {
 	return frc2::cmd::RunOnce([this] {
     	if(_hasZeroed) {
     		_motor1.SetVoltage(1_V);
@@ -86,12 +86,8 @@ frc2::CommandPtr SubHopper::MannualClimbUp() {
 	}).WithTimeout(1_ms);
 }
             
-frc2::CommandPtr SubHopper::ClimbToL1() {
-	return ClimbTo(_L1_HEIGHT);
-}
-
 frc2::CommandPtr SubHopper::Stow() {
-	return ClimbTo(_STOW_HEIGHT);
+	return ExtendTo(_STOW_HEIGHT);
 }
 
 units::meter_t SubHopper::GetHeight() {

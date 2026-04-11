@@ -20,10 +20,9 @@ class SubHopper : public frc2::SubsystemBase {
     	/*void SimulationPeriodic() override; no impl yet*/
     	
 		frc2::CommandPtr Zero();
-		frc2::CommandPtr ClimbTo(units::meter_t height);
-        frc2::CommandPtr MannualClimbDown();
-        frc2::CommandPtr MannualClimbUp();
-		frc2::CommandPtr ClimbToL1();
+		frc2::CommandPtr ExtendTo(units::meter_t height);
+        frc2::CommandPtr MannualExtendDown();
+        frc2::CommandPtr MannualExtendUp();
 		frc2::CommandPtr Stow();
 
 		units::meter_t GetHeight();
@@ -48,7 +47,6 @@ class SubHopper : public frc2::SubsystemBase {
     	
 		static constexpr units::meter_t _UPPER_LIMIT = 205.8_mm;
 		static constexpr units::meter_t _LOWER_LIMIT = 0_m;
-		static constexpr units::meter_t _L1_HEIGHT = 100_mm;
 		static constexpr units::meter_t _STOW_HEIGHT = 0_m;
 		static constexpr units::meter_t _PINION_RAD = 0.05_m;
 		static constexpr units::meter_t _PINION_CIRCUM = _PINION_RAD*2*3.14;
