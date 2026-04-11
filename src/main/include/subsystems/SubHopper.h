@@ -10,26 +10,28 @@
 
 class SubHopper : public frc2::SubsystemBase {
 	public:
-    	static SubHopper& GetInstance() {
+		static SubHopper& GetInstance() {
 			static SubHopper inst;
 			return inst;
-    	}	
-    	SubHopper();
+		}	
+		SubHopper();
 
-    	void Periodic() override;
-    	/*void SimulationPeriodic() override; no impl yet*/
-    	
+		void Periodic() override;
+		/*void SimulationPeriodic() override; no impl yet*/
+
 		frc2::CommandPtr Zero();
 		frc2::CommandPtr ExtendTo(units::meter_t height);
-        frc2::CommandPtr MannualExtendDown();
-        frc2::CommandPtr MannualExtendUp();
+		frc2::CommandPtr ExtendToLerp(double t);
+		frc2::CommandPtr MannualExtendDown();
+		frc2::CommandPtr MannualExtendUp();
 		frc2::CommandPtr Stow();
 
 		units::meter_t GetHeight();
+		bool IsAtTarget();
 	private:
 		units::meter_t ConvertPositionToHeight(units::turn_t pos);
 		units::turn_t ConvertHeightToPosition(units::meter_t height);
-    	
+
 		ICSparkFlex _motor{canid::CLIMBER_MOTOR};
 		rev::spark::SparkFlexConfig _motorConfig;
 		rev::spark::SparkBaseConfig::IdleMode _IDLE_MODE =
@@ -42,7 +44,7 @@ class SubHopper : public frc2::SubsystemBase {
 		static constexpr double _I = 0.0;
 		static constexpr double _D = 0.0;
 		static constexpr double _GEAR_RATIO = 36;
-    	
+
 		static constexpr units::meter_t _UPPER_LIMIT = 205.8_mm;
 		static constexpr units::meter_t _LOWER_LIMIT = 0_m;
 		static constexpr units::meter_t _STOW_HEIGHT = 0_m;
@@ -50,6 +52,6 @@ class SubHopper : public frc2::SubsystemBase {
 		static constexpr units::meter_t _PINION_CIRCUM = _PINION_RAD*2*3.14;
 		static constexpr units::meter_t _TOLERANCE = 5_mm;
 		
-    	bool _zeroing = false;
-    	bool _hasZeroed = false;
+		bool _zeroing = false;
+		bool _hasZeroed = false;
 };
