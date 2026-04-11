@@ -66,6 +66,16 @@ model {
                 }
             }
 
+            // In CI, treat all compiler warnings in user code as errors.
+            // Vendor and WPILib headers are included as system headers (-isystem)
+            // so their warnings are not affected.
+            // Locally, warnings remain as warnings so the build isn't blocked.
+            binaries.all {
+                if (System.getenv("CI") == "true") {
+                    cppCompiler.args "-Werror"
+                }
+            }
+
             // Set deploy task to deploy this component
             deployArtifact.component = it
 
