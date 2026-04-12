@@ -36,7 +36,7 @@ jobs:
     # We use our build server here because clang-tidy is slow as it needs to 
     # resolve all the #includes in our code (WPILib, CTRE, REV, etc.).
     runs-on: self-hosted
-    container: wpilib/roborio-cross-ubuntu:2026-22.04-py314
+    container: wpilib/roborio-cross-ubuntu:2025-24.04
     permissions:
       contents: read
 
