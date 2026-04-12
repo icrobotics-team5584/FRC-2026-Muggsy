@@ -1,0 +1,76 @@
+# clang-format checks that all C++ code is consistently formatted according to
+# the rules defined in the .clang-format file at the root of the repository.
+#
+# If this check fails on your PR, run the following command locally to fix it:
+#   clang-format --style=file -i <file/to/fix>
+#   or in VSCode run "Format Document" on the file.
+# Or to fix all changed files at once in powershell:
+#   $files = git diff --name-only origin/main...HEAD | Where-Object { $_ -match '\.(cpp|h)$' }
+#   if ($files) { $files | ForEach-Object { clang-format --style=file -i $_ } }
+# Or in bash:
+#   git diff --name-only origin/main...HEAD | grep -E '\.(cpp|h)$' | xargs clang-format --style=file -i
+name: clang-format
+
+on:
+  # Only runs on pull requests targeting main.
+  pull_request:
+    branches: [main]
+
+jobs:
+  clang-format:
+    name: Check clang-format
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Find which C++ files were added or modified in this PR.
+      # We only check changed files so that pre-existing formatting issues
+      # in untouched code don't block unrelated PRs.
+      - name: Get changed C++ files
+        id: changed-files
+        run: |
+          FILES=$(git diff --name-only --diff-filter=ACMR \
+            "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}" \
+            | grep -E '^src/main/(cpp|include)/.*\.(cpp|h)$' || true)
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      # Only install clang-format (and run the steps below) if there are
+      # actually C++ files to check. This makes the workflow a no-op for
+      # PRs that only touch docs, config, etc.
+      - name: Install clang-format
+        if: steps.changed-files.outputs.files != ''
+        run: sudo apt-get update -qq && sudo apt-get install -y clang-format-17
+
+      # --dry-run makes clang-format report differences without writing any files.
+      # --Werror makes it exit with a non-zero code if any file would be changed,
+      # which causes this step (and the whole workflow) to fail.
+      - name: Run clang-format check
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          FAILED=0
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            if ! clang-format-17 --dry-run --Werror "$FILE" 2>&1; then
+              echo "::error file=$FILE::Not formatted. Run: clang-format --style=file -i $FILE"
+              FAILED=1
+            fi
+          done <<< "${{ steps.changed-files.outputs.files }}"
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "clang-format found formatting issues. To fix locally, run (PowerShell):"
+            echo '  $files = git diff --name-only origin/main...HEAD | Where-Object { $_ -match "\.(cpp|h)$" }'
+            echo '  if ($files) { $files | ForEach-Object { clang-format --style=file -i $_ } }'
+            echo ""
+            echo "Or in bash:"
+            echo "  git diff --name-only origin/main...HEAD | grep -E '\.(cpp|h)$' | xargs clang-format --style=file -i"
+            echo ""
+            echo "Or in VSCode, open the file and run 'Format Document' (Shift+Alt+F)."
+            exit 1
+          fi
