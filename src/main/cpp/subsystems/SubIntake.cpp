@@ -16,11 +16,15 @@ SubIntake::SubIntake() {
 	_motor1.OverwriteConfig(motor1Config.Apply(_motorConfig));
 	_motor2.OverwriteConfig(motor2Config.Apply(_motorConfig).Follow(
     	canid::INTAKE_MOTOR_1).Inverted(!_INVERTED));
-}
-
-void SubIntake::Periodic() {
+	
 	Logger::Log("Intake/Motor1", &_motor1);
 	Logger::Log("Intake/Motor2", &_motor2);
+}
+
+
+void SubIntake::Periodic() {
+	Logger::Log("Intake/Is Intaking", 
+		_motor1.GetMotorVoltage() == 0_V && _motor2.GetMotorVoltage() == 0_V);
 }
 
 frc2::CommandPtr SubIntake::IntakeEnable() {
