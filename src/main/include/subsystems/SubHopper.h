@@ -37,7 +37,8 @@ class SubHopper : public frc2::SubsystemBase {
 
   ICSparkFlex _motor{canid::CLIMBER_MOTOR};
   rev::spark::SparkFlexConfig _motorConfig;
-  static constexpr rev::spark::SparkBaseConfig::IdleMode _IDLE_MODE = rev::spark::SparkBaseConfig::IdleMode::kBrake;
+  static constexpr rev::spark::SparkBaseConfig::IdleMode _IDLE_MODE =
+    rev::spark::SparkBaseConfig::IdleMode::kBrake;
 
   static constexpr units::ampere_t _ZERO_CURRENT_LIMIT = 40_A;
   static constexpr units::ampere_t _CURRENT_LIMIT = 60_A;
