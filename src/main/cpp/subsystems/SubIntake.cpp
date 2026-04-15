@@ -32,19 +32,21 @@ void SubIntake::Periodic() {
 }
 
 frc2::CommandPtr SubIntake::RunIntake() {
-  return frc2::cmd::StartEnd([this] {
-	_intakeOn = true;
+  return frc2::cmd::StartEnd(
+    [this] {
+      _intakeOn = true;
 
-    _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{5_V});
-    _motor2.SetControl(ctre::phoenix6::controls::VoltageOut{5_V});
-  }, [this] {
-	_intakeOn = false;
+      _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{5_V});
+      _motor2.SetControl(ctre::phoenix6::controls::VoltageOut{5_V});
+    },
+    [this] {
+      _intakeOn = false;
 
-	_motor1.SetControl(ctre::phoenix6::controls::VoltageOut{0_V});
-    _motor2.SetControl(ctre::phoenix6::controls::VoltageOut{0_V});
-  });
+      _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{0_V});
+      _motor2.SetControl(ctre::phoenix6::controls::VoltageOut{0_V});
+    });
 }
 
 bool SubIntake::IsIntakeEnabled() {
-	return _intakeOn;
+  return _intakeOn;
 }
