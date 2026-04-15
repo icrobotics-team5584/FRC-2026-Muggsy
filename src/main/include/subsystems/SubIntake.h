@@ -19,12 +19,12 @@ class SubIntake : public frc2::SubsystemBase {
 
   void Periodic() override;
 
-  frc2::CommandPtr IntakeEnable();
-  frc2::CommandPtr IntakeDisable();
+  frc2::CommandPtr RunIntake();
 
-  bool isIntakeEnabled();
+  bool IsIntakeEnabled();
 
  private:
+  bool _intakeOn = false;
   ctre::phoenix6::hardware::TalonFX _motor1{canid::INTAKE_MOTOR_1};
   ctre::phoenix6::hardware::TalonFX _motor2{canid::INTAKE_MOTOR_2};
   static constexpr ctre::phoenix6::signals::NeutralModeValue _IDLE_MODE =
