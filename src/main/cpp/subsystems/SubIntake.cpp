@@ -17,11 +17,11 @@ SubIntake::SubIntake() {
 	config.CurrentLimits.SupplyCurrentLowerTime = _SUPPLY_CURRENT_LOWER_TIME;
 	config.CurrentLimits.StatorCurrentLimitEnable = true;
 	config.CurrentLimits.StatorCurrentLimit = _STATOR_CURRENT_LIMIT;
-
+	
 	_motor1.GetConfigurator().Apply(config);
-	_motor2.SetControl(ctre::phoenix6::controls::Follower::Follower{
+	_motor2.SetControl(ctre::phoenix6::controls::Follower(
 		canid::INTAKE_MOTOR_2,
-		ctre::phoenix6::signals::MotorAlignmentValue::Opposed});
+		ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
 }
 
 
