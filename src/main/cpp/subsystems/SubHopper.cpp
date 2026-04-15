@@ -67,19 +67,31 @@ frc2::CommandPtr SubHopper::ExtendToLerp(double t) {
 }
 
 frc2::CommandPtr SubHopper::MannualExtendDown() {
-  return frc2::cmd::RunOnce([this] {
-    if (_hasZeroed) {
-      _motor.SetVoltage(-1_V);
-    }
-  }).WithTimeout(1_ms);
+  return frc2::cmd::StartEnd(
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(-1_V);
+      }
+    },
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(0_V);
+      }
+    });
 }
 
 frc2::CommandPtr SubHopper::MannualExtendUp() {
-  return frc2::cmd::RunOnce([this] {
-    if (_hasZeroed) {
-      _motor.SetVoltage(1_V);
-    }
-  }).WithTimeout(1_ms);
+  return frc2::cmd::StartEnd(
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(1_V);
+      }
+    },
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(0_V);
+      }
+    });
 }
 
 frc2::CommandPtr SubHopper::Stow() {
