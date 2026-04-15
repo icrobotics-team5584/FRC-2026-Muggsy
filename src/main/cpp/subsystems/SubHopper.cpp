@@ -13,6 +13,7 @@ SubHopper::SubHopper() {
 	_motorConfig.encoder.VelocityConversionFactor(1 / _GEAR_RATIO);
 	_motorConfig.closedLoop.Pid(_P, _I, _D);
 	_motorConfig.Inverted(_INVERTED);
+	_motorConfig.SetIdleMode(_IDLE_MODE);
 
 	_motor.OverwriteConfig(_motorConfig);
 
