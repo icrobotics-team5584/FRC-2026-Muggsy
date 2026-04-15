@@ -19,6 +19,9 @@ namespace canid {
 
     constexpr int PIGEON_2 = 13; 
 
+    constexpr int INTAKE_MOTOR_1 = 15;
+    constexpr int INTAKE_MOTOR_2 = 16; /* Follower */
+
     constexpr int PDH = 40;
 }
 
