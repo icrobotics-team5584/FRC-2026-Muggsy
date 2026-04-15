@@ -23,7 +23,7 @@ SubHopper::SubHopper() {
 }
 
 void SubHopper::Periodic() {
-  if (_hasZeroed == false && _zeroing == false) {
+  if (!_hasZeroed && !_zeroing) {
     _motor.StopMotor();
   }
 
