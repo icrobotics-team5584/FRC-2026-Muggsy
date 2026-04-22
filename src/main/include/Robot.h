@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include <optional>
-
+#include <frc/PowerDistribution.h>
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
-#include <frc/PowerDistribution.h>
 
-#include "RobotContainer.h"
+#include <optional>
+
 #include "Constants.h"
+#include "RobotContainer.h"
 
 class Robot : public frc::TimedRobot {
  public:
