@@ -6,6 +6,7 @@
 #include "subsystems/SubDrivebase.h"
 #include "utilities/Logger.h"
 #include <frc2/command/Commands.h>
+#include <commands/AutonCommands.h>
 
 RobotContainer::RobotContainer() {
   ConfigureBindings();
@@ -13,11 +14,10 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+  return cmd::IntakeAuton();
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {

@@ -409,8 +409,8 @@ frc2::CommandPtr SubDrivebase::DriveToPose(std::function<frc::Pose2d()> pose, do
   units::meter_t posErrorTolerance, units::degree_t rotErrorTolerance, bool flipForRedAlliance) {
   auto fieldRelativePose = [pose, flipForRedAlliance] {
     return flipForRedAlliance ? ICGeometry::GetFieldRelativePose(pose()) : pose();
-  };
-  
+  };    
+
   return Drive(
       [this, fieldRelativePose, speedScaling] {
         auto pose = fieldRelativePose();
