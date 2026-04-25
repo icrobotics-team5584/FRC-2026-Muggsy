@@ -265,8 +265,8 @@ frc::Rotation2d SubDrivebase::GetGyroAngle(bool allianceRelative) {
   if (!allianceRelative || alliance.value_or(frc::DriverStation::Alliance::kBlue) ==
                              frc::DriverStation::Alliance::kBlue) {
     return _gyro.GetRotation2d();
-  }     return _gyro.GetRotation2d() - 180_deg;
- 
+  }
+  return _gyro.GetRotation2d() - 180_deg;
 }
 
 units::degree_t SubDrivebase::GetPitch() {
@@ -396,8 +396,9 @@ bool SubDrivebase::IsAtPose(
   return atPose;
 }
 
-frc2::CommandPtr SubDrivebase::DriveToPose(const std::function<frc::Pose2d()>& pose, double speedScaling,
-  units::meter_t posErrorTolerance, units::degree_t rotErrorTolerance, bool flipForRedAlliance) {
+frc2::CommandPtr SubDrivebase::DriveToPose(const std::function<frc::Pose2d()>& pose,
+  double speedScaling, units::meter_t posErrorTolerance, units::degree_t rotErrorTolerance,
+  bool flipForRedAlliance) {
   auto fieldRelativePose = [pose, flipForRedAlliance] {
     return flipForRedAlliance ? ICGeometry::GetFieldRelativePose(pose()) : pose();
   };

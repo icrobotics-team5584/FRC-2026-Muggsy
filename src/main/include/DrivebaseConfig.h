@@ -49,4 +49,4 @@ constexpr std::array<double, 3> P2P_TRANSLATION_PID{5, 0, 0};
 constexpr std::array<double, 3> P2P_ROTATION_PID{33, 0, 0};
 
 static constexpr units::meter_t CENTRE_TO_BUMPER_EDGE = 0.435_m;
-}  // namespace DrivebaseConfig
+}  // namespace drivebaseConfig
