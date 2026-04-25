@@ -3,7 +3,7 @@
 #include "utilities/ICGeometry.h"
 #include "utilities/Logger.h"
 
-PoseHandler::PoseHandler() {}
+PoseHandler::PoseHandler() = default;
 
 frc::Pose2d PoseHandler::GetPose() {
   auto pose = _poseEstimator.GetEstimatedPosition();
