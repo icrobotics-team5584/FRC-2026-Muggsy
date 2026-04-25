@@ -1,6 +1,6 @@
 #include "utilities/PoseHandler.h"
 
-#include "utilities/ICgeometry.h"
+#include "utilities/ICGeometry.h"
 #include "utilities/Logger.h"
 
 PoseHandler::PoseHandler() {}
