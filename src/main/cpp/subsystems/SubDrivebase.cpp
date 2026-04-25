@@ -174,7 +174,7 @@ void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_se
   // Set speed limit and apply speed limit to all modules
   frc::SwerveDriveKinematics<4>::DesaturateWheelSpeeds(
     &states, frc::SmartDashboard::GetNumber(
-               "Drivebase/Config/Max Velocity", DrivebaseConfig::MAX_VELOCITY.value()) *
+               "Drivebase/Config/Max Velocity", drivebaseConfig::MAX_VELOCITY.value()) *
                1_mps);
 
   // Extract force feedforwards
@@ -254,7 +254,7 @@ frc2::CommandPtr SubDrivebase::DriveOverBump(
     .Unless([this] { return frc::RobotBase::IsSimulation(); })
     .FinallyDo([this, allianceRelativeEndXY] {
       auto endPose =
-        icGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
+        ICGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
       SetPose(endPose);
     });
 }
@@ -346,7 +346,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
 
   // Clamp translation speed to max velocity
   translationSpeed = std::clamp(
-    translationSpeed, -DrivebaseConfig::MAX_P2P_VELOCITY, DrivebaseConfig::MAX_P2P_VELOCITY);
+    translationSpeed, -drivebaseConfig::MAX_P2P_VELOCITY, drivebaseConfig::MAX_P2P_VELOCITY);
 
   // Convert Polar back into Cartesian X and Y
   frc::Translation2d translationSpeedVector =
@@ -399,7 +399,7 @@ bool SubDrivebase::IsAtPose(
 frc2::CommandPtr SubDrivebase::DriveToPose(const std::function<frc::Pose2d()>& pose, double speedScaling,
   units::meter_t posErrorTolerance, units::degree_t rotErrorTolerance, bool flipForRedAlliance) {
   auto fieldRelativePose = [pose, flipForRedAlliance] {
-    return flipForRedAlliance ? icGeometry::GetFieldRelativePose(pose()) : pose();
+    return flipForRedAlliance ? ICGeometry::GetFieldRelativePose(pose()) : pose();
   };
 
   return Drive(
@@ -416,18 +416,18 @@ frc2::CommandPtr SubDrivebase::DriveToPose(const std::function<frc::Pose2d()>& p
 frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController& controller) {
   std::string configPath = "Drivebase/Config/";
   auto deadband =
-    Logger::Tune(configPath + "Joystick Deadband", DrivebaseConfig::JOYSTICK_DEADBAND);
-  auto maxVelocity = Logger::Tune(configPath + "Max Velocity", DrivebaseConfig::MAX_VELOCITY);
+    Logger::Tune(configPath + "Joystick Deadband", drivebaseConfig::JOYSTICK_DEADBAND);
+  auto maxVelocity = Logger::Tune(configPath + "Max Velocity", drivebaseConfig::MAX_VELOCITY);
   auto maxAngularVelocity =
-    Logger::Tune(configPath + "Max Angular Velocity", DrivebaseConfig::MAX_TELEOP_ANGULAR_VELOCITY);
+    Logger::Tune(configPath + "Max Angular Velocity", drivebaseConfig::MAX_TELEOP_ANGULAR_VELOCITY);
   auto maxJoystickAccel =
-    Logger::Tune(configPath + "Max Joystick Accel", DrivebaseConfig::MAX_JOYSTICK_ACCEL);
+    Logger::Tune(configPath + "Max Joystick Accel", drivebaseConfig::MAX_JOYSTICK_ACCEL);
   auto maxAngularJoystickAccel = Logger::Tune(
-    configPath + "Max Joystick Angular Accel", DrivebaseConfig::MAX_ANGULAR_JOYSTICK_ACCEL);
+    configPath + "Max Joystick Angular Accel", drivebaseConfig::MAX_ANGULAR_JOYSTICK_ACCEL);
   auto translationScaling =
-    Logger::Tune(configPath + "Translation Scaling", DrivebaseConfig::TRANSLATION_SCALING);
+    Logger::Tune(configPath + "Translation Scaling", drivebaseConfig::TRANSLATION_SCALING);
   auto rotationScaling =
-    Logger::Tune(configPath + "Rotation Scaling", DrivebaseConfig::ROTATION_SCALING);
+    Logger::Tune(configPath + "Rotation Scaling", drivebaseConfig::ROTATION_SCALING);
 
   // Recreate slew rate limiters if limits have changed
   if (maxJoystickAccel != _tunedMaxJoystickAccel) {
@@ -505,7 +505,7 @@ frc2::CommandPtr SubDrivebase::CharacteriseWheels() {
   static units::radian_t bRinitialWheelDistance = 0_rad;
   static units::radian_t bLinitialWheelDistance = 0_rad;
   static auto limiter = frc::SlewRateLimiter<units::degrees_per_second>{240_deg_per_s / 10_s};
-  static units::meter_t drivebaseRadius = DrivebaseConfig::FL_POSITION.Norm();
+  static units::meter_t drivebaseRadius = drivebaseConfig::FL_POSITION.Norm();
 
   return RunOnce([this] {
     prevGyroAngle = GetGyroAngle().Radians();

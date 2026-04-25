@@ -7,10 +7,10 @@ PoseHandler::PoseHandler() = default;
 
 frc::Pose2d PoseHandler::GetPose() {
   auto pose = _poseEstimator.GetEstimatedPosition();
-  return {std::clamp(pose.X(), DrivebaseConfig::CENTRE_TO_BUMPER_EDGE,
-            ICGeometry::FIELD_LENGTH - DrivebaseConfig::CENTRE_TO_BUMPER_EDGE),
-    std::clamp(pose.Y(), DrivebaseConfig::CENTRE_TO_BUMPER_EDGE,
-      ICGeometry::FIELD_WIDTH - DrivebaseConfig::CENTRE_TO_BUMPER_EDGE),
+  return {std::clamp(pose.X(), drivebaseConfig::CENTRE_TO_BUMPER_EDGE,
+            ICGeometry::FIELD_LENGTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE),
+    std::clamp(pose.Y(), drivebaseConfig::CENTRE_TO_BUMPER_EDGE,
+      ICGeometry::FIELD_WIDTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE),
     pose.Rotation()};
 }
 
