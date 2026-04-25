@@ -23,7 +23,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {
-  return frc2::cmd::Run([this, force, duration] {
+  return frc2::cmd::Run([this, force] {
     _driverController.SetRumble(frc::XboxController::RumbleType::kBothRumble, force);
     Logger::Log("DriverStation/Rumble", true);
   })

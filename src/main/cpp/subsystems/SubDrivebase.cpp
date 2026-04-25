@@ -231,27 +231,27 @@ frc2::CommandPtr SubDrivebase::LockWheelsInXShape() {
 
 frc2::CommandPtr SubDrivebase::DriveOverBump(
   frc::ChassisSpeeds fieldRelativeSpeeds, frc::Translation2d allianceRelativeEndXY) {
-  return Drive([this, fieldRelativeSpeeds] { return fieldRelativeSpeeds; }, true)
+  return Drive([fieldRelativeSpeeds] { return fieldRelativeSpeeds; }, true)
     .WithDeadline(frc2::cmd::Sequence(
-      frc2::cmd::RunOnce([this] { Logger::Log("Drivebase/DriveOverBump/State", 1); }),
+      frc2::cmd::RunOnce([] { Logger::Log("Drivebase/DriveOverBump/State", 1); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() > 5_deg);  // ascending
       }),
-      frc2::cmd::RunOnce([this] { Logger::Log("Drivebase/DriveOverBump/State", 2); }),
+      frc2::cmd::RunOnce([] { Logger::Log("Drivebase/DriveOverBump/State", 2); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() < 5_deg);  // peak
       }),
-      frc2::cmd::RunOnce([this] { Logger::Log("Drivebase/DriveOverBump/State", 3); }),
+      frc2::cmd::RunOnce([] { Logger::Log("Drivebase/DriveOverBump/State", 3); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() >
                 5_deg);  // descending. note that tilt magnitude is always positive
       }),
-      frc2::cmd::RunOnce([this] { Logger::Log("Drivebase/DriveOverBump/State", 4); }),
+      frc2::cmd::RunOnce([] { Logger::Log("Drivebase/DriveOverBump/State", 4); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() < 2_deg);  // done
       }),
-      frc2::cmd::RunOnce([this] { Logger::Log("Drivebase/DriveOverBump/State", 5); })))
-    .Unless([this] { return frc::RobotBase::IsSimulation(); })
+      frc2::cmd::RunOnce([] { Logger::Log("Drivebase/DriveOverBump/State", 5); })))
+    .Unless([] { return frc::RobotBase::IsSimulation(); })
     .FinallyDo([this, allianceRelativeEndXY] {
       auto endPose =
         ICGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
