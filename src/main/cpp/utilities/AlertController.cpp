@@ -1,6 +1,8 @@
 #include "utilities/AlertController.h"
 
 #include <unordered_map>
+
+#include <utilities/ICSpark.h>
 namespace AlertController {
 std::vector<std::weak_ptr<AlertConfig>> configList;
 // Registers the Alert Config to be used in the ForceRemoveAllAlerts Command
@@ -9,7 +11,7 @@ void RegisterAlertConfig(std::weak_ptr<AlertConfig> config) {
 }
 
 // Check Every Alert for the Motor and Set them accordingly
-void MotorCheck(auto Motor, AlertConfig& config) {
+void MotorCheck(ICSpark& Motor, AlertConfig& config) {
   // Check Temperature
   if (Motor.GetTemperature() >= config.maxDegrees) {
     config.responsiveHighTemperatureAlert.Set(true);
