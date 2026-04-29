@@ -16,7 +16,7 @@ namespace AutonHelper{
     }
 
     void AutonManager::AddDefaultAuton(const std::string &autoname, AutonPtr autonptr) {
-        _autoChooser.SetDefaultOption(autoname, autonptr);
+        _autoChooser.SetDefaultOption(autoname, std::move(autonptr));
     }
 
     AutonChooser& AutonManager::GetAutonChooser() {
