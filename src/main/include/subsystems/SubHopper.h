@@ -35,7 +35,7 @@ class SubHopper : public frc2::SubsystemBase {
   units::meter_t ConvertPositionToHeight(units::turn_t pos);
   units::turn_t ConvertHeightToPosition(units::meter_t height);
 
-  ICSparkFlex _motor{canid::CLIMBER_MOTOR};
+  ICSparkFlex _motor{canid::HOPPER_MOTOR};
   rev::spark::SparkFlexConfig _motorConfig;
   static constexpr rev::spark::SparkBaseConfig::IdleMode _IDLE_MODE =
     rev::spark::SparkBaseConfig::IdleMode::kBrake;
