@@ -74,24 +74,11 @@ void SubDrivebase::LogDrivebaseStates() {
   Logger::Log("Drivebase/Pigeon raw angle", _gyro.GetYaw().GetValue().value());
   Logger::Log("Drivebase/Pigeon raw Rotation2d", _gyro.GetRotation2d().Degrees());
 
-  units::turn_t flRotations = _frontLeft.GetDrivenRotations();
-  units::turn_t frRotations = _frontRight.GetDrivenRotations();
-  units::turn_t blRotations = _backLeft.GetDrivenRotations();
-  units::turn_t brRotations = _backRight.GetDrivenRotations();
-
-  Logger::Log("Drivebase/DistanceDrivenRotations/fl", flRotations);
-  Logger::Log("Drivebase/DistanceDrivenRotations/fr", frRotations);
-  Logger::Log("Drivebase/DistanceDrivenRotations/bl", blRotations);
-  Logger::Log("Drivebase/DistanceDrivenRotations/br", brRotations);
-
-  Logger::Log(
-    "Drivebase/DistanceDriven/fl", (flRotations) * (0.04121451348939883 * 2 * std::numbers::pi));
-  Logger::Log(
-    "Drivebase/DistanceDriven/fr", (frRotations) * (0.04121451348939883 * 2 * std::numbers::pi));
-  Logger::Log(
-    "Drivebase/DistanceDriven/bl", (blRotations) * (0.04121451348939883 * 2 * std::numbers::pi));
-  Logger::Log(
-    "Drivebase/DistanceDriven/br", (brRotations) * (0.04121451348939883 * 2 * std::numbers::pi));
+  Logger::Log("Drivebase/DistanceDrivenRotations/fl", _frontLeft.GetDrivenRotations());
+  Logger::Log("Drivebase/DistanceDrivenRotations/fr", _frontRight.GetDrivenRotations());
+  Logger::Log("Drivebase/DistanceDrivenRotations/bl", _backLeft.GetDrivenRotations());
+  Logger::Log("Drivebase/DistanceDrivenRotations/br", _backRight.GetDrivenRotations()
+);
 
   _frontLeft.SendSensorsToDash();
   _frontRight.SendSensorsToDash();
@@ -199,7 +186,7 @@ frc2::CommandPtr SubDrivebase::Drive(
   }).FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
 }
 
-/* aligns to an a arbitrary while allowing joystick driving */
+/* aligns to an a arbitrary angle while allowing joystick driving */
 frc2::CommandPtr SubDrivebase::AlignToAngle(
   frc2::CommandXboxController& controller, std::function<units::degree_t()> target) {
   return SubDrivebase::GetInstance().Drive(
