@@ -7,8 +7,8 @@
 #include "utilities/Logger.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
-ICCamera::ICCamera(std::string name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap)
- : _camName(name), _botToCam(botToCam), _tagMap(tagMap), _cam(name),
+ICCamera::ICCamera(const std::string &name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap)
+ : _camName(name), _botToCam(botToCam), _tagMap(std::move(tagMap)), _cam(name),
  _camSim(&_cam), _poseEstimator(_tagMap, _botToCam)
  {
     Logger::Log("Vision/" + _camName + "/Is Connected", _cam.IsConnected());
@@ -56,16 +56,16 @@ std::optional<photon::EstimatedRobotPose> ICCamera::GetLatestEstPose() {
 
 std::optional<frc::Transform3d> ICCamera::CalculateRobotToCamera(
   photon::PhotonPipelineResult &result, frc::Transform3d robotToTag) {
+  std::optional<frc::Transform3d> robotToCamera = std::nullopt;
+
   if (result.HasTargets()) {
     auto target = result.GetBestTarget();
     frc::Transform3d cameraToTag = target.GetBestCameraToTarget();
     frc::Transform3d tagToCamera = cameraToTag.Inverse();
-    frc::Transform3d robotToCamera = robotToTag + tagToCamera;
-    
-    return robotToCamera;
-  } else {
-    return std::nullopt;
+    robotToCamera = robotToTag + tagToCamera;
   }
+
+  return robotToCamera;
 }
 
 void ICCamera::CalibrateRobotToCamera(frc::Transform3d robotToTag) {
