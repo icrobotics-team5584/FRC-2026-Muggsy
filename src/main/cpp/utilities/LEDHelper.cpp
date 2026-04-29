@@ -15,9 +15,9 @@ frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color color) {
 
 frc2::CommandPtr LEDHelper::SetScrollingRainbow() {
   return Run([this] {
-    frc::LEDPattern _rainbow = frc::LEDPattern::Rainbow(255, 128);
-    frc::LEDPattern _scrollingRainbow = _rainbow.ScrollAtRelativeSpeed(1_Hz);
-    _scrollingRainbow.ApplyTo(_ledBuffer);
+    frc::LEDPattern rainbow = frc::LEDPattern::Rainbow(255, 128);
+    frc::LEDPattern scrollingRainbow = rainbow.ScrollAtRelativeSpeed(1_Hz);
+    scrollingRainbow.ApplyTo(_ledBuffer);
     _led.SetData(_ledBuffer);
   });
 }
@@ -81,19 +81,21 @@ frc2::CommandPtr LEDHelper::SetFire(int cooldownIntensity, int lastCellMinimumHe
 }
 
 frc::Color LEDHelper::HeatColor(uint8_t heat) {
+  // Defaulting to yellow to white (170–255): red & green full, blue ramps up
+  uint8_t blue = (heat - 170) * 3;
+  frc::Color color = frc::Color{1.0, 1.0, blue / 255.0};
+
   if (heat < 85) {
     // Red (0–84): ramp up from black to red
     uint8_t red = heat * 3;
-    return frc::Color{red / 255.0, 0.0, 0.0};
+    color = frc::Color{red / 255.0, 0.0, 0.0};
   } else if (heat < 170) {
     // Orange to yellow (85–169): red stays full, green ramps up
     uint8_t green = (heat - 85) * 3;
-    return frc::Color{1.0, green / 255.0, 0.0};
-  } else {
-    // Yellow to white (170–255): red & green full, blue ramps up
-    uint8_t blue = (heat - 170) * 3;
-    return frc::Color{1.0, 1.0, blue / 255.0};
+    color = frc::Color{1.0, green / 255.0, 0.0};
   }
+
+  return color;
 }
 
 frc2::CommandPtr LEDHelper::SetFollowProgress(std::function<double()> progress, frc::Color color) {
