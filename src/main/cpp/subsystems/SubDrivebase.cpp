@@ -77,8 +77,7 @@ void SubDrivebase::LogDrivebaseStates() {
   Logger::Log("Drivebase/DistanceDrivenRotations/fl", _frontLeft.GetDrivenRotations());
   Logger::Log("Drivebase/DistanceDrivenRotations/fr", _frontRight.GetDrivenRotations());
   Logger::Log("Drivebase/DistanceDrivenRotations/bl", _backLeft.GetDrivenRotations());
-  Logger::Log("Drivebase/DistanceDrivenRotations/br", _backRight.GetDrivenRotations()
-);
+  Logger::Log("Drivebase/DistanceDrivenRotations/br", _backRight.GetDrivenRotations());
 
   _frontLeft.SendSensorsToDash();
   _frontRight.SendSensorsToDash();
