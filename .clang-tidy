@@ -51,7 +51,8 @@ Checks: >
   readability-redundant-string-cstr,
   readability-simplify-boolean-expr,
   readability-static-accessed-through-instance,
-  readability-string-compare
+  readability-string-compare,
+  clang-diagnostic-unused-lambda-capture
 
 HeaderFilterRegex: "src/main/(cpp|include)/.*"
 WarningsAsErrors: "*"

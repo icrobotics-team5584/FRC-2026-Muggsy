@@ -19,12 +19,14 @@ constexpr int DRIVEBASE_BACK_LEFT_ENCODER = 12;
 
 constexpr int PIGEON_2 = 13;
 
-constexpr int CLIMBER_MOTOR = 14;
+constexpr int HOPPER_MOTOR = 14;
 
 constexpr int PDH = 40;
 }  // namespace canid
 
-namespace dio {}
+namespace dio {
+constexpr int BRAKE_COAST_BUTTON = 0;
+}
 
 namespace pwm {
 constexpr int LED = 0;
