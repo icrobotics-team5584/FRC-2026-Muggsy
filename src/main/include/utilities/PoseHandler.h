@@ -28,8 +28,8 @@ class PoseHandler {
   void AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double, 3> dev);
 
  private:
-  frc::SwerveDriveKinematics<4> _kinematics{DrivebaseConfig::FL_POSITION,
-    DrivebaseConfig::FR_POSITION, DrivebaseConfig::BL_POSITION, DrivebaseConfig::BR_POSITION};
+  frc::SwerveDriveKinematics<4> _kinematics{drivebaseConfig::FL_POSITION,
+    drivebaseConfig::FR_POSITION, drivebaseConfig::BL_POSITION, drivebaseConfig::BR_POSITION};
 
   frc::SwerveDrivePoseEstimator<4> _poseEstimator{_kinematics, 0_deg,
     {frc::SwerveModulePosition{0_m, 0_deg}, frc::SwerveModulePosition{0_m, 0_deg},

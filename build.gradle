@@ -66,6 +66,16 @@ model {
                 }
             }
 
+            // In CI, treat all compiler warnings in user code as errors.
+            // Vendor and WPILib headers are included as system headers (-isystem)
+            // so their warnings are not affected.
+            // Locally, warnings remain as warnings so the build isn't blocked.
+            binaries.all {
+                if (System.getenv("CI") == "true") {
+                    cppCompiler.args "-Werror"
+                }
+            }
+
             // Set deploy task to deploy this component
             deployArtifact.component = it
 
@@ -79,23 +89,26 @@ model {
             wpi.cpp.deps.wpilib(it)
         }
     }
-    testSuites {
-        frcUserProgramTest(GoogleTestTestSuiteSpec) {
-            testing $.components.frcUserProgram
 
-            sources.cpp {
-                source {
-                    srcDir 'src/test/cpp'
-                    include '**/*.cpp'
-                }
-            }
+    // Tests disabled, we don't have any tests and it dramatically increases build time. 
+    // Can re-enable and add tests later if desired, if so `./gradlew assemble` can compile without runnings tests so it won't affect build time.
+    // testSuites {
+    //     frcUserProgramTest(GoogleTestTestSuiteSpec) {
+    //         testing $.components.frcUserProgram
 
-            // Enable run tasks for this component
-            wpi.cpp.enableExternalTasks(it)
+    //         sources.cpp {
+    //             source {
+    //                 srcDir 'src/test/cpp'
+    //                 include '**/*.cpp'
+    //             }
+    //         }
 
-            wpi.cpp.vendor.cpp(it)
-            wpi.cpp.deps.wpilib(it)
-            wpi.cpp.deps.googleTest(it)
-        }
-    }
+    //         // Enable run tasks for this component
+    //         wpi.cpp.enableExternalTasks(it)
+
+    //         wpi.cpp.vendor.cpp(it)
+    //         wpi.cpp.deps.wpilib(it)
+    //         wpi.cpp.deps.googleTest(it)
+    //     }
+    // }
 }
