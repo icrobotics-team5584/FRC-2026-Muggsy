@@ -32,8 +32,8 @@ void Robot::RobotPeriodic() {
   Logger::Log("Robot/RioInputVoltage", frc::RobotController::GetInputVoltage() * 1_V);
   Logger::Log("Robot/RioInputCurrent", frc::RobotController::GetInputCurrent() * 1_A);
   Logger::Log("Robot/BatteryVoltage", frc::RobotController::GetBatteryVoltage());
-  Logger::Log("Robot/PDHInputVoltage", _mPdh.GetVoltage() * 1_V);
-  Logger::Log("Robot/PDHTotalCurrent", _mPdh.GetTotalCurrent() * 1_A);
+  Logger::Log("Robot/PDHInputVoltage", _pdh.GetVoltage() * 1_V);
+  Logger::Log("Robot/PDHTotalCurrent", _pdh.GetTotalCurrent() * 1_A);
 }
 
 void Robot::DisabledInit() {}
@@ -43,10 +43,10 @@ void Robot::DisabledPeriodic() {}
 void Robot::DisabledExit() {}
 
 void Robot::AutonomousInit() {
-  _mAutonomousCommand = _mContainer.GetAutonomousCommand();
+  _autonomousCommand = _container.GetAutonomousCommand();
 
-  if (_mAutonomousCommand) {
-    frc2::CommandScheduler::GetInstance().Schedule(_mAutonomousCommand.value());
+  if (_autonomousCommand) {
+    frc2::CommandScheduler::GetInstance().Schedule(_autonomousCommand.value());
   }
 }
 
@@ -55,8 +55,8 @@ void Robot::AutonomousPeriodic() {}
 void Robot::AutonomousExit() {}
 
 void Robot::TeleopInit() {
-  if (_mAutonomousCommand) {
-    _mAutonomousCommand->Cancel();
+  if (_autonomousCommand) {
+    _autonomousCommand->Cancel();
   }
 }
 

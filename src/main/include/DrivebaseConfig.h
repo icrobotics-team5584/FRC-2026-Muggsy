@@ -33,13 +33,13 @@ constexpr frc::Translation2d BL_POSITION{-0.281_m, +0.281_m};
 constexpr frc::Translation2d BR_POSITION{-0.281_m, -0.281_m};
 
 const units::turn_t FRONT_RIGHT_MAG_OFFSET =
-  BotVars::Choose(-0.94384765625_tr - 0.25_tr, -0.446044921875_tr);
+  botVars::Choose(-0.94384765625_tr - 0.25_tr, -0.446044921875_tr);
 const units::turn_t FRONT_LEFT_MAG_OFFSET =
-  BotVars::Choose(-0.37451171875_tr + 0.25_tr, -0.26611328125_tr);
+  botVars::Choose(-0.37451171875_tr + 0.25_tr, -0.26611328125_tr);
 const units::turn_t BACK_RIGHT_MAG_OFFSET =
-  BotVars::Choose(-0.353515625_tr + 0.25_tr, -0.675048828125_tr);
+  botVars::Choose(-0.353515625_tr + 0.25_tr, -0.675048828125_tr);
 const units::turn_t BACK_LEFT_MAG_OFFSET =
-  BotVars::Choose(-0.464111328125_tr - 0.25_tr, -0.824951171875_tr);
+  botVars::Choose(-0.464111328125_tr - 0.25_tr, -0.824951171875_tr);
 
 // PID constants for translation and rotation controllers
 /* We use std::array<T, int> instead of frc::PIDController to avoid the
