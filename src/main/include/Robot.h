@@ -31,9 +31,9 @@ class Robot : public frc::TimedRobot {
   void TestExit() override;
 
  private:
-  std::optional<frc2::CommandPtr> _mAutonomousCommand;
+  std::optional<frc2::CommandPtr> _autonomousCommand;
 
-  RobotContainer _mContainer;
+  RobotContainer _container;
 
-  frc::PowerDistribution _mPdh{canid::PDH, frc::PowerDistribution::ModuleType::kRev};
+  frc::PowerDistribution _pdh{canid::PDH, frc::PowerDistribution::ModuleType::kRev};
 };
