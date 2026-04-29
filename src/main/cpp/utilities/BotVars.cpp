@@ -11,13 +11,16 @@ BotVars::Robot BotVars::DetermineRobot() {
     std::string macAddress;
     file >> macAddress;
     frc::SmartDashboard::PutString("botVars/MAC address", macAddress);
+
+    enum Robot robotType;
     if (macAddress == COMP_BOT_MAC_ADDRESS) {
       frc::SmartDashboard::PutString("botVars/active robot", "COMP");
-      return Robot::COMP;
+      robotType = Robot::COMP;
     } else if (macAddress == PRACTICE_BOT_MAC_ADDRESS) {
       frc::SmartDashboard::PutString("botVars/active robot", "PRACTICE");
-      return Robot::PRACTICE;
+      robotType = Robot::PRACTICE;
     }
+    return robotType;
   }
   frc::SmartDashboard::PutString("botVars/active robot",
                                  "ERROR! Could not match MAC address. Defaulting to COMP Bot.");
