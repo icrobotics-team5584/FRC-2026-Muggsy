@@ -98,7 +98,7 @@ frc::Color LEDHelper::HeatColor(uint8_t heat) {
   return color;
 }
 
-frc2::CommandPtr LEDHelper::SetFollowProgress(std::function<double()> progress, frc::Color color) {
+frc2::CommandPtr LEDHelper::SetFollowProgress(const std::function<double()> &progress, frc::Color color) {
   return Run([this, progress, color] {
   double progressValue = progress();
   Logger::Log("LEDHelper/SetFollowProgress/Progress", progressValue);
