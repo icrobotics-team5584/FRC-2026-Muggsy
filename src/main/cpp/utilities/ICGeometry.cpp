@@ -40,10 +40,12 @@ frc::Rotation2d PoseDirection(frc::Pose2d origin, frc::Pose2d destination) {
 }
 
 frc::Pose2d GetFieldRelativePose(frc::Pose2d allianceRelativePose) {
+  frc::Pose2d pose = allianceRelativePose;
+
   if(frc::DriverStation::GetAlliance().value_or(frc::DriverStation::kBlue) == frc::DriverStation::kRed) {
-    return ICGeometry::xyPoseFlip(allianceRelativePose);
-  } else {
-    return allianceRelativePose;
+    pose = ICGeometry::xyPoseFlip(allianceRelativePose);
   }
+
+  return pose;
 };
 }  // namespace ICGeometry
