@@ -12,8 +12,8 @@ namespace AutonHelper {
     
     class AutonManager {
         public:
-            void AddAuton(std::string autoname, AutonPtr autoptr);
-            void AddDefaultAuton(std::string autoname, AutonPtr autoptr);
+            void AddAuton(const std::string &autoname, AutonPtr autoptr);
+            void AddDefaultAuton(const std::string &autoname, AutonPtr autoptr);
             AutonChooser& GetAutonChooser();
             AutonPtr GetChosenAuton();
         private:

@@ -11,11 +11,11 @@ namespace AutonHelper{
         return std::make_shared<frc2::CommandPtr>(std::move(auton));
     }
 
-    void AutonManager::AddAuton(std::string autoname, AutonPtr autonptr) {
-        _autoChooser.AddOption(autoname, autonptr);
+    void AutonManager::AddAuton(const std::string &autoname, AutonPtr autonptr) {
+        _autoChooser.AddOption(autoname, std::move(autonptr));
     }
 
-    void AutonManager::AddDefaultAuton(std::string autoname, AutonPtr autonptr) {
+    void AutonManager::AddDefaultAuton(const std::string &autoname, AutonPtr autonptr) {
         _autoChooser.SetDefaultOption(autoname, autonptr);
     }
 
