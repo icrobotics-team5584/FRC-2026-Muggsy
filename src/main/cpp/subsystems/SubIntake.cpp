@@ -5,7 +5,7 @@
 SubIntake::SubIntake() {
   ctre::phoenix6::configs::TalonFXConfiguration config;
 
-  config.Feedback.SensorToMechanismRatio = 1 / _GEAR_RATIO;
+  config.Feedback.SensorToMechanismRatio = _GEAR_RATIO;
   config.Slot0.kP = _P;
   config.Slot0.kI = _I;
   config.Slot0.kD = _D;
@@ -36,8 +36,9 @@ void SubIntake::Periodic() {
 void SubIntake::SimulationPeriodic() {
   _sim.SetInputVoltage(_motor1.GetSimState().GetMotorVoltage());
   _sim.Update(20_ms);
-  _motor1.GetSimState().SetRotorVelocity(_sim.GetAngularVelocity());
-  _motor1.GetSimState().SetRotorAcceleration(_sim.GetAngularAcceleration());
+  _motor1.GetSimState().SetRotorVelocity(_sim.GetAngularVelocity()*_GEAR_RATIO);
+  _motor1.GetSimState().SetRotorAcceleration(_sim.GetAngularAcceleration()*_GEAR_RATIO);
+  _motor1.GetSimState().AddRotorPosition(_sim.GetAngularVelocity()*20_ms*_GEAR_RATIO);
 }
 
 frc2::CommandPtr SubIntake::RunIntake() {
