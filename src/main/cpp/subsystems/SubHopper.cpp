@@ -4,6 +4,7 @@
 #include "utilities/Logger.h"
 
 #include <frc2/command/Commands.h>
+#include <frc/RobotBase.h>
 
 #include <units/math.h>
 
@@ -42,7 +43,8 @@ frc2::CommandPtr SubHopper::Zero() {
     _motor.SetVoltage(-1_V);
   })
     .AndThen(frc2::cmd::WaitUntil(
-      [this] { return std::abs(_motor.GetStatorCurrent() > _ZERO_CURRENT_LIMIT); }))
+      [this] { 
+        return std::abs(_motor.GetStatorCurrent() > _ZERO_CURRENT_LIMIT) || frc::RobotBase::IsSimulation(); }))
     .AndThen([this] {
       _motor.SetPosition(0_deg);
       _motor.StopMotor();
