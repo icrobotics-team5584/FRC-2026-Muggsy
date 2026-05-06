@@ -36,9 +36,9 @@ void SubIntake::Periodic() {
 void SubIntake::SimulationPeriodic() {
   _sim.SetInputVoltage(_motor1.GetSimState().GetMotorVoltage());
   _sim.Update(20_ms);
-  _motor1.GetSimState().SetRotorVelocity(_sim.GetAngularVelocity()*_GEAR_RATIO);
-  _motor1.GetSimState().SetRotorAcceleration(_sim.GetAngularAcceleration()*_GEAR_RATIO);
-  _motor1.GetSimState().AddRotorPosition(_sim.GetAngularVelocity()*20_ms*_GEAR_RATIO);
+  _motor1.GetSimState().SetRotorVelocity(_sim.GetAngularVelocity() * _GEAR_RATIO);
+  _motor1.GetSimState().SetRotorAcceleration(_sim.GetAngularAcceleration() * _GEAR_RATIO);
+  _motor1.GetSimState().AddRotorPosition(_sim.GetAngularVelocity() * 20_ms * _GEAR_RATIO);
 }
 
 frc2::CommandPtr SubIntake::RunIntake() {
