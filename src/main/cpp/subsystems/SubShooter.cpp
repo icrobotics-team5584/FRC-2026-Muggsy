@@ -30,12 +30,12 @@ SubShooter::SubShooter() {
   _shooterMotorConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
   _shooterMotor2.SetControl(ctre::phoenix6::controls::Follower(
-    _shooterMotor1.GetDeviceID(), ctre::phoenix6::signals::MotorAlignmentValue::Aligned));
+    canid::SHOOTER_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Aligned));
   _shooterMotor3.SetControl(ctre::phoenix6::controls::Follower(
-    _shooterMotor1.GetDeviceID(), ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
+    canid::SHOOTER_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
   _shooterMotor4.SetControl(ctre::phoenix6::controls::Follower(
-    _shooterMotor1.GetDeviceID(), ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
-
+    canid::SHOOTER_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
+    
   _shooterMotor1.GetConfigurator().Apply(_shooterMotorConfig);
   _shooterMotor2.GetConfigurator().Apply(_shooterMotorConfig);
   _shooterMotor3.GetConfigurator().Apply(_shooterMotorConfig);
