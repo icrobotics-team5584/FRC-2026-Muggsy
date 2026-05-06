@@ -1,5 +1,7 @@
 #include "utilities/ICGeometry.h"
+
 #include "utilities/Logger.h"
+
 #include <frc/DriverStation.h>
 #include <frc/geometry/Pose2d.h>
 
@@ -12,7 +14,7 @@ frc::Pose2d xPoseFlip(frc::Pose2d pose) {
   units::meter_t xdiff = units::math::abs(FIELD_LENGTH / 2 - pose.X());
   units::meter_t x =
     (pose.X() < FIELD_LENGTH / 2) ? FIELD_LENGTH / 2 + xdiff : FIELD_LENGTH / 2 - xdiff;
-  return frc::Pose2d(x, pose.Y(), frc::Rotation2d{180_deg}-pose.Rotation());
+  return frc::Pose2d(x, pose.Y(), frc::Rotation2d{180_deg} - pose.Rotation());
 }
 
 frc::Translation3d xTranslationFlip(frc::Translation3d translation3d) {
@@ -42,7 +44,8 @@ frc::Rotation2d PoseDirection(frc::Pose2d origin, frc::Pose2d destination) {
 frc::Pose2d GetFieldRelativePose(frc::Pose2d allianceRelativePose) {
   frc::Pose2d pose = allianceRelativePose;
 
-  if(frc::DriverStation::GetAlliance().value_or(frc::DriverStation::kBlue) == frc::DriverStation::kRed) {
+  if (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::kBlue) ==
+      frc::DriverStation::kRed) {
     pose = ICGeometry::xyPoseFlip(allianceRelativePose);
   }
 

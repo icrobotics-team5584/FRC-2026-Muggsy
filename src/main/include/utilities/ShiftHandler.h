@@ -1,7 +1,7 @@
 #include <frc/DriverStation.h>
+#include <frc/Timer.h>
 
 #include <units/time.h>
-#include <frc/Timer.h>
 
 enum RebuiltShift {
   RED = 0, /* set to match frc::DriverStation::Alliance */
@@ -18,7 +18,7 @@ class ShiftHandler {
     static ShiftHandler inst;
     return inst;
   }
-  
+
   void resetTimer();
   units::second_t getTimer();
 

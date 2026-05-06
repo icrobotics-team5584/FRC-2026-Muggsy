@@ -1,26 +1,29 @@
 #include "utilities/NeoIO.h"
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <string>
-#include <rev/SparkMax.h>
 
-NeoIO::NeoIO(int turnCanID, int driveCanID, int encoderCanID,
-             units::turn_t cancoderMagOffset)
-    : _canTurnMotor(turnCanID), _canDriveMotor(driveCanID), _canEncoder(encoderCanID) {
-  frc::SmartDashboard::PutData("swerve/DriveMotor" + std::to_string(driveCanID), (wpi::Sendable*) &_canDriveMotor);
-  frc::SmartDashboard::PutData("swerve/TurnMotor" + std::to_string(turnCanID), (wpi::Sendable*) &_canTurnMotor);
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include <rev/SparkMax.h>
+#include <string>
+
+NeoIO::NeoIO(int turnCanID, int driveCanID, int encoderCanID, units::turn_t cancoderMagOffset)
+  : _canTurnMotor(turnCanID), _canDriveMotor(driveCanID), _canEncoder(encoderCanID) {
+  frc::SmartDashboard::PutData(
+    "swerve/DriveMotor" + std::to_string(driveCanID), (wpi::Sendable*)&_canDriveMotor);
+  frc::SmartDashboard::PutData(
+    "swerve/TurnMotor" + std::to_string(turnCanID), (wpi::Sendable*)&_canTurnMotor);
 }
 
 void NeoIO::ConfigTurnMotor() {
   rev::spark::SparkBaseConfig _canTurnConfig;
 
   _canTurnConfig.SmartCurrentLimit(40);
-  _canTurnConfig.encoder.PositionConversionFactor(1.0 / TURNING_GEAR_RATIO).VelocityConversionFactor(TURNING_GEAR_RATIO);
+  _canTurnConfig.encoder.PositionConversionFactor(1.0 / TURNING_GEAR_RATIO)
+    .VelocityConversionFactor(TURNING_GEAR_RATIO);
   _canTurnConfig.closedLoop.Pid(TURN_P, TURN_I, TURN_D);
   _canTurnConfig.closedLoop.PositionWrappingEnabled(true)
     .PositionWrappingMinInput(0)
     .PositionWrappingMaxInput(1);
-  _canTurnConfig.Inverted(true)
-    .SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  _canTurnConfig.Inverted(true).SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
 
   _canTurnMotor.OverwriteConfig(_canTurnConfig);
 }
@@ -68,9 +71,7 @@ void NeoIO::StopMotors() {
   _canTurnMotor.Set(0);
 }
 
-void NeoIO::UpdateSim(units::second_t deltaTime) {
-
-}
+void NeoIO::UpdateSim(units::second_t deltaTime) {}
 
 void NeoIO::SetNeutralMode(bool brakeModeToggle) {
   rev::spark::SparkBaseConfig _neutralModeConfig;
@@ -93,7 +94,7 @@ void NeoIO::ConfigDriveMotor() {
   _canDriveConfig.closedLoop.Pid(DRIVE_P, DRIVE_I, DRIVE_D);
   _canDriveConfig.closedLoop.feedForward.kV(DRIVE_FF);
   _canDriveConfig.encoder.PositionConversionFactor(1.0 / DRIVE_GEAR_RATIO)
-      .VelocityConversionFactor(1.0 / DRIVE_GEAR_RATIO);
+    .VelocityConversionFactor(1.0 / DRIVE_GEAR_RATIO);
   _canDriveConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
 
   _canDriveMotor.OverwriteConfig(_canDriveConfig);
@@ -114,10 +115,9 @@ frc::Rotation2d NeoIO::GetDesiredAngle() {
 }
 
 units::meters_per_second_t NeoIO::GetSpeed() {
-  return (
-    _canDriveMotor.GetVelocity().convert<units::turns_per_second>().value() 
-    * WHEEL_CIRCUMFERENCE.value()
-  ) * 1_mps;
+  return (_canDriveMotor.GetVelocity().convert<units::turns_per_second>().value() *
+           WHEEL_CIRCUMFERENCE.value()) *
+         1_mps;
 }
 
 units::meters_per_second_t NeoIO::GetDesiredSpeed() {

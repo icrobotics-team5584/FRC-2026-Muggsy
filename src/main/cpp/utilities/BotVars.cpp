@@ -1,4 +1,5 @@
 #include "utilities/BotVars.h"
+
 #include <iostream>
 
 BotVars::Robot BotVars::DetermineRobot() {
@@ -22,13 +23,12 @@ BotVars::Robot BotVars::DetermineRobot() {
     }
     return robotType;
   }
-  frc::SmartDashboard::PutString("botVars/active robot",
-                                 "ERROR! Could not match MAC address. Defaulting to COMP Bot.");
+  frc::SmartDashboard::PutString(
+    "botVars/active robot", "ERROR! Could not match MAC address. Defaulting to COMP Bot.");
   return Robot::COMP;
 }
 
-
-BotVars::Robot BotVars::GetRobot(){
+BotVars::Robot BotVars::GetRobot() {
   static Robot activeRobot = DetermineRobot();
   return activeRobot;
 }

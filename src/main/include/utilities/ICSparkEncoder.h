@@ -1,9 +1,9 @@
 #pragma once
 
-#include <rev/SparkMax.h>
-#include <rev/SparkFlex.h>
-#include <rev/RelativeEncoder.h>
 #include <memory>
+#include <rev/RelativeEncoder.h>
+#include <rev/SparkFlex.h>
+#include <rev/SparkMax.h>
 
 class ICSparkEncoder {
  public:
@@ -14,7 +14,7 @@ class ICSparkEncoder {
   void UseRelative(rev::spark::SparkMaxAlternateEncoder& encoder);
   void UseRelative(rev::spark::SparkFlexExternalEncoder& encoder);
   void UseAbsolute(rev::spark::SparkAbsoluteEncoder& encoder);
-  
+
   double GetPosition();
   double GetVelocity();
 

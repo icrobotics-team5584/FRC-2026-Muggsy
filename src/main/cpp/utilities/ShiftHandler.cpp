@@ -3,15 +3,15 @@
 #include "utilities/Logger.h"
 
 void ShiftHandler::Periodic() {
-  Logger::Log("RebuiltShift/Hub Active", IsActiveShift());
-  Logger::Log("RebuiltShift/Won Auton Shift", GetShiftName(GetWinningShift()));
-  Logger::Log("RebuiltShift/Current Shift", GetShiftName(GetCurrentShift()));
-  Logger::Log("RebuiltShift/Seconds Left on Shift", GetTimeLeft());
-  Logger::Log("RebuiltShift/Seconds Left in Match", frc::DriverStation::GetMatchTime());
-  Logger::Log("RebuiltShift/Override Active", _overrideActive);
-  Logger::Log("RebuiltShift/Start shift offset", _beforeShiftOffset);
-  Logger::Log("RebuiltShift/End shift offset", _afterShiftOffset);
-  Logger::Log("RebuiltShift/GetCurrentShift/timeLeft", 140_s - getTimer());
+  logger::Log("RebuiltShift/Hub Active", IsActiveShift());
+  logger::Log("RebuiltShift/Won Auton Shift", GetShiftName(GetWinningShift()));
+  logger::Log("RebuiltShift/Current Shift", GetShiftName(GetCurrentShift()));
+  logger::Log("RebuiltShift/Seconds Left on Shift", GetTimeLeft());
+  logger::Log("RebuiltShift/Seconds Left in Match", frc::DriverStation::GetMatchTime());
+  logger::Log("RebuiltShift/Override Active", _overrideActive);
+  logger::Log("RebuiltShift/Start shift offset", _beforeShiftOffset);
+  logger::Log("RebuiltShift/End shift offset", _afterShiftOffset);
+  logger::Log("RebuiltShift/GetCurrentShift/timeLeft", 140_s - getTimer());
 }
 
 RebuiltShift ShiftHandler::GetCurrentShift() {

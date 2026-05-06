@@ -1,16 +1,18 @@
 #include "utilities/LEDHelper.h"
+
 #include "utilities/Logger.h"
+
 #include <frc/util/Color.h>
-#include <thread>
+
 #include <functional>
+#include <thread>
 
 frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color color) {
   return RunOnce([this, color] {
-           frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
-           ledpattern.ApplyTo(_ledBuffer);
-           _led.SetData(_ledBuffer);
-         })
-      .AndThen(frc2::cmd::Idle());
+    frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
+    ledpattern.ApplyTo(_ledBuffer);
+    _led.SetData(_ledBuffer);
+  }).AndThen(frc2::cmd::Idle());
 }
 
 frc2::CommandPtr LEDHelper::SetScrollingRainbow() {
@@ -24,60 +26,62 @@ frc2::CommandPtr LEDHelper::SetScrollingRainbow() {
 
 frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color color1, frc::Color color2) {
   return RunOnce([this, color1, color2] {
-           std::array<frc::Color, 2> colors{color1, color2};
-           frc::LEDPattern gradient =
-               frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
+    std::array<frc::Color, 2> colors{color1, color2};
+    frc::LEDPattern gradient =
+      frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
 
-           // Apply the LED pattern to the data buffer
-           gradient.ApplyTo(_ledBuffer);
-           _led.SetData(_ledBuffer);
-         })
-      .AndThen(frc2::cmd::Idle());
+    // Apply the LED pattern to the data buffer
+    gradient.ApplyTo(_ledBuffer);
+    _led.SetData(_ledBuffer);
+  }).AndThen(frc2::cmd::Idle());
 }
 
 frc2::CommandPtr LEDHelper::SetFire(int cooldownIntensity, int lastCellMinimumHeat,
-                                    int chanceOfSpark, units::hertz_t animationFrequency) {
+  int chanceOfSpark, units::hertz_t animationFrequency) {
   return RunOnce([this, cooldownIntensity, lastCellMinimumHeat, chanceOfSpark] {
-           // Cool down every cell a little
-           for (int i = 0; i < _length; i++) {
-             int cooldown = rand() % cooldownIntensity;  // higher = faster cooldown, lower = more
-                                                         // constant. default is 25.
-             _heat[i] = std::max(0, _heat[i] - cooldown);
-           }
+    // Cool down every cell a little
+    for (int i = 0; i < _length; i++) {
+      int cooldown = rand() % cooldownIntensity;  // higher = faster cooldown, lower = more
+                                                  // constant. default is 25.
+      _heat[i] = std::max(0, _heat[i] - cooldown);
+    }
 
-           // Heat diffusion upward (based on the two lower pixels)
-           if (_length >= 3) {
-             for (int i = _length - 1; i >= 2; i--) {
-               _heat[i] = (_heat[i - 1] + _heat[i - 2] + _heat[i - 2]) / 3;
-             }
-           }
+    // Heat diffusion upward (based on the two lower pixels)
+    if (_length >= 3) {
+      for (int i = _length - 1; i >= 2; i--) {
+        _heat[i] = (_heat[i - 1] + _heat[i - 2] + _heat[i - 2]) / 3;
+      }
+    }
 
-           // Handle bottom 2 pixels
-           if (_length >= 2) {
-             _heat[1] = (_heat[0] + _heat[0]) / 2;
-           }  // second-last cell: manual heat diffusion based on last cell
-           if (_length >= 1) {
-             _heat[0] = std::max<uint8_t>(_heat[0] * 0.85, lastCellMinimumHeat);
-             // last cell: heat decreases until minimum heat value. default is 60.
-           }
+    // Handle bottom 2 pixels
+    if (_length >= 2) {
+      _heat[1] = (_heat[0] + _heat[0]) / 2;
+    }  // second-last cell: manual heat diffusion based on last cell
+    if (_length >= 1) {
+      _heat[0] = std::max<uint8_t>(_heat[0] * 0.85, lastCellMinimumHeat);
+      // last cell: heat decreases until minimum heat value. default is 60.
+    }
 
-           // Randomly ignite new heat near the bottom
-           if (rand() % chanceOfSpark == 0) {  // chance of a spark starting. default is 1/8
-             int y = rand() % (_length / 5);
-             _heat[y] =
-                 std::min(255, _heat[y] + rand() % 80 + 80);  // new spark intensity is between 80 and 140 + current cell heat. this can be changed as necessary
-           }
+    // Randomly ignite new heat near the bottom
+    if (rand() % chanceOfSpark == 0) {  // chance of a spark starting. default is 1/8
+      int y = rand() % (_length / 5);
+      _heat[y] = std::min(
+        255, _heat[y] + rand() % 80 + 80);  // new spark intensity is between 80 and 140 + current
+                                            // cell heat. this can be changed as necessary
+    }
 
-           // Map heat to color
-           for (int i = 0; i < _length; i++) {
-             frc::Color color = HeatColor(_heat[i]);
-             _ledBuffer[i].SetRGB(color.red * 255, color.green * 255, color.blue * 255);
-           }
+    // Map heat to color
+    for (int i = 0; i < _length; i++) {
+      frc::Color color = HeatColor(_heat[i]);
+      _ledBuffer[i].SetRGB(color.red * 255, color.green * 255, color.blue * 255);
+    }
 
-           _led.SetData(_ledBuffer);
-         })
-      .AndThen(frc2::cmd::Wait(((1.0 / animationFrequency.value()) * 1000_ms) - 20_ms)) // converts Hz to milliseconds, then compensates for the 20ms scheduler period
-      .Repeatedly();
+    _led.SetData(_ledBuffer);
+  })
+    .AndThen(frc2::cmd::Wait(
+      ((1.0 / animationFrequency.value()) * 1000_ms) -
+      20_ms))  // converts Hz to milliseconds, then compensates for the 20ms scheduler period
+    .Repeatedly();
 }
 
 frc::Color LEDHelper::HeatColor(uint8_t heat) {
@@ -98,12 +102,12 @@ frc::Color LEDHelper::HeatColor(uint8_t heat) {
   return color;
 }
 
-frc2::CommandPtr LEDHelper::SetFollowProgress(const std::function<double()> &progress, frc::Color color) {
+frc2::CommandPtr LEDHelper::SetFollowProgress(
+  const std::function<double()>& progress, frc::Color color) {
   return Run([this, progress, color] {
-  double progressValue = progress();
-  Logger::Log("LEDHelper/SetFollowProgress/Progress", progressValue);
-    frc::LEDPattern base =
-        frc::LEDPattern::Solid(color);
+    double progressValue = progress();
+    logger::Log("LEDHelper/SetFollowProgress/Progress", progressValue);
+    frc::LEDPattern base = frc::LEDPattern::Solid(color);
     frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer(progress);
 
     frc::LEDPattern heightDisplay = base.Mask(mask);
@@ -126,11 +130,10 @@ frc2::CommandPtr LEDHelper::SetBreatheColour(frc::Color color) {
 
 frc2::CommandPtr LEDHelper::FlashColour(frc::Color color) {
   return RunOnce([this, color] {
-           frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
-           ledpattern.ApplyTo(_ledBuffer);
-           _led.SetData(_ledBuffer);
-         })
-      .AndThen(frc2::cmd::Wait(200_ms));
+    frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
+    ledpattern.ApplyTo(_ledBuffer);
+    _led.SetData(_ledBuffer);
+  }).AndThen(frc2::cmd::Wait(200_ms));
 }
 
 void LEDHelper::Start(int length) {
