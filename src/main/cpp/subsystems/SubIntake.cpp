@@ -27,8 +27,17 @@ void SubIntake::Periodic() {
   Logger::LogFalcon("Intake/Motor1", _motor1);
   Logger::LogFalcon("Intake/Motor2", _motor2);
 
+  RobotVisualisation::GetInstance()._indexerMechWheel.SetAngle(_motor1.GetPosition().GetValue());
+
   Logger::Log("Intake/Is Intaking",
     !(_motor1.GetMotorVoltage().GetValue() == 0_V && _motor2.GetMotorVoltage().GetValue() == 0_V));
+}
+
+void SubIntake::SimulationPeriodic() {
+  _sim.SetInputVoltage(_motor1.GetSimState().GetMotorVoltage());
+  _sim.Update(20_ms);
+  _motor1.GetSimState().SetRotorVelocity(_sim.GetAngularVelocity());
+  _motor1.GetSimState().SetRotorAcceleration(_sim.GetAngularAcceleration());
 }
 
 frc2::CommandPtr SubIntake::RunIntake() {

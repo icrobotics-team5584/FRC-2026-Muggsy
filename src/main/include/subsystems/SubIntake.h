@@ -2,13 +2,16 @@
 
 #include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
+#include <frc/simulation/FlywheelSim.h>
+#include <frc/system/plant/DCMotor.h>
+#include <frc/system/plant/LinearSystemId.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/signals/SpnEnums.hpp>
 #include <units/current.h>
 
 #include "Constants.h"
-
+#include "utilities/RobotVisualisation.h"
 class SubIntake : public frc2::SubsystemBase {
  public:
   static SubIntake& GetInstance() {
@@ -18,6 +21,7 @@ class SubIntake : public frc2::SubsystemBase {
   SubIntake();
 
   void Periodic() override;
+  void SimulationPeriodic() override;
 
   frc2::CommandPtr RunIntake();
 
@@ -40,4 +44,13 @@ class SubIntake : public frc2::SubsystemBase {
   static constexpr double _I = 0.0;
   static constexpr double _D = 0.0;
   static constexpr double _GEAR_RATIO = 0.5; /* 2:1 */
+
+  /* The TalonFX's sim SetRotor(Acceleration|Velocity)() set the motor's
+   * without velocity without taking in gear ratio. Ergo, the simulation
+   * will have a gearing of 1. */
+  static constexpr units::kilogram_square_meter_t _MOI = 0.0000001_kg_sq_m;
+  static constexpr frc::DCMotor _MOTOR_MODEL = frc::DCMotor::Falcon500();
+  frc::LinearSystem<1, 1, 1> _rollerSystem
+    = frc::LinearSystemId::FlywheelSystem(_MOTOR_MODEL, _MOI, 1.0);
+  frc::sim::FlywheelSim _sim{_rollerSystem, _MOTOR_MODEL};
 };
