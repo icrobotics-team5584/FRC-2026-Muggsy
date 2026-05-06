@@ -28,7 +28,7 @@ void SubIntake::Periodic() {
   Logger::LogFalcon("Intake/Motor2", _motor2);
 
   Logger::Log("Intake/Is Intaking",
-    _motor1.GetMotorVoltage().GetValue() == 0_V && _motor2.GetMotorVoltage().GetValue() == 0_V);
+    !(_motor1.GetMotorVoltage().GetValue() == 0_V && _motor2.GetMotorVoltage().GetValue() == 0_V));
 }
 
 frc2::CommandPtr SubIntake::RunIntake() {
