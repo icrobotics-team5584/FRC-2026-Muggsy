@@ -9,6 +9,11 @@
 #include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
 
+#include <frc/simulation/FlywheelSim.h>
+#include <frc/simulation/SingleJointedArmSim.h>
+#include <frc/system/plant/DCMotor.h>
+#include <frc/system/plant/LinearSystemId.h>
+
 #include <rev/config/SparkFlexConfig.h>
 #include <rev/config/SparkFlexConfigAccessor.h>
 
@@ -46,4 +51,10 @@ class SubIndexer : public frc2::SubsystemBase {
   static constexpr units::ampere_t _CURRENT_LIMIT = 60_A;
 
   // Simulation Config
+  static constexpr double GEARING = 1.0;
+  static constexpr units::kilogram_square_meter_t MOI = 1_kg_sq_m;
+  static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex();
+  frc::LinearSystem<1, 1, 1> _flywheelSystem =
+  frc::LinearSystemId::FlywheelSystem(MOTOR_MODEL, MOI, GEARING);
+  frc::sim::FlywheelSim _sim{_flywheelSystem, MOTOR_MODEL};
 };

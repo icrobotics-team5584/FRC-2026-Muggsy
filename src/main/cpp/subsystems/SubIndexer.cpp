@@ -3,9 +3,11 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/SubIndexer.h"
-#include "Constants.h"
 
 #include <frc/smartdashboard/SmartDashboard.h>
+
+#include "Constants.h"
+#include "utilities/Logger.h"
 
 SubIndexer::SubIndexer() {
   frc::SmartDashboard::PutData("indexer motor", &_indexerMotor);
@@ -13,17 +15,29 @@ SubIndexer::SubIndexer() {
 
   _indexerMotorConfig.SmartCurrentLimit(_CURRENT_LIMIT.value());
   _indexerMotor.OverwriteConfig(_indexerMotorConfig);
+  Logger::Log("Indexer/Indexer Motor", &_indexerMotor);
+  
 
   _indexerFollowMotorConfig.SmartCurrentLimit(_CURRENT_LIMIT.value());
- // _indexerFollowMotorConfig.Inverted(true);
-  _indexerFollowMotorConfig.Follow(canid::INDEXER_MOTOR, true);
+  _indexerFollowMotorConfig.Inverted(true);
+  _indexerFollowMotorConfig.Follow(_indexerMotor, true);
   _indexerFollowMotor.OverwriteConfig(_indexerFollowMotorConfig);
+  Logger::Log("Indexer/Indexer Follow Motor", &_indexerFollowMotor);
 }
 
 // This method will be called once per scheduler run
-void SubIndexer::Periodic() {}
+void SubIndexer::Periodic() {
+  units::celsius_t indexerTemperature = _indexerMotor.GetTemperature();
 
-void SubIndexer::SimulationPeriodic() {}
+  units::ampere_t indexerCurrent = _indexerMotor.GetStatorCurrent();
+}
+
+
+void SubIndexer::SimulationPeriodic() {
+  _sim.SetInputVoltage(_indexerMotor.CalcSimVoltage());
+  _sim.Update(20_ms);
+  _indexerMotor.IterateSim(_sim.GetAngularVelocity());
+}
 
 frc2::CommandPtr SubIndexer::SpinIndexer() {
   return StartEnd([this] { _indexerMotor.Set(0.8); }, [this] { _indexerMotor.Set(0); });
