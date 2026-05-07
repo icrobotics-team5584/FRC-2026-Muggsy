@@ -4,11 +4,13 @@
 
 #pragma once
 
-#include <optional>
-
+#include <frc/PowerDistribution.h>
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
 
+#include <optional>
+
+#include "Constants.h"
 #include "RobotContainer.h"
 
 class Robot : public frc::TimedRobot {
@@ -29,7 +31,9 @@ class Robot : public frc::TimedRobot {
   void TestExit() override;
 
  private:
-  std::optional<frc2::CommandPtr> m_autonomousCommand;
+  std::optional<frc2::CommandPtr> _autonomousCommand;
 
-  RobotContainer m_container;
+  RobotContainer _container;
+
+  frc::PowerDistribution _pdh{canid::PDH, frc::PowerDistribution::ModuleType::kRev};
 };
