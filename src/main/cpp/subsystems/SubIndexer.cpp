@@ -26,11 +26,7 @@ SubIndexer::SubIndexer() {
 }
 
 // This method will be called once per scheduler run
-void SubIndexer::Periodic() {
-  units::celsius_t indexerTemperature = _indexerMotor.GetTemperature();
-
-  units::ampere_t indexerCurrent = _indexerMotor.GetStatorCurrent();
-}
+void SubIndexer::Periodic() {}
 
 void SubIndexer::SimulationPeriodic() {
   _sim.SetInputVoltage(_indexerMotor.CalcSimVoltage());
