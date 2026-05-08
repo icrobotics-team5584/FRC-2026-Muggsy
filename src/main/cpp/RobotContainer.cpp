@@ -3,9 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
-#include "subsystems/SubIndexer.h"
 
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubIndexer.h"
 
 #include "utilities/Logger.h"
 

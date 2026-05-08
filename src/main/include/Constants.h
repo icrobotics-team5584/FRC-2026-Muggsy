@@ -23,7 +23,7 @@ constexpr int INDEXER_MOTOR = 20;
 constexpr int INDEXER_FOLLOW_MOTOR = 21;  // Placeholder values
 
 constexpr int PDH = 40;
-} 
+}  // namespace canid
 
 namespace dio {
 constexpr int BRAKE_COAST_BUTTON = 0;
