@@ -17,11 +17,7 @@ RobotContainer::RobotContainer() {
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
 
-void RobotContainer::ConfigureBindings() {
-  _controller.A().WhileTrue(SubIndexer::GetInstance().SpinIndexer());
-  _controller.B().WhileTrue(SubIndexer::GetInstance().ReverseIndexer());
-  _controller.X().WhileTrue(SubIndexer::GetInstance().StopIndexer());
-}
+void RobotContainer::ConfigureBindings() {}
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");

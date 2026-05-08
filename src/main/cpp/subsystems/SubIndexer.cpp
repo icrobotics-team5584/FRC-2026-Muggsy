@@ -4,19 +4,19 @@
 
 #include "subsystems/SubIndexer.h"
 
+#include "utilities/Logger.h"
+
 #include <frc/smartdashboard/SmartDashboard.h>
 
 #include "Constants.h"
-#include "utilities/Logger.h"
 
 SubIndexer::SubIndexer() {
-  frc::SmartDashboard::PutData("indexer motor", &_indexerMotor);
-  frc::SmartDashboard::PutData("indexer follow motor", &_indexerFollowMotor);
+  frc::SmartDashboard::PutData("Indexer/Indexer Motor", &_indexerMotor);
+  frc::SmartDashboard::PutData("Indexer/Indexer Follow Motor", &_indexerFollowMotor);
 
   _indexerMotorConfig.SmartCurrentLimit(_CURRENT_LIMIT.value());
   _indexerMotor.OverwriteConfig(_indexerMotorConfig);
   Logger::Log("Indexer/Indexer Motor", &_indexerMotor);
-  
 
   _indexerFollowMotorConfig.SmartCurrentLimit(_CURRENT_LIMIT.value());
   _indexerFollowMotorConfig.Inverted(true);
@@ -31,7 +31,6 @@ void SubIndexer::Periodic() {
 
   units::ampere_t indexerCurrent = _indexerMotor.GetStatorCurrent();
 }
-
 
 void SubIndexer::SimulationPeriodic() {
   _sim.SetInputVoltage(_indexerMotor.CalcSimVoltage());
