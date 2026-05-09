@@ -35,7 +35,7 @@ SubShooter::SubShooter() {
     canid::SHOOTER_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
   _shooterMotor4.SetControl(ctre::phoenix6::controls::Follower(
     canid::SHOOTER_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
-    
+
   _shooterMotor1.GetConfigurator().Apply(_shooterMotorConfig);
   _shooterMotor2.GetConfigurator().Apply(_shooterMotorConfig);
   _shooterMotor3.GetConfigurator().Apply(_shooterMotorConfig);
@@ -58,17 +58,25 @@ void SubShooter::Periodic() {
   Logger::LogFalcon("Shooter/Motor4", _shooterMotor4);
   Logger::Log("Shooter/IsReadyToShoot", IsReadyToShoot());
 
-  AlertController::UpdateTemperatureAlert(_shooter1AlertConfig, _shooterMotor1.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(_shooter1AlertConfig, _shooterMotor1.GetStatorCurrent().GetValue());
-  
-  AlertController::UpdateTemperatureAlert(_shooter2AlertConfig, _shooterMotor2.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(_shooter2AlertConfig, _shooterMotor2.GetStatorCurrent().GetValue());
+  AlertController::UpdateTemperatureAlert(
+    _shooter1AlertConfig, _shooterMotor1.GetDeviceTemp().GetValue());
+  AlertController::UpdateCurrentAlert(
+    _shooter1AlertConfig, _shooterMotor1.GetStatorCurrent().GetValue());
 
-  AlertController::UpdateTemperatureAlert(_shooter3AlertConfig, _shooterMotor3.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(_shooter3AlertConfig, _shooterMotor3.GetStatorCurrent().GetValue());
+  AlertController::UpdateTemperatureAlert(
+    _shooter2AlertConfig, _shooterMotor2.GetDeviceTemp().GetValue());
+  AlertController::UpdateCurrentAlert(
+    _shooter2AlertConfig, _shooterMotor2.GetStatorCurrent().GetValue());
 
-  AlertController::UpdateTemperatureAlert(_shooter4AlertConfig, _shooterMotor4.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(_shooter4AlertConfig, _shooterMotor4.GetStatorCurrent().GetValue());
+  AlertController::UpdateTemperatureAlert(
+    _shooter3AlertConfig, _shooterMotor3.GetDeviceTemp().GetValue());
+  AlertController::UpdateCurrentAlert(
+    _shooter3AlertConfig, _shooterMotor3.GetStatorCurrent().GetValue());
+
+  AlertController::UpdateTemperatureAlert(
+    _shooter4AlertConfig, _shooterMotor4.GetDeviceTemp().GetValue());
+  AlertController::UpdateCurrentAlert(
+    _shooter4AlertConfig, _shooterMotor4.GetStatorCurrent().GetValue());
 
   Logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
 }
@@ -80,9 +88,9 @@ void SubShooter::SimulationPeriodic() {
   _flywheelSim.SetInputVoltage(simState.GetMotorVoltage());
   _flywheelSim.Update(20_ms);
 
-  simState.SetRotorVelocity(_flywheelSim.GetAngularVelocity()*GEAR_RATIO);
-  simState.SetRotorAcceleration(_flywheelSim.GetAngularAcceleration()*GEAR_RATIO);
-  simState.AddRotorPosition(_flywheelSim.GetAngularVelocity()*GEAR_RATIO*20_ms);
+  simState.SetRotorVelocity(_flywheelSim.GetAngularVelocity() * GEAR_RATIO);
+  simState.SetRotorAcceleration(_flywheelSim.GetAngularAcceleration() * GEAR_RATIO);
+  simState.AddRotorPosition(_flywheelSim.GetAngularVelocity() * GEAR_RATIO * 20_ms);
 }
 
 frc2::CommandPtr SubShooter::SetSpeedTarget(std::function<units::turns_per_second_t()> speed) {
@@ -101,17 +109,19 @@ frc2::CommandPtr SubShooter::SpinSlowly() {
 
 frc2::CommandPtr SubShooter::AddManualSpeedOffset(units::turns_per_second_t offset) {
   // Using frc2 cmd so we dont require subsystem
-  return frc2::cmd::RunOnce([this, offset] {
-    SetManualSpeedOffset(_manualSpeedOffset + offset);
-  });
+  return frc2::cmd::RunOnce([this, offset] { SetManualSpeedOffset(_manualSpeedOffset + offset); });
 }
 
 bool SubShooter::IsReadyToShoot() {
-    bool motor1Ready = units::math::abs(_shooterMotor1.GetVelocity().GetValue() - _flywheelTargetVelocity.Velocity) < 20_tps;
-    bool motor2Ready = units::math::abs(_shooterMotor2.GetVelocity().GetValue() - _flywheelTargetVelocity.Velocity) < 20_tps;
-    bool motor3Ready = units::math::abs(_shooterMotor3.GetVelocity().GetValue() - _flywheelTargetVelocity.Velocity) < 20_tps;
-    bool motor4Ready = units::math::abs(_shooterMotor4.GetVelocity().GetValue() - _flywheelTargetVelocity.Velocity) < 20_tps;
-    return motor1Ready && motor2Ready && motor3Ready && motor4Ready;
+  bool motor1Ready = units::math::abs(_shooterMotor1.GetVelocity().GetValue() -
+                                      _flywheelTargetVelocity.Velocity) < 20_tps;
+  bool motor2Ready = units::math::abs(_shooterMotor2.GetVelocity().GetValue() -
+                                      _flywheelTargetVelocity.Velocity) < 20_tps;
+  bool motor3Ready = units::math::abs(_shooterMotor3.GetVelocity().GetValue() -
+                                      _flywheelTargetVelocity.Velocity) < 20_tps;
+  bool motor4Ready = units::math::abs(_shooterMotor4.GetVelocity().GetValue() -
+                                      _flywheelTargetVelocity.Velocity) < 20_tps;
+  return motor1Ready && motor2Ready && motor3Ready && motor4Ready;
 }
 
 frc2::CommandPtr SubShooter::SetSpeedFromDistanceTarget(
