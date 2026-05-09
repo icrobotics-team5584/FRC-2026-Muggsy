@@ -55,10 +55,11 @@ class SubShooter : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _shooterMotor4{canid::SHOOTER_MOTOR_4};
 
   static constexpr units::turns_per_second_t DEFAULT_SPEED_OFFSET = 0_tps;
+  //_manualSpeedOffset should only be modified using the SetManualSpeedOffset function
+  units::turns_per_second_t _manualSpeedOffset{DEFAULT_SPEED_OFFSET};
 
   ctre::phoenix6::configs::TalonFXConfiguration _shooterMotorConfig;
   ctre::phoenix6::controls::VelocityVoltage _flywheelTargetVelocity{0_tps};
-  units::turns_per_second_t _manualSpeedOffset{DEFAULT_SPEED_OFFSET};
 
   frc::Alert _shooter1HighTempAlert{
     "Shooter Motor 1 high temperature!", frc::Alert::AlertType::kWarning};
@@ -79,6 +80,26 @@ class SubShooter : public frc2::SubsystemBase {
     "Shooter Motor 2 max current was reached!", frc::Alert::AlertType::kWarning};
   AlertController::MotorAlertConfig _shooter2AlertConfig{_shooter2HighTempAlert,
     _shooter2CurrentAlert, _shooter2StickyTempAlert, _shooter2StickyCurrentAlert, 60_degC, 20_A};
+
+  frc::Alert _shooter3HighTempAlert{
+    "Shooter Motor 3 high temperature!", frc::Alert::AlertType::kWarning};
+  frc::Alert _shooter3CurrentAlert{"Shooter Motor 3 overcurrent!", frc::Alert::AlertType::kWarning};
+  frc::Alert _shooter3StickyTempAlert{
+    "Shooter Motor 3 max temperature was reached!", frc::Alert::AlertType::kWarning};
+  frc::Alert _shooter3StickyCurrentAlert{
+    "Shooter Motor 3 max current was reached!", frc::Alert::AlertType::kWarning};
+  AlertController::MotorAlertConfig _shooter3AlertConfig{_shooter3HighTempAlert,
+    _shooter3CurrentAlert, _shooter3StickyTempAlert, _shooter3StickyCurrentAlert, 60_degC, 20_A};
+
+  frc::Alert _shooter4HighTempAlert{
+    "Shooter Motor 4 high temperature!", frc::Alert::AlertType::kWarning};
+  frc::Alert _shooter4CurrentAlert{"Shooter Motor 4 overcurrent!", frc::Alert::AlertType::kWarning};
+  frc::Alert _shooter4StickyTempAlert{
+    "Shooter Motor 4 max temperature was reached!", frc::Alert::AlertType::kWarning};
+  frc::Alert _shooter4StickyCurrentAlert{
+    "Shooter Motor 4 max current was reached!", frc::Alert::AlertType::kWarning};
+  AlertController::MotorAlertConfig _shooter4AlertConfig{_shooter4HighTempAlert,
+    _shooter4CurrentAlert, _shooter4StickyTempAlert, _shooter4StickyCurrentAlert, 60_degC, 20_A};
 
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTableScoring;
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTablePassing;

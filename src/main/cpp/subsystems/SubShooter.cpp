@@ -64,11 +64,11 @@ void SubShooter::Periodic() {
   AlertController::UpdateTemperatureAlert(_shooter2AlertConfig, _shooterMotor2.GetDeviceTemp().GetValue());
   AlertController::UpdateCurrentAlert(_shooter2AlertConfig, _shooterMotor2.GetStatorCurrent().GetValue());
 
-//   AlertController::UpdateTemperatureAlert(_shooter3AlertConfig, _shooterMotor3.GetDeviceTemp().GetValue());
-//   AlertController::UpdateCurrentAlert(_shooter3AlertConfig, _shooterMotor3.GetStatorCurrent().GetValue());
+  AlertController::UpdateTemperatureAlert(_shooter3AlertConfig, _shooterMotor3.GetDeviceTemp().GetValue());
+  AlertController::UpdateCurrentAlert(_shooter3AlertConfig, _shooterMotor3.GetStatorCurrent().GetValue());
 
-//   AlertController::UpdateTemperatureAlert(_shooter4AlertConfig, _shooterMotor4.GetDeviceTemp().GetValue());
-//   AlertController::UpdateCurrentAlert(_shooter4AlertConfig, _shooterMotor4.GetStatorCurrent().GetValue());
+  AlertController::UpdateTemperatureAlert(_shooter4AlertConfig, _shooterMotor4.GetDeviceTemp().GetValue());
+  AlertController::UpdateCurrentAlert(_shooter4AlertConfig, _shooterMotor4.GetStatorCurrent().GetValue());
 
   Logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
 }
