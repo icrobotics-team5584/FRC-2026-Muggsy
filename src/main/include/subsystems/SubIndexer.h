@@ -7,7 +7,6 @@
 #include "utilities/ICSparkFlex.h"
 
 #include <frc/simulation/FlywheelSim.h>
-#include <frc/simulation/SingleJointedArmSim.h>
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 #include <frc2/command/Commands.h>
@@ -55,5 +54,5 @@ class SubIndexer : public frc2::SubsystemBase {
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex();
   frc::LinearSystem<1, 1, 1> _flywheelSystem =
     frc::LinearSystemId::FlywheelSystem(MOTOR_MODEL, MOI, GEARING);
-  frc::sim::FlywheelSim _sim{_flywheelSystem, MOTOR_MODEL};
+  frc::sim::FlywheelSim _indexerSim{_flywheelSystem, MOTOR_MODEL};
 };
