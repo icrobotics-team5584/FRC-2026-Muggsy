@@ -8,8 +8,6 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
-#include "Constants.h"
-
 SubIndexer::SubIndexer() {
   frc::SmartDashboard::PutData("Indexer/Indexer Motor", &_indexerMotor);
   frc::SmartDashboard::PutData("Indexer/Indexer Follow Motor", &_indexerFollowMotor);
