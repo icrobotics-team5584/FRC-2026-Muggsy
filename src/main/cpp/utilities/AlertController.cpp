@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 
-#include <utilities/ICSpark.h>
 namespace AlertController {
 std::vector<std::weak_ptr<AlertConfig>> configList;
 // Registers the Alert Config to be used in the ForceRemoveAllAlerts Command

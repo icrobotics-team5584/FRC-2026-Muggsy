@@ -8,6 +8,8 @@
 #include <units/current.h>
 #include <units/temperature.h>
 
+#include <utilities/ICSpark.h>
+
 namespace AlertController {
 
 struct AlertConfig {
@@ -64,7 +66,7 @@ struct AlertConfig {
 
 void RegisterAlertConfig(std::weak_ptr<AlertConfig> config);
 
-void MotorCheck(auto Motor, AlertConfig& config);
+void MotorCheck(ICSpark& Motor, AlertConfig& config);
 
 frc2::CommandPtr ForceRemoveAllAlerts();
 
