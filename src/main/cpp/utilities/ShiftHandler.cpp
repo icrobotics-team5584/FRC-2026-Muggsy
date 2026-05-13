@@ -66,13 +66,13 @@ RebuiltShift ShiftHandler::GetCurrentShift() {
 }
 
 RebuiltShift ShiftHandler::GetWinningShift() {
-  if (_overrideActive == true) {
+  if (_overrideActive) {
     return static_cast<RebuiltShift>(
       frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue));
   }
 
   std::string data = frc::DriverStation::GetGameSpecificMessage();
-  if (data.length() == 0) { /* No winning shift message recieved */
+  if (data.empty()) { /* No winning shift message recieved */
     return RebuiltShift::NONE;
   }
 

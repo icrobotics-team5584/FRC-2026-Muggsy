@@ -42,10 +42,10 @@ class NeoIO : public SwerveIO {
   const double DRIVE_FF = 0.0141;
 
  private:
-  units::degree_t _desiredAngle;
-  units::meters_per_second_t _desiredSpeed;
+  units::degree_t desiredAngle;
+  units::meters_per_second_t desiredSpeed;
 
-  ICSparkMax _canTurnMotor;
-  ICSparkMax _canDriveMotor;
+  ICSparkMax canTurnMotor;
+  ICSparkMax canDriveMotor;
   ctre::phoenix6::hardware::CANcoder _canEncoder;
 };
