@@ -5,18 +5,18 @@
 SubIntake::SubIntake() {
   ctre::phoenix6::configs::TalonFXConfiguration config;
 
-  config.Feedback.SensorToMechanismRatio = _GEAR_RATIO;
-  config.Slot0.kP = _P;
-  config.Slot0.kI = _I;
-  config.Slot0.kD = _D;
-  config.MotorOutput.Inverted = _INVERTED;
-  config.MotorOutput.NeutralMode = _IDLE_MODE;
+  config.Feedback.SensorToMechanismRatio = 2.0;
+  config.Slot0.kP = 1.0;
+  config.Slot0.kI = 0.0;
+  config.Slot0.kD = 0.0;
+  config.MotorOutput.Inverted =  ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
+  config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
   config.CurrentLimits.SupplyCurrentLimitEnable = true;
-  config.CurrentLimits.SupplyCurrentLimit = _SUPPLY_CURRENT_LIMT;
-  config.CurrentLimits.SupplyCurrentLowerLimit = _SUPPLY_CURRENT_LOWER_LIMIT;
-  config.CurrentLimits.SupplyCurrentLowerTime = _SUPPLY_CURRENT_LOWER_TIME;
+  config.CurrentLimits.SupplyCurrentLimit = 40_A;
+  config.CurrentLimits.SupplyCurrentLowerLimit = 35_A;
+  config.CurrentLimits.SupplyCurrentLowerTime = 0.1_A;
   config.CurrentLimits.StatorCurrentLimitEnable = true;
-  config.CurrentLimits.StatorCurrentLimit = _STATOR_CURRENT_LIMIT;
+  config.CurrentLimits.StatorCurrentLimit = 60_A;
 
   _motor1.GetConfigurator().Apply(config);
   _motor2.SetControl(ctre::phoenix6::controls::Follower(
