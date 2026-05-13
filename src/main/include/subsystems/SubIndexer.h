@@ -46,7 +46,7 @@ class SubIndexer : public frc2::SubsystemBase {
   rev::spark::SparkFlexConfig _indexerMotorConfig;
   rev::spark::SparkFlexConfig _indexerFollowMotorConfig;
 
-  static constexpr units::ampere_t _CURRENT_LIMIT = 60_A;
+  static constexpr units::ampere_t CURRENT_LIMIT = 60_A;
 
   // Simulation Config
   static constexpr double GEARING = 1.0;
