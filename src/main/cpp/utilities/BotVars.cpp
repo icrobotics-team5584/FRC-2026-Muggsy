@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-BotVars::Robot BotVars::DetermineRobot() {
+botVars::Robot botVars::DetermineRobot() {
   std::string filePath = "/sys/class/net/eth0/address";
   std::cout << "Running DetermineRobot()\n";
   frc::SmartDashboard::PutString("botVars/comp bot MAC address", COMP_BOT_MAC_ADDRESS);
@@ -28,7 +28,7 @@ BotVars::Robot BotVars::DetermineRobot() {
   return Robot::COMP;
 }
 
-BotVars::Robot BotVars::GetRobot() {
+botVars::Robot botVars::GetRobot() {
   static Robot activeRobot = DetermineRobot();
   return activeRobot;
 }

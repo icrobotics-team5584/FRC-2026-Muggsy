@@ -1,6 +1,6 @@
 #include "utilities/AutonHelper.h"
 
-namespace AutonHelper {
+namespace autonHelper {
 AutonPtr MakePathPlannerAuto(pathplanner::PathPlannerAuto auton) {
   /* An AutonPtr is just a shared_ptr to a CommandPtr*/
   return std::make_shared<frc2::CommandPtr>(std::move(auton).ToPtr());

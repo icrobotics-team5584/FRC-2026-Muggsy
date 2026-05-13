@@ -20,4 +20,4 @@ T Choose(T compBotValue, T practiceBotValue) {
   return compBotValue;  // GetRobot() == COMP ? compBotValue : practiceBotValue;
 }
 
-}  // namespace BotVars
+}  // namespace botVars

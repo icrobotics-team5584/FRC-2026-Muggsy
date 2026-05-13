@@ -18,7 +18,7 @@ ShotPlanner::ShotPlannerResults ShotPlanner::CalculateShotTarget(frc::Pose2d rob
   auto alliance = frc::DriverStation::GetAlliance();
   if (alliance) {
     if (alliance.value() == frc::DriverStation::kRed) {
-      robotPos = ICGeometry::xPoseFlip(robotPos);
+      robotPos = icGeometry::XPoseFlip(robotPos);
     }
     logger::FieldDisplay::GetInstance().DisplayPose("Shot Planner/Robot Position", robotPos);
   }
@@ -74,7 +74,7 @@ ShotPlanner::ShotPlannerResults ShotPlanner::CalculateShotTarget(frc::Pose2d rob
 
   if (alliance) {
     if (alliance.value() == frc::DriverStation::Alliance::kRed) {
-      target = ICGeometry::xTranslationFlip(target);
+      target = icGeometry::XTranslationFlip(target);
     }
   }
 

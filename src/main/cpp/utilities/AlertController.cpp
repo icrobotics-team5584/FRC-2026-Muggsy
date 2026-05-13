@@ -1,28 +1,28 @@
 #include "utilities/AlertController.h"
 
-namespace AlertController {
+namespace alertController {
 
 // updates the alert for the temperature. automatically updates to true or false
 void UpdateTemperatureAlert(MotorAlertConfig& config, units::celsius_t motorTemperature) {
-  if (motorTemperature > config.maxDegrees) {
-    config.temperatureAlert.Set(true);
-    config.recordedTemperatureAlert.Set(true);
+  if (motorTemperature > config._maxDegrees) {
+    config._temperatureAlert.Set(true);
+    config._recordedTemperatureAlert.Set(true);
   } else {
-    config.temperatureAlert.Set(false);
+    config._temperatureAlert.Set(false);
   }
 }
 // updates the alert for the current. automatically updates to true if has been over 3s or false.
 void UpdateCurrentAlert(MotorAlertConfig& config, units::ampere_t motorCurrent) {
-  if (motorCurrent > config.maxCurrent) {
-    config.highCurrentTimer.Start();
-    if (config.highCurrentTimer.Get() > 3_s) {
-      config.currentAlert.Set(true);
+  if (motorCurrent > config._maxCurrent) {
+    config._highCurrentTimer.Start();
+    if (config._highCurrentTimer.Get() > 3_s) {
+      config._currentAlert.Set(true);
       config.recordedCurrentAlert.Set(true);
     }
 
   } else {
-    config.currentAlert.Set(false);
-    config.highCurrentTimer.Reset();
+    config._currentAlert.Set(false);
+    config._highCurrentTimer.Reset();
   }
 }
 

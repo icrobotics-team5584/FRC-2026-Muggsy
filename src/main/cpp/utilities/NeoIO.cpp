@@ -6,11 +6,11 @@
 #include <string>
 
 NeoIO::NeoIO(int turnCanID, int driveCanID, int encoderCanID, units::turn_t cancoderMagOffset)
-  : canTurnMotor(turnCanID), canDriveMotor(driveCanID), _canEncoder(encoderCanID) {
+  : _canTurnMotor(turnCanID), _canDriveMotor(driveCanID), _canEncoder(encoderCanID) {
   frc::SmartDashboard::PutData(
-    "swerve/DriveMotor" + std::to_string(driveCanID), (wpi::Sendable*)&canDriveMotor);
+    "swerve/DriveMotor" + std::to_string(driveCanID), (wpi::Sendable*)&_canDriveMotor);
   frc::SmartDashboard::PutData(
-    "swerve/TurnMotor" + std::to_string(turnCanID), (wpi::Sendable*)&canTurnMotor);
+    "swerve/TurnMotor" + std::to_string(turnCanID), (wpi::Sendable*)&_canTurnMotor);
 }
 
 void NeoIO::ConfigTurnMotor() {
@@ -25,30 +25,30 @@ void NeoIO::ConfigTurnMotor() {
     .PositionWrappingMaxInput(1);
   canTurnConfig.Inverted(true).SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
 
-  canTurnMotor.OverwriteConfig(canTurnConfig);
+_canTurnMotor.OverwriteConfig(canTurnConfig);
 }
 
 void NeoIO::SetDesiredAngle(units::degree_t angle) {
-  canTurnMotor.SetPositionTarget(angle);
-  desiredAngle = angle;
+_canTurnMotor.SetPositionTarget(angle);
+  _desiredAngle = angle;
 }
 
 void NeoIO::SetAngle(units::turn_t angle) {
   /*
     @param angle: angle of encoder
   */
-  canTurnMotor.SetCANTimeout(500);
+_canTurnMotor.SetCANTimeout(500);
   int maxAttempts = 15;
   int currentAttempts = 0;
   units::turn_t tolerance = 0.01_tr;
-  while (units::math::abs(canTurnMotor.GetPosition() - angle) > tolerance &&
+  while (units::math::abs(_canTurnMotor.GetPosition() - angle) > tolerance &&
          currentAttempts < maxAttempts) {
-    canTurnMotor.SetPosition(angle);
+_canTurnMotor.SetPosition(angle);
     currentAttempts++;
   }
 
   currentAttempts = 0;
-  canTurnMotor.SetCANTimeout(10);
+_canTurnMotor.SetCANTimeout(10);
 }
 
 void NeoIO::SendSensorsToDash() {
@@ -57,18 +57,18 @@ void NeoIO::SendSensorsToDash() {
 
 void NeoIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) {
   units::turns_per_second_t turnsPerSec = (velocity.value() / WHEEL_CIRCUMFERENCE.value()) * 1_tps;
-  canDriveMotor.SetVelocityTarget(turnsPerSec);
-  desiredSpeed = velocity;
+  _canDriveMotor.SetVelocityTarget(turnsPerSec);
+  _desiredSpeed = velocity;
 }
 
 void NeoIO::DriveStraightVolts(units::volt_t volts) {
   SetDesiredAngle(0_deg);
-  canDriveMotor.SetVoltage(volts);
+  _canDriveMotor.SetVoltage(volts);
 }
 
 void NeoIO::StopMotors() {
-  canDriveMotor.Set(0);
-  canTurnMotor.Set(0);
+  _canDriveMotor.Set(0);
+_canTurnMotor.Set(0);
 }
 
 void NeoIO::UpdateSim(units::second_t deltaTime) {}
@@ -78,12 +78,12 @@ void NeoIO::SetNeutralMode(bool brakeModeToggle) {
 
   if (brakeModeToggle) {
     neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    canDriveMotor.AdjustConfigNoPersist(neutralModeConfig);
-    canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
+    _canDriveMotor.AdjustConfigNoPersist(neutralModeConfig);
+_canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
   } else if (!brakeModeToggle) {
     neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
-    canDriveMotor.AdjustConfigNoPersist(neutralModeConfig);
-    canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
+    _canDriveMotor.AdjustConfigNoPersist(neutralModeConfig);
+_canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
   }
 }
 
@@ -97,35 +97,35 @@ void NeoIO::ConfigDriveMotor() {
     .VelocityConversionFactor(1.0 / DRIVE_GEAR_RATIO);
   canDriveConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
 
-  canDriveMotor.OverwriteConfig(canDriveConfig);
+  _canDriveMotor.OverwriteConfig(canDriveConfig);
 }
 
 frc::SwerveModulePosition NeoIO::GetPosition() {
-  units::meter_t distance = canDriveMotor.GetPosition().value() * WHEEL_CIRCUMFERENCE;
+  units::meter_t distance = _canDriveMotor.GetPosition().value() * WHEEL_CIRCUMFERENCE;
   return {distance, GetAngle()};
 }
 
 frc::Rotation2d NeoIO::GetAngle() {
-  units::radian_t turnAngle = canTurnMotor.GetPosition();
+  units::radian_t turnAngle = _canTurnMotor.GetPosition();
   return turnAngle;
 }
 
 frc::Rotation2d NeoIO::GetDesiredAngle() {
-  return desiredAngle;
+  return _desiredAngle;
 }
 
 units::meters_per_second_t NeoIO::GetSpeed() {
-  return (canDriveMotor.GetVelocity().convert<units::turns_per_second>().value() *
+  return (_canDriveMotor.GetVelocity().convert<units::turns_per_second>().value() *
            WHEEL_CIRCUMFERENCE.value()) *
          1_mps;
 }
 
 units::meters_per_second_t NeoIO::GetDesiredSpeed() {
-  return desiredSpeed;
+  return _desiredSpeed;
 }
 
 units::volt_t NeoIO::GetDriveVoltage() {
-  return canDriveMotor.GetAppliedOutput() * canDriveMotor.GetBusVoltage() * 1_V;
+  return _canDriveMotor.GetAppliedOutput() * _canDriveMotor.GetBusVoltage() * 1_V;
 }
 
 frc::SwerveModuleState NeoIO::GetState() {
@@ -137,5 +137,5 @@ frc::SwerveModuleState NeoIO::GetDesiredState() {
 }
 
 units::radian_t NeoIO::GetDrivenRotations() {
-  return canDriveMotor.GetPosition();
+  return _canDriveMotor.GetPosition();
 }

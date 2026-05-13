@@ -22,7 +22,7 @@ SwerveModule::SwerveModule(
   using namespace ctre::phoenix6::configs;
 
   // Select IO interface
-  if (BotVars::GetRobot() == BotVars::PRACTICE) {
+  if (botVars::GetRobot() == botVars::PRACTICE) {
     _io =
       std::make_unique<NeoIO>(canTurnMotorID, canDriveMotorID, canTurnEncoderID, cancoderMagOffset);
   } else {

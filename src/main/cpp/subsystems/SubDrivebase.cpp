@@ -240,7 +240,7 @@ frc2::CommandPtr SubDrivebase::DriveOverBump(
     .Unless([] { return frc::RobotBase::IsSimulation(); })
     .FinallyDo([this, allianceRelativeEndXY] {
       auto endPose =
-        ICGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
+        icGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
       SetPose(endPose);
     });
 }
@@ -386,7 +386,7 @@ frc2::CommandPtr SubDrivebase::DriveToPose(const std::function<frc::Pose2d()>& p
   double speedScaling, units::meter_t posErrorTolerance, units::degree_t rotErrorTolerance,
   bool flipForRedAlliance) {
   auto fieldRelativePose = [pose, flipForRedAlliance] {
-    return flipForRedAlliance ? ICGeometry::GetFieldRelativePose(pose()) : pose();
+    return flipForRedAlliance ? icGeometry::GetFieldRelativePose(pose()) : pose();
   };
 
   return Drive(
