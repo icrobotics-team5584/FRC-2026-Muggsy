@@ -139,9 +139,9 @@ bool ShiftHandler::IsActiveShift() {
   if (_overrideActive) {
     return true;
   }
-  if (!frc::DriverStation::IsFMSAttached() &&  /* Isn't at comp? */
+  if (!frc::DriverStation::IsFMSAttached() &&       /* Isn't at comp? */
       frc::DriverStation::GetMatchTime() == -1_s && /* Isn't home practise mode */
-      !frc::DriverStation::IsDisabled()  /* Isn't disabled */
+      !frc::DriverStation::IsDisabled()             /* Isn't disabled */
   ) {
     return true; /* Don't respect shifts */
   }
@@ -149,10 +149,8 @@ bool ShiftHandler::IsActiveShift() {
   RebuiltShift myShift = static_cast<RebuiltShift>(
     frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue));
 
-  return currentShift == RebuiltShift::AUTON ||
-    currentShift == RebuiltShift::TRANS ||
-    currentShift == RebuiltShift::ENDGAME ||
-    myShift == currentShift;
+  return currentShift == RebuiltShift::AUTON || currentShift == RebuiltShift::TRANS ||
+         currentShift == RebuiltShift::ENDGAME || myShift == currentShift;
 }
 
 void ShiftHandler::SetOverrideActive(bool isActive) {

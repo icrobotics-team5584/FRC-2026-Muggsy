@@ -25,11 +25,11 @@ void NeoIO::ConfigTurnMotor() {
     .PositionWrappingMaxInput(1);
   canTurnConfig.Inverted(true).SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
 
-_canTurnMotor.OverwriteConfig(canTurnConfig);
+  _canTurnMotor.OverwriteConfig(canTurnConfig);
 }
 
 void NeoIO::SetDesiredAngle(units::degree_t angle) {
-_canTurnMotor.SetPositionTarget(angle);
+  _canTurnMotor.SetPositionTarget(angle);
   _desiredAngle = angle;
 }
 
@@ -37,18 +37,18 @@ void NeoIO::SetAngle(units::turn_t angle) {
   /*
     @param angle: angle of encoder
   */
-_canTurnMotor.SetCANTimeout(500);
+  _canTurnMotor.SetCANTimeout(500);
   int maxAttempts = 15;
   int currentAttempts = 0;
   units::turn_t tolerance = 0.01_tr;
   while (units::math::abs(_canTurnMotor.GetPosition() - angle) > tolerance &&
          currentAttempts < maxAttempts) {
-_canTurnMotor.SetPosition(angle);
+    _canTurnMotor.SetPosition(angle);
     currentAttempts++;
   }
 
   currentAttempts = 0;
-_canTurnMotor.SetCANTimeout(10);
+  _canTurnMotor.SetCANTimeout(10);
 }
 
 void NeoIO::SendSensorsToDash() {
@@ -68,7 +68,7 @@ void NeoIO::DriveStraightVolts(units::volt_t volts) {
 
 void NeoIO::StopMotors() {
   _canDriveMotor.Set(0);
-_canTurnMotor.Set(0);
+  _canTurnMotor.Set(0);
 }
 
 void NeoIO::UpdateSim(units::second_t deltaTime) {}
@@ -79,11 +79,11 @@ void NeoIO::SetNeutralMode(bool brakeModeToggle) {
   if (brakeModeToggle) {
     neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     _canDriveMotor.AdjustConfigNoPersist(neutralModeConfig);
-_canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
+    _canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
   } else if (!brakeModeToggle) {
     neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
     _canDriveMotor.AdjustConfigNoPersist(neutralModeConfig);
-_canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
+    _canTurnMotor.AdjustConfigNoPersist(neutralModeConfig);
   }
 }
 

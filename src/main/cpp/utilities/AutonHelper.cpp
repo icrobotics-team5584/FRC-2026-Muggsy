@@ -26,4 +26,4 @@ AutonChooser& AutonManager::GetAutonChooser() {
 AutonPtr AutonManager::GetChosenAuton() {
   return _autoChooser.GetSelected().lock();
 }
-}  // namespace AutonHelper
+}  // namespace autonHelper

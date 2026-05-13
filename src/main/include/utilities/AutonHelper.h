@@ -21,4 +21,4 @@ class AutonManager {
  private:
   AutonChooser _autoChooser;
 };
-}  // namespace AutonHelper
+}  // namespace autonHelper

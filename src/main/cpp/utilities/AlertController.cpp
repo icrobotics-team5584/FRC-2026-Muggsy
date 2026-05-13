@@ -26,4 +26,4 @@ void UpdateCurrentAlert(MotorAlertConfig& config, units::ampere_t motorCurrent) 
   }
 }
 
-}  // namespace AlertController
+}  // namespace alertController
