@@ -25,6 +25,7 @@ class SubIntake : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
   frc2::CommandPtr RunIntake();
+  frc2::CommandPtr RunReverseIntake();
 
   bool IsIntakeEnabled();
 
