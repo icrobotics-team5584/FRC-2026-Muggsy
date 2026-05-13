@@ -14,7 +14,7 @@ SubIntake::SubIntake() {
   config.CurrentLimits.SupplyCurrentLimitEnable = true;
   config.CurrentLimits.SupplyCurrentLimit = 40_A;
   config.CurrentLimits.SupplyCurrentLowerLimit = 35_A;
-  config.CurrentLimits.SupplyCurrentLowerTime = 0.1_A;
+  config.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
   config.CurrentLimits.StatorCurrentLimitEnable = true;
   config.CurrentLimits.StatorCurrentLimit = 60_A;
 
