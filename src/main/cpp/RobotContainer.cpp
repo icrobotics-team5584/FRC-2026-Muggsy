@@ -5,6 +5,7 @@
 #include "RobotContainer.h"
 
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubIndexer.h"
 
 #include "utilities/Logger.h"
 
