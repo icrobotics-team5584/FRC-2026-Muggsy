@@ -5,7 +5,7 @@
 SubIntake::SubIntake() {
   ctre::phoenix6::configs::TalonFXConfiguration config;
 
-  config.Feedback.SensorToMechanismRatio = 2.0;
+  config.Feedback.SensorToMechanismRatio = _GEAR_RATIO;
   config.Slot0.kP = 1.0;
   config.Slot0.kI = 0.0;
   config.Slot0.kD = 0.0;
