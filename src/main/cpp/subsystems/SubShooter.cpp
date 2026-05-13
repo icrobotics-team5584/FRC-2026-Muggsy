@@ -41,6 +41,7 @@ SubShooter::SubShooter() {
   _shooterMotor3.GetConfigurator().Apply(_shooterMotorConfig);
   _shooterMotor4.GetConfigurator().Apply(_shooterMotorConfig);
 
+  // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 
   //_flyWheelSpeedTableScoring.insert(x_m, y_tps);
