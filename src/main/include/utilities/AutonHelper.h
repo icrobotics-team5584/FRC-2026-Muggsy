@@ -5,9 +5,9 @@
 
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
-namespace AutonHelper {
-typedef std::shared_ptr<frc2::CommandPtr> AutonPtr;
-typedef frc::SendableChooser<AutonPtr> AutonChooser;
+namespace autonHelper {
+using AutonPtr = std::shared_ptr<frc2::CommandPtr>;
+using AutonChooser = frc::SendableChooser<AutonPtr>;
 AutonPtr MakePathPlannerAuto(pathplanner::PathPlannerAuto auton);
 AutonPtr MakeCommandPtrAuto(frc2::CommandPtr auton);
 

@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string>
 
-namespace BotVars {
+namespace botVars {
 
 enum Robot { COMP, PRACTICE };
 const inline std::string COMP_BOT_MAC_ADDRESS = "00:80:2f:34:07:fe";

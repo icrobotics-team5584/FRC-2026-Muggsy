@@ -10,8 +10,8 @@
 class ShotPlanner {
  public:
   struct ShotPlannerResults {
-    frc::Translation3d targetPosition;
-    bool shouldShoot;
+    frc::Translation3d _targetPosition;
+    bool _shouldShoot;
     bool isPassing;
   };
 

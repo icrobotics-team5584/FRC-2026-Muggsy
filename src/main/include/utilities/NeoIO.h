@@ -28,24 +28,24 @@ class NeoIO : public SwerveIO {
   frc::SwerveModuleState GetDesiredState() override;
   units::radian_t GetDrivenRotations() override;
 
-  const double TURNING_GEAR_RATIO = 150.0 / 7.0;
-  const double DRIVE_GEAR_RATIO = 6.75;  // L2 - Fast kit
-  const units::meter_t WHEEL_RADIUS = 49.5_mm;
-  const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
+  static constexpr double TURNING_GEAR_RATIO = 150.0 / 7.0;
+  static constexpr double DRIVE_GEAR_RATIO = 6.75;  // L2 - Fast kit
+  static constexpr units::meter_t WHEEL_RADIUS = 49.5_mm;
+  static constexpr units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
-  const double TURN_P = 5;
-  const double TURN_I = 0.0;
-  const double TURN_D = 0;
-  const double DRIVE_P = 0.0001;
-  const double DRIVE_I = 0.0;
-  const double DRIVE_D = 0.0;
-  const double DRIVE_FF = 0.0141;
+  static constexpr double TURN_P = 5;
+  static constexpr double TURN_I = 0.0;
+  static constexpr double TURN_D = 0;
+  static constexpr double DRIVE_P = 0.0001;
+  static constexpr double DRIVE_I = 0.0;
+  static constexpr double DRIVE_D = 0.0;
+  static constexpr double DRIVE_FF = 0.0141;
 
  private:
-  units::degree_t desiredAngle;
-  units::meters_per_second_t desiredSpeed;
+  units::degree_t _desiredAngle;
+  units::meters_per_second_t _desiredSpeed;
 
-  ICSparkMax canTurnMotor;
-  ICSparkMax canDriveMotor;
+  ICSparkMax _canTurnMotor;
+  ICSparkMax _canDriveMotor;
   ctre::phoenix6::hardware::CANcoder _canEncoder;
 };

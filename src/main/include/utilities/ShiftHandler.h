@@ -19,8 +19,8 @@ class ShiftHandler {
     return inst;
   }
 
-  void resetTimer();
-  units::second_t getTimer();
+  void ResetTimer();
+  units::second_t GetTimer();
 
   /* Logging */
   void Periodic();
@@ -36,7 +36,7 @@ class ShiftHandler {
 
   /* Setters */
   void SetOverrideActive(bool isActive);
-  void SetTOFOffset(units::second_t TOF);
+  void SetTOFOffset(units::second_t tof);
 
   /*Delete assignment and copy so people don't accidently create copies*/
   ShiftHandler(ShiftHandler const&) = delete;
@@ -51,5 +51,5 @@ class ShiftHandler {
   frc::Timer _teleopTimer;
 
   /*Private constructor to prevent creating multiple instances*/
-  ShiftHandler() {}
+  ShiftHandler() = default;
 };

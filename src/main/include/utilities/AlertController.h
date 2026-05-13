@@ -5,15 +5,15 @@
 #include <units/current.h>
 #include <units/temperature.h>
 
-namespace AlertController {
+namespace alertController {
 struct MotorAlertConfig {
-  frc::Alert temperatureAlert;
-  frc::Alert currentAlert;
-  frc::Alert recordedTemperatureAlert;
+  frc::Alert _temperatureAlert;
+  frc::Alert _currentAlert;
+  frc::Alert _recordedTemperatureAlert;
   frc::Alert recordedCurrentAlert;
-  units::celsius_t maxDegrees;
-  units::ampere_t maxCurrent;
-  frc::Timer highCurrentTimer = frc::Timer();
+  units::celsius_t _maxDegrees;
+  units::ampere_t _maxCurrent;
+  frc::Timer _highCurrentTimer = frc::Timer();
 };
 
 // updates the alert for the temperature. automatically updates to true or false

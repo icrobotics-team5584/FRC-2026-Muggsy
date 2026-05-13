@@ -37,21 +37,21 @@ class KrakenIO : public SwerveIO {
   frc::SwerveModuleState GetDesiredState() override;
   units::radian_t GetDrivenRotations() override;
 
-  const double TURNING_GEAR_RATIO = 150.0 / 7.0;
-  const double DRIVE_GEAR_RATIO = 6.75;  // L2 - Fast kit
-  const units::meter_t WHEEL_RADIUS = 0.0502044712_m;
-  const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
+  static constexpr double TURNING_GEAR_RATIO = 150.0 / 7.0;
+  static constexpr double DRIVE_GEAR_RATIO = 6.75;  // L2 - Fast kit
+  static constexpr units::meter_t WHEEL_RADIUS = 0.0502044712_m;
+  static constexpr units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
-  const double TURN_P = 60.0;
-  const double TURN_I = 0.0;
-  const double TURN_D = 0;
-  const double DRIVE_P = 0.017401;  // left
-  const double DRIVE_I = 0.0;
-  const double DRIVE_D = 0.0;
-  const double DRIVE_F = 0;
-  const double DRIVE_S = 0.096844;  // Units is V 0.3017; left
-  const double DRIVE_V = 0.78528125;
-  const double DRIVE_A = 0.079385;  // Units is V/1m/s^2 0.34324; left
+  static constexpr double TURN_P = 60.0;
+  static constexpr double TURN_I = 0.0;
+  static constexpr double TURN_D = 0;
+  static constexpr double DRIVE_P = 0.017401;  // left
+  static constexpr double DRIVE_I = 0.0;
+  static constexpr double DRIVE_D = 0.0;
+  static constexpr double DRIVE_F = 0;
+  static constexpr double DRIVE_S = 0.096844;  // Units is V 0.3017; left
+  static constexpr double DRIVE_V = 0.78528125;
+  static constexpr double DRIVE_A = 0.079385;  // Units is V/1m/s^2 0.34324; left
 
  private:
   units::degree_t _desiredAngle;

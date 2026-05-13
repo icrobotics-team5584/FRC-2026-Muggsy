@@ -132,16 +132,16 @@ bool ShiftHandler::GetOverrideActive() {
 }
 
 bool ShiftHandler::IsShift(RebuiltShift shift) {
-  return GetCurrentShift() == shift ? true : false; /* check if matching */
+  return GetCurrentShift() == shift; /* check if matching */
 }
 
 bool ShiftHandler::IsActiveShift() {
-  if (_overrideActive == true) {
+  if (_overrideActive) {
     return true;
   }
-  if (frc::DriverStation::IsFMSAttached() == false && /* Isn't at comp? */
-      frc::DriverStation::GetMatchTime() == -1_s &&   /* Isn't home practise mode */
-      frc::DriverStation::IsDisabled() == false       /* Isn't disabled */
+  if (!frc::DriverStation::IsFMSAttached() &&  /* Isn't at comp? */
+      frc::DriverStation::GetMatchTime() == -1_s && /* Isn't home practise mode */
+      !frc::DriverStation::IsDisabled()  /* Isn't disabled */
   ) {
     return true; /* Don't respect shifts */
   }
@@ -149,21 +149,20 @@ bool ShiftHandler::IsActiveShift() {
   RebuiltShift myShift = static_cast<RebuiltShift>(
     frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue));
 
-  if (currentShift == RebuiltShift::AUTON || currentShift == RebuiltShift::TRANS ||
-      currentShift == RebuiltShift::ENDGAME || myShift == currentShift) {
-    return true;
-  }
-  return false;
+  return currentShift == RebuiltShift::AUTON ||
+    currentShift == RebuiltShift::TRANS ||
+    currentShift == RebuiltShift::ENDGAME ||
+    myShift == currentShift;
 }
 
 void ShiftHandler::SetOverrideActive(bool isActive) {
   _overrideActive = isActive;
 }
 
-void ShiftHandler::SetTOFOffset(units::second_t TOF) {
-  _tof = TOF;
-  _beforeShiftOffset = TOF;
-  _afterShiftOffset = _baseOffset - TOF;
+void ShiftHandler::SetTOFOffset(units::second_t tof) {
+  _tof = tof;
+  _beforeShiftOffset = tof;
+  _afterShiftOffset = _baseOffset - tof;
 }
 
 void ShiftHandler::resetTimer() {

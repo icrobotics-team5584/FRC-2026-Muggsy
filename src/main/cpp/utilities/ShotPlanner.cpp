@@ -92,17 +92,11 @@ bool ShotPlanner::IsWithinZone(
 }
 
 bool ShotPlanner::IsInTopHalf(frc::Pose2d robotPos) {
-  if (robotPos.Y() < 4_m) {
-    return true;
-  }
-  return false;
+  return robotPos.Y() < 4_m;
 }
 
 bool ShotPlanner::IsInAllianceZone(frc::Pose2d robotPos) {
-  if (robotPos.X() < fieldpos::BLUE_ALLIANCE_ZONE_TOP_RIGHT.X()) {
-    return true;
-  }
-  return false;
+  return robotPos.X() < fieldpos::BLUE_ALLIANCE_ZONE_TOP_RIGHT.X();
 }
 
 frc::Pose2d ShotPlanner::ConvertToPose2d(frc::Translation3d translation3d) {
@@ -117,8 +111,5 @@ void ShotPlanner::SetOverride(Override override) {
 }
 
 bool ShotPlanner::GetOverrideEnabled() {
-  if (_overrideStatus != Override::NONE) {
-    return true;
-  }
-  return false;
+  return _overrideStatus != Override::NONE;
 }
