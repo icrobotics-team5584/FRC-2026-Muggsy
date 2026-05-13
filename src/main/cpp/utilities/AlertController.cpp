@@ -17,7 +17,7 @@ void UpdateCurrentAlert(MotorAlertConfig& config, units::ampere_t motorCurrent) 
     config._highCurrentTimer.Start();
     if (config._highCurrentTimer.Get() > 3_s) {
       config._currentAlert.Set(true);
-      config.recordedCurrentAlert.Set(true);
+      config._recordedCurrentAlert.Set(true);
     }
 
   } else {
