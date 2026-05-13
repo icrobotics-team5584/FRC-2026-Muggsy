@@ -20,7 +20,7 @@ SubIntake::SubIntake() {
 
   _motor1.GetConfigurator().Apply(config);
   _motor2.SetControl(ctre::phoenix6::controls::Follower(
-    canid::INTAKE_MOTOR_2, ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
+    canid::INTAKE_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
 }
 
 void SubIntake::Periodic() {
