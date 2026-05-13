@@ -27,7 +27,7 @@ class SubShooter : public frc2::SubsystemBase {
     return inst;
   }
 
-  void SimulationPeriodic();
+  void SimulationPeriodic() override;
 
   frc2::CommandPtr SetSpeedTarget(std::function<units::turns_per_second_t()> speed);
   frc2::CommandPtr Stop();
@@ -69,7 +69,7 @@ class SubShooter : public frc2::SubsystemBase {
   frc::Alert _shooter1StickyCurrentAlert{
     "Shooter Motor 1 max current was reached!", frc::Alert::AlertType::kWarning};
   AlertController::MotorAlertConfig _shooter1AlertConfig{_shooter1HighTempAlert,
-    _shooter1CurrentAlert, _shooter1StickyTempAlert, _shooter1StickyCurrentAlert, 60_degC, 20_A};
+    _shooter1CurrentAlert, _shooter1StickyTempAlert, _shooter1StickyCurrentAlert, 60_degC, 40_A};
 
   frc::Alert _shooter2HighTempAlert{
     "Shooter Motor 2 high temperature!", frc::Alert::AlertType::kWarning};
@@ -79,7 +79,7 @@ class SubShooter : public frc2::SubsystemBase {
   frc::Alert _shooter2StickyCurrentAlert{
     "Shooter Motor 2 max current was reached!", frc::Alert::AlertType::kWarning};
   AlertController::MotorAlertConfig _shooter2AlertConfig{_shooter2HighTempAlert,
-    _shooter2CurrentAlert, _shooter2StickyTempAlert, _shooter2StickyCurrentAlert, 60_degC, 20_A};
+    _shooter2CurrentAlert, _shooter2StickyTempAlert, _shooter2StickyCurrentAlert, 60_degC, 40_A};
 
   frc::Alert _shooter3HighTempAlert{
     "Shooter Motor 3 high temperature!", frc::Alert::AlertType::kWarning};
@@ -89,7 +89,7 @@ class SubShooter : public frc2::SubsystemBase {
   frc::Alert _shooter3StickyCurrentAlert{
     "Shooter Motor 3 max current was reached!", frc::Alert::AlertType::kWarning};
   AlertController::MotorAlertConfig _shooter3AlertConfig{_shooter3HighTempAlert,
-    _shooter3CurrentAlert, _shooter3StickyTempAlert, _shooter3StickyCurrentAlert, 60_degC, 20_A};
+    _shooter3CurrentAlert, _shooter3StickyTempAlert, _shooter3StickyCurrentAlert, 60_degC, 40_A};
 
   frc::Alert _shooter4HighTempAlert{
     "Shooter Motor 4 high temperature!", frc::Alert::AlertType::kWarning};
@@ -99,7 +99,7 @@ class SubShooter : public frc2::SubsystemBase {
   frc::Alert _shooter4StickyCurrentAlert{
     "Shooter Motor 4 max current was reached!", frc::Alert::AlertType::kWarning};
   AlertController::MotorAlertConfig _shooter4AlertConfig{_shooter4HighTempAlert,
-    _shooter4CurrentAlert, _shooter4StickyTempAlert, _shooter4StickyCurrentAlert, 60_degC, 20_A};
+    _shooter4CurrentAlert, _shooter4StickyTempAlert, _shooter4StickyCurrentAlert, 60_degC, 40_A};
 
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTableScoring;
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTablePassing;
@@ -108,7 +108,7 @@ class SubShooter : public frc2::SubsystemBase {
   // Sim
   static constexpr units::kilogram_square_meter_t MOI = 0.05_kg_sq_m;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::KrakenX60FOC(4);
-  const double GEAR_RATIO = 10;
+  static constexpr double GEAR_RATIO = 10;
 
   frc::LinearSystem<1, 1, 1> _flywheelSystem =
     frc::LinearSystemId::FlywheelSystem(MOTOR_MODEL, MOI, GEAR_RATIO);

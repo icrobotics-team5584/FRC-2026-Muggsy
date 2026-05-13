@@ -9,8 +9,6 @@
 #include <ctre/phoenix6/configs/Configuration.hpp>
 #include <ctre/phoenix6/controls/Follower.hpp>
 
-#include "frc/smartdashboard/SmartDashboard.h"
-
 SubShooter::SubShooter() {
   _shooterMotorConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
 
