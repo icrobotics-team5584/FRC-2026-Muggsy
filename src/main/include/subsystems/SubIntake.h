@@ -35,7 +35,7 @@ class SubIntake : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _motor2{canid::INTAKE_MOTOR_2};
 
   static constexpr double _GEAR_RATIO = 2.0;
-  
+
   static constexpr units::kilogram_square_meter_t _MOI = 0.0000001_kg_sq_m;
   static constexpr frc::DCMotor _MOTOR_MODEL = frc::DCMotor::Falcon500();
   frc::LinearSystem<1, 1, 1> _rollerSystem =

@@ -9,7 +9,7 @@ SubIntake::SubIntake() {
   config.Slot0.kP = 1.0;
   config.Slot0.kI = 0.0;
   config.Slot0.kD = 0.0;
-  config.MotorOutput.Inverted =  ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
+  config.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
   config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
   config.CurrentLimits.SupplyCurrentLimitEnable = true;
   config.CurrentLimits.SupplyCurrentLimit = 40_A;
