@@ -163,7 +163,7 @@ bool Tune(const std::string& keyName, bool defaultValue) {
     frc::SmartDashboard::PutBoolean(keyName, defaultValue);
   }
 
-  return defaultValue;
+  return value;
 }
 
 std::string Tune(const std::string& keyName, const std::string& defaultValue) {

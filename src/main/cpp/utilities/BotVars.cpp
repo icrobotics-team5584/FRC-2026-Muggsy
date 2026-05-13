@@ -13,10 +13,11 @@ botVars::Robot botVars::DetermineRobot() {
     file >> macAddress;
     frc::SmartDashboard::PutString("botVars/MAC address", macAddress);
 
-    enum Robot robotType;
+    Robot robotType = Robot::COMP;
+    frc::SmartDashboard::PutString(
+      "botVars/active robot", "ERROR! MAC address is not equal to COMP or PRACTISE. Defaulting to COMP Bot.");
     if (macAddress == COMP_BOT_MAC_ADDRESS) {
       frc::SmartDashboard::PutString("botVars/active robot", "COMP");
-      robotType = Robot::COMP;
     } else if (macAddress == PRACTICE_BOT_MAC_ADDRESS) {
       frc::SmartDashboard::PutString("botVars/active robot", "PRACTICE");
       robotType = Robot::PRACTICE;
