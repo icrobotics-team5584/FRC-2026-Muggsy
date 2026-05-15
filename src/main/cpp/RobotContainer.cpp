@@ -6,6 +6,7 @@
 
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubIntake.h"
+#include "subsystems/SubIndexer.h"
 
 #include "utilities/Logger.h"
 
