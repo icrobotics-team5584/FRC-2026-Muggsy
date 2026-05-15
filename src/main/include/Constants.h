@@ -19,8 +19,10 @@ constexpr int DRIVEBASE_BACK_LEFT_ENCODER = 12;
 
 constexpr int PIGEON_2 = 13;
 
-constexpr int INDEXER_MOTOR = 20;
-constexpr int INDEXER_FOLLOW_MOTOR = 21;  // Placeholder values
+constexpr int INDEXER_MOTOR = 18;
+constexpr int INDEXER_FOLLOW_MOTOR = 19;  // Placeholder values
+
+constexpr int HOOD_MOTOR = 20;
 
 constexpr int PDH = 40;
 }  // namespace canid
