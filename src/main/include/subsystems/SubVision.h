@@ -1,0 +1,81 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+#pragma once
+
+#include <frc2/command/SubsystemBase.h>
+#include <frc/geometry/Pose3d.h>
+#include <frc/geometry/Transform3d.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
+#include <frc/apriltag/AprilTagFields.h>
+#include <photon/PhotonCamera.h>
+#include <photon/simulation/VisionSystemSim.h>
+#include <photon/PhotonPoseEstimator.h>
+#include <frc/Filesystem.h>
+#include <wpi/interpolating_map.h>
+#include "utilities/ICCamera.h"
+
+class SubVision : public frc2::SubsystemBase {
+public:
+  SubVision();
+  static SubVision& GetInstance() {
+    static SubVision inst;
+    return inst;
+  }
+
+  void Periodic() override;
+
+  void UpdateVision();
+
+  void StableCameraProcess();
+
+  void TurretCameraProcess();
+
+  void SimulationPeriodic() override;
+
+  enum Side {
+    Left = 1,
+    Right = 2
+  };
+
+  std::optional<frc::Pose2d> GetAprilTagPose(int id);
+
+  std::map<std::string, std::optional<photon::EstimatedRobotPose>> GetPose();
+
+  int GetClosestTag(frc::Pose2d currentPose);
+
+  units::length::meter_t GetAvgDistanceFromCamera(photon::EstimatedRobotPose est);
+
+  bool IsEstimateUsable(photon::EstimatedRobotPose est);
+
+  double GetDev(units::length::meter_t distance);
+
+  const std::string SHOOTER_CAM_NAME = "shooter";
+
+ private:
+
+  //Create field layout
+  std::string _tagMapFilePath = frc::filesystem::GetDeployDirectory() + "/2026-rebuilt.json";
+  frc::AprilTagFieldLayout _tagMap{_tagMapFilePath};
+
+  frc::Transform3d _shooterBotToCam{{-295.779_mm,252.927_mm,320.249_mm},{0_deg,-30_deg, 90_deg}};
+
+  ICCamera _shooterCam {
+    SHOOTER_CAM_NAME,
+    _shooterBotToCam,
+    _tagMap
+  };
+
+  std::vector<ICCamera*> _camList {
+    &_shooterCam,
+  };
+
+  photon::VisionSystemSim _visionSim{"VisionSim"};
+
+  //Deviation table for further distances from tag
+  wpi::interpolating_map<units::meter_t, double> _devTable;
+};
+
+// Link to photon vision
+//http://10.55.84.11:5800
