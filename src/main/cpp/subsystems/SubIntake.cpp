@@ -19,6 +19,7 @@ SubIntake::SubIntake() {
   config.CurrentLimits.StatorCurrentLimit = 60_A;
 
   _motor1.GetConfigurator().Apply(config);
+  _motor2.GetConfigurator().Apply(config);
   _motor2.SetControl(ctre::phoenix6::controls::Follower(
     canid::INTAKE_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Opposed));
 }
