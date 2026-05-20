@@ -92,7 +92,8 @@ void SubShooter::SimulationPeriodic() {
   simState.AddRotorPosition(_flywheelSim.GetAngularVelocity() * GEAR_RATIO * 20_ms);
 }
 
-frc2::CommandPtr SubShooter::SetSpeedTarget(const std::function<units::turns_per_second_t()>& speed) {
+frc2::CommandPtr SubShooter::SetSpeedTarget(
+  const std::function<units::turns_per_second_t()>& speed) {
   return Run(
     [this, speed] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(speed())); });
 }
