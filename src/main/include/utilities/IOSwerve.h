@@ -20,6 +20,7 @@
 
 class SwerveIO {
  public:
+  virtual ~SwerveIO() = default;
   virtual void ConfigTurnMotor() = 0;
   virtual void SetDesiredAngle(units::degree_t angle) = 0;
   virtual void SetAngle(units::turn_t angle) = 0;
