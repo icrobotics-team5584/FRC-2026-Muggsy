@@ -25,12 +25,16 @@ SubIntake::SubIntake() {
 }
 
 void SubIntake::Periodic() {
+  units::second_t loopStart = frc::GetTime();
+
   Logger::LogFalcon("Intake/Motor1", _motor1);
   Logger::LogFalcon("Intake/Motor2", _motor2);
 
   RobotVisualisation::GetInstance()._intakeMechWheel.SetAngle(_motor1.GetPosition().GetValue());
 
   Logger::Log("Intake/Is Intaking", _intakeOn);
+
+  Logger::Log("Intake/Loop Time", (frc::GetTime() - loopStart));
 }
 
 void SubIntake::SimulationPeriodic() {
