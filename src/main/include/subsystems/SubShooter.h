@@ -29,10 +29,10 @@ class SubShooter : public frc2::SubsystemBase {
 
   void SimulationPeriodic() override;
 
-  frc2::CommandPtr SetSpeedTarget(std::function<units::turns_per_second_t()> speed);
+  frc2::CommandPtr SetSpeedTarget(const std::function<units::turns_per_second_t()>& speed);
   frc2::CommandPtr Stop();
   frc2::CommandPtr SetSpeedFromDistanceTarget(
-    std::function<units::meter_t()> distance, std::function<bool()> isPassing);
+    const std::function<units::meter_t()>& distance, const std::function<bool()>& isPassing);
   frc2::CommandPtr SpinSlowly();
 
   frc2::CommandPtr AddManualSpeedOffset(units::turns_per_second_t offset);
