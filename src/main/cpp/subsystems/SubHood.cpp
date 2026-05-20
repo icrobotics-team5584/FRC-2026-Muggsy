@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "subsystems/Hood/SubHood.h"
+#include "subsystems/SubHood.h"
 
 #include "utilities/Logger.h"
 
@@ -10,65 +10,65 @@
 
 SubHood::SubHood() {
   //_hoodPitchTable.insert(x_m, y_deg);
+  _config.encoder.PositionConversionFactor(1 / GEAR_RATIO);
+  _config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
+  _config.closedLoop.Pid(16, 0, 8);
+  _config.closedLoop.feedForward.kS(0.6);
+  _config.SmartCurrentLimit(30);
+  _config.Inverted(false);
+  _config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  _hoodMotor.OverwriteConfig(_config);
 
-  _hoodMotor->ConfigMotor();
+  Logger::Log("Hood/Motor", &_hoodMotor);
 }
 
 // This method will be called once per scheduler run
 void SubHood::Periodic() {
   auto loopStart = frc::GetTime();
-  units::celsius_t hoodTemperature = _hoodMotor->GetTemperature();
-  units::ampere_t hoodCurrent = _hoodMotor->GetCurrent();
+  units::celsius_t hoodTemperature = _hoodMotor.GetTemperature();
+  units::ampere_t hoodCurrent = _hoodMotor.GetStatorCurrent();
 
   AlertController::UpdateTemperatureAlert(_hoodAlertConfig, hoodTemperature);
   AlertController::UpdateCurrentAlert(_hoodAlertConfig, hoodCurrent);
 
   if (_hasZeroed == false && _zeroing == false) {
-    _hoodMotor->StopMotor();
+    _hoodMotor.StopMotor();
   }
 
   Logger::Log("Hood/Has zeroed", _hasZeroed);
   Logger::Log("Hood/Zeroing", _zeroing);
-  Logger::Log("Hood/IsAtTarget", HoodIsAtTarget());
-  
-  _hoodMotor->Log("Hood/Motor");
-  
+  Logger::Log("Hood/IsAtTarget", IsAtTarget());
+    
   Logger::Log("Hood/Loop Time", (frc::GetTime() - loopStart));
 }
 
 void SubHood::SimulationPeriodic() {
-  _hoodSim.SetInputVoltage(_hoodMotor->CalcSimVoltage());
+  _hoodSim.SetInputVoltage(_hoodMotor.CalcSimVoltage());
   _hoodSim.Update(20_ms);
-  _hoodMotor->IterateSim(_hoodSim.GetVelocity(), _hoodSim.GetAngle());
+  _hoodMotor.IterateSim(_hoodSim.GetVelocity(), _hoodSim.GetAngle());
 }
 
-frc2::CommandPtr SubHood::SetHoodPositionTarget(std::function<units::degree_t()> angle) {
-    return Run([this, angle] {
-    units::degree_t target = angle();
-
-    if (target > UPPER_LIMIT) {
-      target = UPPER_LIMIT;
-    }
-
-    if (target < LOWER_LIMIT) {
-      target = LOWER_LIMIT;
-    }
+frc2::CommandPtr SubHood::SetPositionTarget(std::function<units::degree_t()> angle) {
+  return Run([this, angle] {
+    units::degree_t target = std::clamp(angle(), LOWER_LIMIT, UPPER_LIMIT);
 
     if (_hasZeroed) {
-      _hoodMotor->SetPositionTarget(target);
+      _hoodMotor.SetPositionTarget(target);
     }
-    
   });
 }
 
 frc2::CommandPtr SubHood::ZeroHood() {
-  return RunOnce([this] { _zeroing = true; })
+  return RunOnce([this] {
+    _hasZeroed = false;
+    _zeroing = true;
+  })
     .AndThen(ManualHoodDown())
     .Until([this] { return (HoodCurrentCheck());})
-    .AndThen([this] { _hoodMotor->SetPosition(LOWER_LIMIT); })
+    .AndThen([this] { _hoodMotor.SetPosition(LOWER_LIMIT); })
     .FinallyDo([this] {
-      _hoodMotor->StopMotor();
-      _hoodMotor->SetPositionTarget(LOWER_LIMIT);
+      _hoodMotor.StopMotor();
+      _hoodMotor.SetPositionTarget(LOWER_LIMIT);
       _zeroing = false;
     });
 }
@@ -84,7 +84,7 @@ bool SubHood::HoodCurrentCheck() {
 }
 
 units::ampere_t SubHood::GetHoodMotorCurrent() {
-  return _hoodMotor->GetCurrent();
+  return _hoodMotor.GetStatorCurrent();
 }
 
 units::degree_t SubHood::GetManualAngleOffset() {
@@ -92,59 +92,58 @@ units::degree_t SubHood::GetManualAngleOffset() {
 }
 
 void SubHood::SetManualAngleOffset(units::degree_t offset) {
-  _manualSpeedOffset = offset;
-  Logger::Log("Shooter/Manual Speed Offset", _manualSpeedOffset);
+  _manualAngleOffset = offset;
+  Logger::Log("Hood/Manual Angle Offset", _manualAngleOffset);
 }
 
 frc2::CommandPtr SubHood::StowHood() {
-  return RunOnce([this] { _hoodMotor->SetPositionTarget(STOW_ANGLE); });
+  return RunOnce([this] { _hoodMotor.SetPositionTarget(STOW_ANGLE); });
 }
 
 frc2::CommandPtr SubHood::ManualHoodDown() {
-  return StartEnd([this] { _hoodMotor->SetVoltage(-1_V); },
+  return StartEnd([this] { _hoodMotor.SetVoltage(-1_V); },
     [this] {
-      auto targRot = _hoodMotor->GetPosition();
-      _hoodMotor->SetPositionTarget(targRot);
+      auto targRot = _hoodMotor.GetPosition();
+      _hoodMotor.SetPositionTarget(targRot);
     });
 }
 
-frc2::CommandPtr SubHood::SetHoodPositionTargetFromDist(
+frc2::CommandPtr SubHood::SetPositionFromDistanceTarget(
   std::function<units::meter_t()> distanceToTarget) {
-  return SetHoodPositionTarget([this, distanceToTarget] {
-    return _hoodPitchTable[distanceToTarget()] + Logger::Tune("Hood/Angle Manual Offset", DEFAULT_HOOD_OFFSET);
+  return SetPositionTarget([this, distanceToTarget] {
+    return _hoodPitchTable[distanceToTarget()] + _manualAngleOffset;
   });
 }
 
 frc2::CommandPtr SubHood::AddManualAngleOffset(units::degree_t offset) {
   // Using frc2 cmd so we dont require subsystem
-  return frc2::cmd::RunOnce([offset] {
-    units::degree_t oldOffset = Logger::Tune("Hood/Angle Manual Offset", DEFAULT_HOOD_OFFSET);
-    units::degree_t newOffset = oldOffset + offset;
-    Logger::Log("Hood/Angle Manual Offset", newOffset);
+  return frc2::cmd::RunOnce([this, offset] {
+    SetManualAngleOffset(_manualAngleOffset + offset);
   });
 }
 
-bool SubHood::HoodIsAtTarget() {
-  return units::math::abs(_hoodMotor->GetPositionError()) < TOLERANCE;
+bool SubHood::IsAtTarget() {
+  return units::math::abs(_hoodMotor.GetPosError()) < TOLERANCE;
 }
 
 frc2::CommandPtr SubHood::MoveHoodUp1Degree() {
-  return SetHoodPositionTarget([this] { return _hoodMotor->GetPositionTarget() + 1_deg; }).WithTimeout(1_ms);
+  return SetPositionTarget([this] { return _hoodMotor.GetPositionTarget() + 1_deg; }).WithTimeout(1_ms);
 }
 
 frc2::CommandPtr SubHood::MoveHoodDown1Degree() {
-  return SetHoodPositionTarget([this] { return _hoodMotor->GetPositionTarget() - 1_deg; }).WithTimeout(1_ms);
+  return SetPositionTarget([this] { return _hoodMotor.GetPositionTarget() - 1_deg; }).WithTimeout(1_ms);
 }
 
 frc2::CommandPtr SubHood::HoodToEjectAngle() {
-  return SubHood::GetInstance().SetHoodPositionTarget([] { return LOWER_LIMIT + 5_deg; });
+  return SubHood::GetInstance().SetPositionTarget([] { return LOWER_LIMIT + 5_deg; });
 }
 
 void SubHood::SetBrakeMode(bool brakeMode){
-  if (brakeMode == true){
-    _hoodMotor->SetBrakeMode(true);
+  rev::spark::SparkBaseConfig _brakeModeConfig;
+  if (brakeMode) {
+    _brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  } else {
+    _brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
   }
-  else {
-    _hoodMotor->SetBrakeMode(false);
-  }
+  _hoodMotor.AdjustConfigNoPersist(_brakeModeConfig);
 }

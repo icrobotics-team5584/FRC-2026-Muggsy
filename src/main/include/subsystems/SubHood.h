@@ -28,7 +28,7 @@ class SubHood : public frc2::SubsystemBase {
   void SimulationPeriodic();
 
   bool HoodCurrentCheck();
-  bool HoodIsAtTarget();
+  bool IsAtTarget();
 
   units::ampere_t GetHoodMotorCurrent();
 
@@ -62,14 +62,15 @@ class SubHood : public frc2::SubsystemBase {
 
   units::ampere_t zeroingCurrentLimit = 20_A;
 
-  static constexpr units::turns_per_second_t DEFAULT_ANGLE_OFFSET = 0_tps;
+  static constexpr units::degree_t DEFAULT_ANGLE_OFFSET = 0_deg;
   //_manualSpeedOffset should only be modified using the SetManualAngleOffset function
-  units::turns_per_second_t _manualAngleOffset{DEFAULT_ANGLE_OFFSET};
+  units::degree_t _manualAngleOffset{DEFAULT_ANGLE_OFFSET};
 
   bool _zeroing = false;
   bool _hasZeroed = false;
 
   ICSparkFlex _hoodMotor{canid::HOOD_MOTOR};
+  rev::spark::SparkBaseConfig _config;
 
   frc::Alert _hoodHighTempAlert{
     "Hood Motor high temperature!", frc::Alert::AlertType::kWarning};
