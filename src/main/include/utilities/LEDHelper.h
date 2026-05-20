@@ -18,15 +18,15 @@ class LEDHelper : public frc2::SubsystemBase {
   }
   void Start(int length);
 
-  frc2::CommandPtr SetSolidColour(frc::Color color);
+  frc2::CommandPtr SetSolidColour(frc::Color colour);
   frc2::CommandPtr SetScrollingRainbow();
-  frc2::CommandPtr SetContinuousGradient(frc::Color color1, frc::Color color2);
-  frc2::CommandPtr SetBreatheColour(frc::Color color);
-  frc2::CommandPtr SetFollowProgress(const std::function<double()>& progress, frc::Color color);
+  frc2::CommandPtr SetContinuousGradient(frc::Color colour1, frc::Color colour2);
+  frc2::CommandPtr SetBreatheColour(frc::Color colour);
+  frc2::CommandPtr SetFollowProgress(const std::function<double()>& progress, frc::Color colour);
   frc2::CommandPtr SetFire(int cooldownIntensity = 25, int lastCellMinimumHeat = 60,
     int chanceOfSpark = 8, units::hertz_t animationFrequency = 30_Hz);
-  frc::Color HeatColor(uint8_t temperature);
-  frc2::CommandPtr FlashColour(frc::Color color);
+  frc::Color HeatColour(uint8_t temperature);
+  frc2::CommandPtr FlashColour(frc::Color colour);
 
  private:
   frc::AddressableLED _led{pwm::LED};

@@ -7,9 +7,9 @@
 #include <functional>
 #include <thread>
 
-frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color color) {
-  return RunOnce([this, color] {
-    frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
+frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color colour) {
+  return RunOnce([this, colour] {
+    frc::LEDPattern ledpattern = frc::LEDPattern::Solid(colour);
     ledpattern.ApplyTo(_ledBuffer);
     _led.SetData(_ledBuffer);
   }).AndThen(frc2::cmd::Idle());
@@ -24,11 +24,11 @@ frc2::CommandPtr LEDHelper::SetScrollingRainbow() {
   });
 }
 
-frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color color1, frc::Color color2) {
-  return RunOnce([this, color1, color2] {
-    std::array<frc::Color, 2> colors{color1, color2};
+frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color colour1, frc::Color colour2) {
+  return RunOnce([this, colour1, colour2] {
+    std::array<frc::Color, 2> colours{colour1, colour2};
     frc::LEDPattern gradient =
-      frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
+      frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colours);
 
     // Apply the LED pattern to the data buffer
     gradient.ApplyTo(_ledBuffer);
@@ -72,8 +72,8 @@ frc2::CommandPtr LEDHelper::SetFire(int cooldownIntensity, int lastCellMinimumHe
 
     // Map heat to color
     for (int i = 0; i < _length; i++) {
-      frc::Color color = HeatColor(_heat[i]);
-      _ledBuffer[i].SetRGB(color.red * 255, color.green * 255, color.blue * 255);
+      frc::Color colour = HeatColour(_heat[i]);
+      _ledBuffer[i].SetRGB(colour.red * 255, colour.green * 255, colour.blue * 255);
     }
 
     _led.SetData(_ledBuffer);
@@ -84,30 +84,32 @@ frc2::CommandPtr LEDHelper::SetFire(int cooldownIntensity, int lastCellMinimumHe
     .Repeatedly();
 }
 
-frc::Color LEDHelper::HeatColor(uint8_t heat) {
-  // Defaulting to yellow to white (170–255): red & green full, blue ramps up
-  uint8_t blue = (heat - 170) * 3;
-  frc::Color color = frc::Color{1.0, 1.0, blue / 255.0};
+frc::Color LEDHelper::HeatColour(uint8_t heat) {
+  frc::Color colour;
 
   if (heat < 85) {
     // Red (0–84): ramp up from black to red
     uint8_t red = heat * 3;
-    color = frc::Color{red / 255.0, 0.0, 0.0};
+    colour = frc::Color{red / 255.0, 0.0, 0.0};
   } else if (heat < 170) {
     // Orange to yellow (85–169): red stays full, green ramps up
     uint8_t green = (heat - 85) * 3;
-    color = frc::Color{1.0, green / 255.0, 0.0};
+    colour = frc::Color{1.0, green / 255.0, 0.0};
+  } else {
+    // Yellow to white (170–255): red & green full, blue ramps up
+    uint8_t blue = (heat - 170) * 3;
+    colour = frc::Color{1.0, 1.0, blue / 255.0};
   }
 
-  return color;
+  return colour;
 }
 
 frc2::CommandPtr LEDHelper::SetFollowProgress(
-  const std::function<double()>& progress, frc::Color color) {
-  return Run([this, progress, color] {
+  const std::function<double()>& progress, frc::Color colour) {
+  return Run([this, progress, colour] {
     double progressValue = progress();
     logger::Log("LEDHelper/SetFollowProgress/Progress", progressValue);
-    frc::LEDPattern base = frc::LEDPattern::Solid(color);
+    frc::LEDPattern base = frc::LEDPattern::Solid(colour);
     frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer(progress);
 
     frc::LEDPattern heightDisplay = base.Mask(mask);
@@ -117,9 +119,9 @@ frc2::CommandPtr LEDHelper::SetFollowProgress(
   });
 }
 
-frc2::CommandPtr LEDHelper::SetBreatheColour(frc::Color color) {
-  return Run([this, color] {
-    frc::LEDPattern base = frc::LEDPattern::Solid(color);
+frc2::CommandPtr LEDHelper::SetBreatheColour(frc::Color colour) {
+  return Run([this, colour] {
+    frc::LEDPattern base = frc::LEDPattern::Solid(colour);
     frc::LEDPattern pattern = base.Breathe(2_s);
 
     // Apply the LED pattern to the data buffer
@@ -128,9 +130,9 @@ frc2::CommandPtr LEDHelper::SetBreatheColour(frc::Color color) {
   });
 }
 
-frc2::CommandPtr LEDHelper::FlashColour(frc::Color color) {
-  return RunOnce([this, color] {
-    frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
+frc2::CommandPtr LEDHelper::FlashColour(frc::Color colour) {
+  return RunOnce([this, colour] {
+    frc::LEDPattern ledpattern = frc::LEDPattern::Solid(colour);
     ledpattern.ApplyTo(_ledBuffer);
     _led.SetData(_ledBuffer);
   }).AndThen(frc2::cmd::Wait(200_ms));
