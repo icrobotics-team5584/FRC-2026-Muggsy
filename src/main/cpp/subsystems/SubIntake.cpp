@@ -6,9 +6,6 @@ SubIntake::SubIntake() {
   ctre::phoenix6::configs::TalonFXConfiguration config;
 
   config.Feedback.SensorToMechanismRatio = _GEAR_RATIO;
-  config.Slot0.kP = 1.0;
-  config.Slot0.kI = 0.0;
-  config.Slot0.kD = 0.0;
   config.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
   config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
   config.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -32,7 +29,7 @@ void SubIntake::Periodic() {
 
   RobotVisualisation::GetInstance()._intakeMechWheel.SetAngle(_motor1.GetPosition().GetValue());
 
-  Logger::Log("Intake/Is Intaking", _intakeOn);
+  Logger::Log("Intake/Is Running", _intakeOn);
 
   Logger::Log("Intake/Loop Time", (frc::GetTime() - loopStart));
 }
@@ -46,7 +43,7 @@ void SubIntake::SimulationPeriodic() {
 }
 
 frc2::CommandPtr SubIntake::RunIntake() {
-  return frc2::cmd::StartEnd(
+  return StartEnd(
     [this] {
       _intakeOn = true;
 
@@ -60,7 +57,7 @@ frc2::CommandPtr SubIntake::RunIntake() {
 }
 
 frc2::CommandPtr SubIntake::RunReverseIntake() {
-  return frc2::cmd::StartEnd(
+  return StartEnd(
     [this] {
       _intakeOn = true;
 
