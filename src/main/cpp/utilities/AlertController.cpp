@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 
+
 namespace AlertController {
 std::vector<std::weak_ptr<AlertConfig>> configList;
 // Registers the Alert Config to be used in the ForceRemoveAllAlerts Command
@@ -10,54 +11,94 @@ void RegisterAlertConfig(std::weak_ptr<AlertConfig> config) {
 }
 
 // Check Every Alert for the Motor and Set them accordingly
-void MotorCheck(ICSpark& Motor, AlertConfig& config) {
-  // Check Temperature
-  if (Motor.GetTemperature() >= config.maxDegrees) {
-    config.responsiveHighTemperatureAlert.Set(true);
-    config.tempuratureReachedCount++;
-    config.reachedTemperatureAlert.Set(true);
+void MotorCheck(
+  MotorVariant motor, AlertConfig& config) {
+  //  High Temperature Check
+  units::celsius_t motorTemp = GetMotorTemperature(motor);
+  units::ampere_t motorCurrent = GetMotorCurrent(motor);
+
+  if (motorTemp >= config.maxDegrees) {
+    if (config.shouldRecordTemp) {
+      config.tempuratureReachedCount++;
+      config.reachedTemperatureAlert.SetText(
+        config.motorString +
+        " Reached Max Temperature Threshold: " + std::to_string(config.tempuratureReachedCount) +
+        (config.tempuratureReachedCount > 1 ? " Times" : " Time"));
+
+      config.reachedTemperatureAlert.Set(true);
+      config.responsiveHighTemperatureAlert.Set(true);
+      config.shouldRecordTemp = false;
+    }
+
   } else {
     config.responsiveHighTemperatureAlert.Set(false);
+    config.shouldRecordTemp = true;
   }
 
-  // Check High Current
-  if (Motor.GetStatorCurrent() >= config.maxCurrent) {
-    config.responsiveHighCurrentAlert.Set(true);
+  // High Current Check
+  if (motorCurrent >= config.maxCurrent) {
     config.highCurrentTimer.Start();
+
     if (config.highCurrentTimer.HasElapsed(1_s)) {
       config.highCurrentTimer.Stop();
       config.highCurrentTimer.Reset();
-      config.highCurrentReachedCount++;
-      config.reachedHighCurrentAlert.Set(true);
+
+      if (config.shouldRecordHighCurrent) {
+        config.highCurrentReachedCount++;
+        config.reachedHighCurrentAlert.SetText(
+          config.motorString +
+          " Reached Max Current Threshold: " + std::to_string(config.highCurrentReachedCount) +
+          (config.highCurrentReachedCount > 1 ? " Times" : " Time"));
+        config.reachedHighCurrentAlert.Set(true);
+        config.responsiveHighCurrentAlert.Set(true);
+        config.shouldRecordHighCurrent = false;
+      }
     }
   } else {
     config.responsiveHighCurrentAlert.Set(false);
     config.highCurrentTimer.Stop();
     config.highCurrentTimer.Reset();
-  }
-  // Check Low Current
-  if (Motor.GetStatorCurrent() <= config.minCurrent) {
-    config.responsiveLowCurrentAlert.Set(true);
-    if (config.highCurrentTimer.HasElapsed(1_s)) {
-      config.highCurrentTimer.Stop();
-      config.highCurrentTimer.Reset();
-      config.lowCurrentReachedCount++;
-      config.reachedLowCurrentAlert.Set(true);
-    }
-  } else {
-    config.responsiveLowCurrentAlert.Set(false);
+    config.shouldRecordHighCurrent = true;
   }
 }
-// Command to Force Remove All Alerts, used for testing and to reset the alert counts
+
+units::celsius_t GetMotorTemperature(MotorVariant motor) {
+  return std::visit([](auto* m) -> units::celsius_t {
+    using T = std::decay_t<decltype(*m)>;
+
+    if constexpr (std::is_same_v<T, ICSpark>) {
+      return m->GetTemperature();
+    } else {
+      return m->GetDeviceTemp().GetValue();
+    }
+  }, motor);
+}
+
+units::ampere_t GetMotorCurrent(MotorVariant motor) {
+  return std::visit([](auto* m) -> units::ampere_t {
+    using T = std::decay_t<decltype(*m)>;
+
+    if constexpr (std::is_same_v<T, ICSpark>) {
+      return m->GetStatorCurrent();
+    } else if constexpr (std::is_same_v<T, ctre::phoenix6::hardware::TalonFX>) {
+      return m->GetStatorCurrent().GetValue();
+    }
+  }, motor);
+}
+// Command to Force Remove All Alerts
 frc2::CommandPtr ForceRemoveAllAlerts() {
   return frc2::cmd::RunOnce([] {
-    for (std::weak_ptr<AlertConfig>& configWeak : configList) {
-      if (auto config = configWeak.lock()) {  // lock once
+    for (auto& weak : configList) {
+      if (auto config = weak.lock()) {
+        config->reachedTemperatureAlert.Set(false);
+        config->responsiveHighTemperatureAlert.Set(false);
+        config->responsiveHighCurrentAlert.Set(false);
+        config->reachedHighCurrentAlert.Set(false);
       }
     }
   })
-    .WithName("Force Remove All Alerts")
-    .IgnoringDisable(true);
+  .WithName("Force Remove All Alerts")
+  .IgnoringDisable(true);
 }
 
 }  // namespace AlertController

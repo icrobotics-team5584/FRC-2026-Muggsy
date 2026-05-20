@@ -4,43 +4,39 @@
 #include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
 
+#include <ctre/phoenix6/TalonFX.hpp>
 #include <memory>
 #include <units/current.h>
 #include <units/temperature.h>
-
 #include <utilities/ICSpark.h>
-
 namespace AlertController {
+using MotorVariant = std::variant<ICSpark*, ctre::phoenix6::hardware::TalonFX*>;
 
-struct AlertConfig {
+struct AlertConfig;
+
+void RegisterAlertConfig(std::weak_ptr<AlertConfig> config);
+
+void MotorCheck(
+  std::variant<ICSpark*, ctre::phoenix6::hardware::TalonFX*> motor, AlertConfig& config);
+
+units::celsius_t GetMotorTemperature(MotorVariant motor);
+units::ampere_t GetMotorCurrent(MotorVariant motor);
+
+frc2::CommandPtr ForceRemoveAllAlerts();
+
+struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   std::string motorString;
   units::celsius_t maxDegrees;
 
   units::ampere_t maxCurrent;
-  units::ampere_t minCurrent;
 
   // Tempurature Alerts//
-  frc::Alert responsiveHighTemperatureAlert =
-    frc::Alert(motorString + ": " + "!HIGH TEMP!", frc::Alert::AlertType::kWarning);
-  frc::Alert reachedTemperatureAlert = frc::Alert(
-    motorString + "Reached Max Temperature Threshold: " + std::to_string(tempuratureReachedCount) +
-      (tempuratureReachedCount > 1 ? " Times" : " Time"),
-    frc::Alert::AlertType::kWarning);
+  frc::Alert responsiveHighTemperatureAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
+  frc::Alert reachedTemperatureAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
 
-  // Current Alerts//
-  frc::Alert responsiveHighCurrentAlert =
-    frc::Alert(motorString + ": " + "!HIGH CURRENT!", frc::Alert::AlertType::kWarning);
-  frc::Alert reachedHighCurrentAlert = frc::Alert(
-    motorString + "Reached Max Current Threshold: " + std::to_string(highCurrentReachedCount) +
-      (highCurrentReachedCount > 1 ? " Times" : " Time"),
-    frc::Alert::AlertType::kWarning);
-
-  frc::Alert responsiveLowCurrentAlert =
-    frc::Alert(motorString + ": " + "!LOW CURRENT!", frc::Alert::AlertType::kWarning);
-  frc::Alert reachedLowCurrentAlert = frc::Alert(
-    motorString + "Reached Min Current Threshold: " + std::to_string(lowCurrentReachedCount) +
-      (lowCurrentReachedCount > 1 ? " Times" : " Time"),
-    frc::Alert::AlertType::kWarning);
+  // Current Alert//
+  frc::Alert responsiveHighCurrentAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
+  frc::Alert reachedHighCurrentAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
 
   // Timers for Current
   frc::Timer highCurrentTimer = frc::Timer();
@@ -48,26 +44,25 @@ struct AlertConfig {
   // Counts for how many times the motor has reached the thresholds
   int tempuratureReachedCount = 0;
   int highCurrentReachedCount = 0;
-  int lowCurrentReachedCount = 0;
 
-  AlertConfig() {
-    responsiveHighTemperatureAlert.SetText(motorString + ": " + "!HIGH TEMP!");
-    reachedTemperatureAlert.SetText(motorString + "Reached Max Temperature Threshold: " +
-                                    std::to_string(tempuratureReachedCount) + " Times");
+  // Booleans to only allow recorded temperatures to record once per alert
+  bool shouldRecordTemp = true;
+  bool shouldRecordHighCurrent = true;
 
-    responsiveHighCurrentAlert.SetText(motorString + ": " + "!HIGH CURRENT!");
-    reachedHighCurrentAlert.SetText(motorString + "Reached Max Current Threshold: " +
-                                    std::to_string(highCurrentReachedCount) + " Times");
-    responsiveLowCurrentAlert.SetText(motorString + ": " + "!LOW CURRENT!");
-    reachedLowCurrentAlert.SetText(motorString + "Reached Min Current Threshold: " +
-                                   std::to_string(lowCurrentReachedCount) + " Times");
+  AlertConfig(std::string motorName, units::celsius_t maxTemp, units::ampere_t maxCurr) {
+    responsiveHighTemperatureAlert.SetText(motorName + ": " + " HIGH TEMP");
+
+    responsiveHighCurrentAlert.SetText(motorName + ": " + "HIGH CURRENT");
+    reachedHighCurrentAlert.SetText(
+      motorName + "Reached Max Current Threshold: " + std::to_string(highCurrentReachedCount) +
+      (highCurrentReachedCount > 1 ? " Times" : " Time"));
+
+    motorString = motorName;
+    maxDegrees = maxTemp;
+    maxCurrent = maxCurr;
+
+    RegisterAlertConfig(weak_from_this());
   }
 };
-
-void RegisterAlertConfig(std::weak_ptr<AlertConfig> config);
-
-void MotorCheck(ICSpark& Motor, AlertConfig& config);
-
-frc2::CommandPtr ForceRemoveAllAlerts();
 
 };  // namespace AlertController
