@@ -15,7 +15,7 @@ botVars::Robot botVars::DetermineRobot() {
 
     Robot robotType = Robot::COMP;
     frc::SmartDashboard::PutString("botVars/active robot",
-      "ERROR! MAC address is not equal to COMP or PRACTISE. Defaulting to COMP Bot.");
+      "ERROR! MAC address is not equal to COMP or PRACTICE. Defaulting to COMP Bot.");
     if (macAddress == COMP_BOT_MAC_ADDRESS) {
       frc::SmartDashboard::PutString("botVars/active robot", "COMP");
     } else if (macAddress == PRACTICE_BOT_MAC_ADDRESS) {

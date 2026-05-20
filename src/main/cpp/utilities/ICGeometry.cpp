@@ -31,7 +31,7 @@ frc::Pose2d YPoseFlip(frc::Pose2d pose) {
   return frc::Pose2d(pose.X(), y, -pose.Rotation());
 }
 
-frc::Pose2d XyPoseFlip(frc::Pose2d pose) {
+frc::Pose2d XYPoseFlip(frc::Pose2d pose) {
   return YPoseFlip(XPoseFlip(pose));
 }
 
@@ -46,7 +46,7 @@ frc::Pose2d GetFieldRelativePose(frc::Pose2d allianceRelativePose) {
 
   if (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::kBlue) ==
       frc::DriverStation::kRed) {
-    pose = icGeometry::XyPoseFlip(allianceRelativePose);
+    pose = icGeometry::XYPoseFlip(allianceRelativePose);
   }
 
   return pose;

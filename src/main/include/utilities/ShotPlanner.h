@@ -10,9 +10,9 @@
 class ShotPlanner {
  public:
   struct ShotPlannerResults {
-    frc::Translation3d _targetPosition;
-    bool _shouldShoot;
-    bool _isPassing;
+    frc::Translation3d targetPosition;
+    bool shouldShoot;
+    bool isPassing;
   };
 
   enum Override { PASS = 0, SCORE = 1, NONE = 2 };
