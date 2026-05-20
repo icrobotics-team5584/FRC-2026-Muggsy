@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 
-
 namespace AlertController {
 std::vector<std::weak_ptr<AlertConfig>> configList;
 // Registers the Alert Config to be used in the ForceRemoveAllAlerts Command
@@ -11,8 +10,7 @@ void RegisterAlertConfig(std::weak_ptr<AlertConfig> config) {
 }
 
 // Check Every Alert for the Motor and Set them accordingly
-void MotorCheck(
-  MotorVariant motor, AlertConfig& config) {
+void MotorCheck(MotorVariant motor, AlertConfig& config) {
   //  High Temperature Check
   units::celsius_t motorTemp = GetMotorTemperature(motor);
   units::ampere_t motorCurrent = GetMotorCurrent(motor);
@@ -63,27 +61,31 @@ void MotorCheck(
 }
 
 units::celsius_t GetMotorTemperature(MotorVariant motor) {
-  return std::visit([](auto* m) -> units::celsius_t {
-    using T = std::decay_t<decltype(*m)>;
+  return std::visit(
+    [](auto* m) -> units::celsius_t {
+      using T = std::decay_t<decltype(*m)>;
 
-    if constexpr (std::is_same_v<T, ICSpark>) {
-      return m->GetTemperature();
-    } else {
-      return m->GetDeviceTemp().GetValue();
-    }
-  }, motor);
+      if constexpr (std::is_same_v<T, ICSpark>) {
+        return m->GetTemperature();
+      } else {
+        return m->GetDeviceTemp().GetValue();
+      }
+    },
+    motor);
 }
 
 units::ampere_t GetMotorCurrent(MotorVariant motor) {
-  return std::visit([](auto* m) -> units::ampere_t {
-    using T = std::decay_t<decltype(*m)>;
+  return std::visit(
+    [](auto* m) -> units::ampere_t {
+      using T = std::decay_t<decltype(*m)>;
 
-    if constexpr (std::is_same_v<T, ICSpark>) {
-      return m->GetStatorCurrent();
-    } else if constexpr (std::is_same_v<T, ctre::phoenix6::hardware::TalonFX>) {
-      return m->GetStatorCurrent().GetValue();
-    }
-  }, motor);
+      if constexpr (std::is_same_v<T, ICSpark>) {
+        return m->GetStatorCurrent();
+      } else if constexpr (std::is_same_v<T, ctre::phoenix6::hardware::TalonFX>) {
+        return m->GetStatorCurrent().GetValue();
+      }
+    },
+    motor);
 }
 // Command to Force Remove All Alerts
 frc2::CommandPtr ForceRemoveAllAlerts() {
@@ -97,8 +99,8 @@ frc2::CommandPtr ForceRemoveAllAlerts() {
       }
     }
   })
-  .WithName("Force Remove All Alerts")
-  .IgnoringDisable(true);
+    .WithName("Force Remove All Alerts")
+    .IgnoringDisable(true);
 }
 
 }  // namespace AlertController
