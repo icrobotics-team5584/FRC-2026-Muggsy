@@ -58,30 +58,27 @@ frc2::CommandPtr SubHood::SetPositionTarget(std::function<units::degree_t()> ang
   });
 }
 
-frc2::CommandPtr SubHood::ZeroHood() {
-  return RunOnce([this] {
-    _hasZeroed = false;
-    _zeroing = true;
-  })
-    .AndThen(ManualHoodDown())
-    .Until([this] { return (HoodCurrentCheck());})
-    .AndThen([this] { _hoodMotor.SetPosition(LOWER_LIMIT); })
+frc2::CommandPtr SubHood::RunZeroingSequence() {
+  return frc2::cmd::RunOnce([this] {
+      _hasZeroed = false;
+      _zeroing = true;
+      //ToggleSoftLimit(false); // disable soft limit (here be dragons!!)
+      _hoodMotor.SetVoltage(-1_V); // start moving arm down slowly
+    })
+    .AndThen(frc2::cmd::WaitUntil([this] {
+      return (units::math::abs(GetHoodMotorCurrent()) > zeroingCurrentLimit || frc::RobotBase::IsSimulation()); // stop moving down when current limit reached (i.e. arm hits the ground)
+    }))
+    .AndThen([this] {
+      _hoodMotor.StopMotor(); // stop motors
+      _hoodMotor.SetPosition(LOWER_LIMIT);
+      _hasZeroed = true;
+    }) // set both arm motors to zero at ground
     .FinallyDo([this] {
-      _hoodMotor.StopMotor();
       _hoodMotor.SetPositionTarget(LOWER_LIMIT);
       _zeroing = false;
+      //ToggleSoftLimit(true); // re-enable soft limit
     });
-}
-
-bool SubHood::HoodCurrentCheck() {
-  _hasZeroed = false;
-  if (units::math::abs(GetHoodMotorCurrent()) > zeroingCurrentLimit || frc::RobotBase::IsSimulation()) {
-    _hasZeroed = true;
-    return true;
-  }
-
-  return false;
-}
+};
 
 units::ampere_t SubHood::GetHoodMotorCurrent() {
   return _hoodMotor.GetStatorCurrent();
@@ -96,16 +93,8 @@ void SubHood::SetManualAngleOffset(units::degree_t offset) {
   Logger::Log("Hood/Manual Angle Offset", _manualAngleOffset);
 }
 
-frc2::CommandPtr SubHood::StowHood() {
+frc2::CommandPtr SubHood::HoodToStowAngle() {
   return RunOnce([this] { _hoodMotor.SetPositionTarget(STOW_ANGLE); });
-}
-
-frc2::CommandPtr SubHood::ManualHoodDown() {
-  return StartEnd([this] { _hoodMotor.SetVoltage(-1_V); },
-    [this] {
-      auto targRot = _hoodMotor.GetPosition();
-      _hoodMotor.SetPositionTarget(targRot);
-    });
 }
 
 frc2::CommandPtr SubHood::SetPositionFromDistanceTarget(

@@ -33,9 +33,9 @@ class SubHood : public frc2::SubsystemBase {
   units::ampere_t GetHoodMotorCurrent();
 
   frc2::CommandPtr ManualHoodDown();
-  frc2::CommandPtr StowHood();
-  frc2::CommandPtr ZeroHood();
+  frc2::CommandPtr RunZeroingSequence();
   frc2::CommandPtr HoodToEjectAngle();
+  frc2::CommandPtr HoodToStowAngle();
 
   frc2::CommandPtr SetPositionTarget(std::function<units::degree_t()> angle);
   frc2::CommandPtr SetPositionFromDistanceTarget(std::function<units::meter_t()> distanceToTarget);
