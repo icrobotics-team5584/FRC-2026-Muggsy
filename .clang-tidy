@@ -69,12 +69,14 @@ CheckOptions:
     value: "UPPER_CASE"
   - key: readability-identifier-naming.FunctionCase
     value: "CamelCase"
-  - key: readability-identifier-naming.MemberCase
+  - key: readability-identifier-naming.StructMemberCase
     value: "camelBack"
   - key: readability-identifier-naming.ClassMemberCase
     value: "camelBack"
   - key: readability-identifier-naming.ClassMemberPrefix
     value: "_"
+  - key: readability-identifier-naming.ClassConstantCase
+    value: "UPPER_CASE"
   - key: readability-identifier-naming.ParameterCase
     value: "camelBack"
   # Allow single uppercase letters for conventional names (e.g. P, I, D, S, V, A)
