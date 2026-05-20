@@ -18,6 +18,6 @@ class RobotVisualisation {
   frc::Mechanism2d _display{0.75, 0.75};
 
   /* Indexer Visualisation */
-  frc::MechanismRoot2d* _indexerMechRoot = _display.GetRoot("indexerRoot", 0.250, 0.125);
-  MechanismCircle2d _indexerMechWheel{_indexerMechRoot, "indexerCircle", 0.10, 0_deg};
+  frc::MechanismRoot2d* _intakeMechRoot = _display.GetRoot("intakeRoot", 0.250, 0.125);
+  MechanismCircle2d _intakeMechWheel{_intakeMechRoot, "intakeCircle", 0.10, 0_deg};
 };

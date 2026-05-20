@@ -28,7 +28,7 @@ void SubIntake::Periodic() {
   Logger::LogFalcon("Intake/Motor1", _motor1);
   Logger::LogFalcon("Intake/Motor2", _motor2);
 
-  RobotVisualisation::GetInstance()._indexerMechWheel.SetAngle(_motor1.GetPosition().GetValue());
+  RobotVisualisation::GetInstance()._intakeMechWheel.SetAngle(_motor1.GetPosition().GetValue());
 
   Logger::Log("Intake/Is Intaking", _intakeOn);
 }
