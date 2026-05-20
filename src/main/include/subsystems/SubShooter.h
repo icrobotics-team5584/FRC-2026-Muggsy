@@ -68,7 +68,7 @@ class SubShooter : public frc2::SubsystemBase {
     "Shooter Motor 1 max temperature was reached!", frc::Alert::AlertType::kWarning};
   frc::Alert _shooter1StickyCurrentAlert{
     "Shooter Motor 1 max current was reached!", frc::Alert::AlertType::kWarning};
-  AlertController::MotorAlertConfig _shooter1AlertConfig{_shooter1HighTempAlert,
+  alertController::MotorAlertConfig _shooter1AlertConfig{_shooter1HighTempAlert,
     _shooter1CurrentAlert, _shooter1StickyTempAlert, _shooter1StickyCurrentAlert, 60_degC, 40_A};
 
   frc::Alert _shooter2HighTempAlert{
@@ -78,7 +78,7 @@ class SubShooter : public frc2::SubsystemBase {
     "Shooter Motor 2 max temperature was reached!", frc::Alert::AlertType::kWarning};
   frc::Alert _shooter2StickyCurrentAlert{
     "Shooter Motor 2 max current was reached!", frc::Alert::AlertType::kWarning};
-  AlertController::MotorAlertConfig _shooter2AlertConfig{_shooter2HighTempAlert,
+  alertController::MotorAlertConfig _shooter2AlertConfig{_shooter2HighTempAlert,
     _shooter2CurrentAlert, _shooter2StickyTempAlert, _shooter2StickyCurrentAlert, 60_degC, 40_A};
 
   frc::Alert _shooter3HighTempAlert{
@@ -88,7 +88,7 @@ class SubShooter : public frc2::SubsystemBase {
     "Shooter Motor 3 max temperature was reached!", frc::Alert::AlertType::kWarning};
   frc::Alert _shooter3StickyCurrentAlert{
     "Shooter Motor 3 max current was reached!", frc::Alert::AlertType::kWarning};
-  AlertController::MotorAlertConfig _shooter3AlertConfig{_shooter3HighTempAlert,
+  alertController::MotorAlertConfig _shooter3AlertConfig{_shooter3HighTempAlert,
     _shooter3CurrentAlert, _shooter3StickyTempAlert, _shooter3StickyCurrentAlert, 60_degC, 40_A};
 
   frc::Alert _shooter4HighTempAlert{
@@ -98,7 +98,7 @@ class SubShooter : public frc2::SubsystemBase {
     "Shooter Motor 4 max temperature was reached!", frc::Alert::AlertType::kWarning};
   frc::Alert _shooter4StickyCurrentAlert{
     "Shooter Motor 4 max current was reached!", frc::Alert::AlertType::kWarning};
-  AlertController::MotorAlertConfig _shooter4AlertConfig{_shooter4HighTempAlert,
+  alertController::MotorAlertConfig _shooter4AlertConfig{_shooter4HighTempAlert,
     _shooter4CurrentAlert, _shooter4StickyTempAlert, _shooter4StickyCurrentAlert, 60_degC, 40_A};
 
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTableScoring;
