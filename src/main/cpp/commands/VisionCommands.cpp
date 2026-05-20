@@ -24,10 +24,10 @@ frc2::CommandPtr AddVisionMeasurement() {
             Logger::FieldDisplay::GetInstance().DisplayPose("Vision/"+name+"/Est pose" , {});
             Logger::Log("Vision/"+name+"/Est pose usable", false);
             Logger::Log("Vision/"+name+"/Timestamp difference", 0_s);
-            Logger::Log("Vision/"+name+"/Vaild timestamp", false);
+            Logger::Log("Vision/"+name+"/Valid timestamp", false);
 
             // If the pose has value
-            Logger::Log("Vision/"+name+"/Have value" , pose.has_value());
+            Logger::Log("Vision/"+name+"/Has value" , pose.has_value());
             if (!pose.has_value()) {continue;}
 
             // If the pose is usable, or the timestamp is recent

@@ -86,8 +86,11 @@ units::length::meter_t SubVision::GetAvgDistanceFromCamera(photon::EstimatedRobo
 bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose est) {
   bool targetsUsable = (GetAvgDistanceFromCamera(est) < 5_m) || (est.targetsUsed.size() > 1);
   auto pose = est.estimatedPose;
-  bool estimateOnField = (pose.X() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE && pose.X() < ICGeometry::FIELD_LENGTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
-                          pose.Y() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE && pose.Y() < ICGeometry::FIELD_WIDTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE);
+  bool estimateOnField =
+      (pose.X() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
+      pose.X() < ICGeometry::FIELD_LENGTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
+      pose.Y() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
+      pose.Y() < ICGeometry::FIELD_WIDTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE);
   return (targetsUsable && estimateOnField);
 }
 
