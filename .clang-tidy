@@ -52,11 +52,11 @@ Checks: >
   readability-simplify-boolean-expr,
   readability-static-accessed-through-instance,
   readability-string-compare,
-  clang-diagnostic-unused-lambda-capture,
-  -clang-diagnostic-c11-extensions
+  clang-diagnostic-unused-lambda-capture
 
 HeaderFilterRegex: "src/main/(cpp|include)/.*"
 WarningsAsErrors: "*"
+ExtraArgs: ["-Wno-c11-extensions"]
 
 CheckOptions:
   - key: readability-identifier-naming.ClassCase
