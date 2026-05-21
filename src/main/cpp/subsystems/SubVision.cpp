@@ -3,21 +3,24 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/SubVision.h"
-#include "subsystems/SubDrivebase.h"
-#include "DrivebaseConfig.h"
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <frc/DriverStation.h>
-#include <frc/RobotBase.h>
-#include <photon/estimation/CameraTargetRelation.h>
-#include <frc/MathUtil.h>
-#include "utilities/PoseHandler.h"
-#include "utilities/Logger.h"
-#include "utilities/ICGeometry.h"
 
+#include "subsystems/SubDrivebase.h"
+
+#include "utilities/ICGeometry.h"
+#include "utilities/Logger.h"
+#include "utilities/PoseHandler.h"
+
+#include <frc/DriverStation.h>
+#include <frc/MathUtil.h>
+#include <frc/RobotBase.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include <photon/estimation/CameraTargetRelation.h>
+
+#include "DrivebaseConfig.h"
 
 SubVision::SubVision() {
-
-   // Set dev table for distance based deviance
+  // Set dev table for distance based deviance
   _devTable.insert(0_m, 0);
   _devTable.insert(0.71_m, 0.002);
   _devTable.insert(1_m, 0.006);
@@ -36,8 +39,8 @@ SubVision::SubVision() {
 
   // Display tags on field
   for (auto target : _visionSim.GetVisionTargets()) {
-     Logger::FieldDisplay::GetInstance().DisplayPose(fmt::format("tag{}", target.GetFiducialId()),
-                                            target.GetPose().ToPose2d());
+    Logger::FieldDisplay::GetInstance().DisplayPose(
+      fmt::format("tag{}", target.GetFiducialId()), target.GetPose().ToPose2d());
   }
 }
 
@@ -87,7 +90,7 @@ bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose est) {
   bool targetsUsable = (GetAvgDistanceFromCamera(est) < 5_m) || (est.targetsUsed.size() > 1);
   auto pose = est.estimatedPose;
   bool estimateOnField =
-      (pose.X() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
+    (pose.X() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
       pose.X() < ICGeometry::FIELD_LENGTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
       pose.Y() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
       pose.Y() < ICGeometry::FIELD_WIDTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE);
@@ -103,12 +106,12 @@ std::optional<frc::Pose2d> SubVision::GetAprilTagPose(int id) {
   }
 }
 
-int SubVision::GetClosestTag(frc::Pose2d currentPose){
+int SubVision::GetClosestTag(frc::Pose2d currentPose) {
   int closestTagID = 0;
   units::length::meter_t closestDistance;
   std::vector<frc::AprilTag> tagList = _tagMap.GetTags();
 
-   for (const frc::AprilTag tag : tagList) {
+  for (const frc::AprilTag tag : tagList) {
     int id = tag.ID;
     auto distance = currentPose.Translation().Distance(GetAprilTagPose(id).value().Translation());
     if (closestTagID == 0 || distance < closestDistance) {

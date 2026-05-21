@@ -4,20 +4,22 @@
 
 #pragma once
 
-#include <frc2/command/SubsystemBase.h>
-#include <frc/geometry/Pose3d.h>
-#include <frc/geometry/Transform3d.h>
-#include <frc/apriltag/AprilTagFieldLayout.h>
-#include <frc/apriltag/AprilTagFields.h>
-#include <photon/PhotonCamera.h>
-#include <photon/simulation/VisionSystemSim.h>
-#include <photon/PhotonPoseEstimator.h>
-#include <frc/Filesystem.h>
-#include <wpi/interpolating_map.h>
 #include "utilities/ICCamera.h"
 
+#include <frc/Filesystem.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
+#include <frc/apriltag/AprilTagFields.h>
+#include <frc/geometry/Pose3d.h>
+#include <frc/geometry/Transform3d.h>
+#include <frc2/command/SubsystemBase.h>
+
+#include <photon/PhotonCamera.h>
+#include <photon/PhotonPoseEstimator.h>
+#include <photon/simulation/VisionSystemSim.h>
+#include <wpi/interpolating_map.h>
+
 class SubVision : public frc2::SubsystemBase {
-public:
+ public:
   SubVision();
   static SubVision& GetInstance() {
     static SubVision inst;
@@ -34,10 +36,7 @@ public:
 
   void SimulationPeriodic() override;
 
-  enum Side {
-    Left = 1,
-    Right = 2
-  };
+  enum Side { Left = 1, Right = 2 };
 
   std::optional<frc::Pose2d> GetAprilTagPose(int id);
 
@@ -54,28 +53,24 @@ public:
   const std::string SHOOTER_CAM_NAME = "shooter";
 
  private:
-
-  //Create field layout
+  // Create field layout
   std::string _tagMapFilePath = frc::filesystem::GetDeployDirectory() + "/2026-rebuilt.json";
   frc::AprilTagFieldLayout _tagMap{_tagMapFilePath};
 
-  frc::Transform3d _shooterBotToCam{{-295.779_mm,252.927_mm,320.249_mm},{0_deg,-30_deg, 90_deg}};
+  frc::Transform3d _shooterBotToCam{
+    {-295.779_mm, 252.927_mm, 320.249_mm}, {0_deg, -30_deg, 90_deg}};
 
-  ICCamera _shooterCam {
-    SHOOTER_CAM_NAME,
-    _shooterBotToCam,
-    _tagMap
-  };
+  ICCamera _shooterCam{SHOOTER_CAM_NAME, _shooterBotToCam, _tagMap};
 
-  std::vector<ICCamera*> _camList {
+  std::vector<ICCamera*> _camList{
     &_shooterCam,
   };
 
   photon::VisionSystemSim _visionSim{"VisionSim"};
 
-  //Deviation table for further distances from tag
+  // Deviation table for further distances from tag
   wpi::interpolating_map<units::meter_t, double> _devTable;
 };
 
 // Link to photon vision
-//http://10.55.84.11:5800
+// http://10.55.84.11:5800
