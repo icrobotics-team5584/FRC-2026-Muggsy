@@ -60,18 +60,12 @@ void SwerveModule::SetDesiredState(
   auto curAngle = GetAngle();
   referenceState.Optimize(curAngle);
 
-  // finds force required for FF, scaled by distance to correct angle error
+  // finds force required for FF, scaled by distance to correct angle
   namespace math = units::math;
-  units::turn_t forceFFAngle = math::atan(yForceFF / xForceFF);  // finds angle of the force to
-                                                                 // apply
-  units::turn_t angleError =
-    forceFFAngle -
-    curAngle.Radians();  // checks error between angle to apply force on and current angle
-  units::newton_t forceFFNorm =
-    math::sqrt(math::pow<2>(xForceFF) + math::pow<2>(yForceFF));  // finds required amount of force
-  units::newton_t scaledForceFF =
-    forceFFNorm *
-    math::cos(angleError);  // scales force by depending on the distance from required angle
+  units::turn_t forceFFAngle = math::atan(yForceFF / xForceFF);
+  units::turn_t angleError = forceFFAngle - curAngle.Radians();
+  units::newton_t forceFFNorm = math::sqrt(math::pow<2>(xForceFF) + math::pow<2>(yForceFF));
+  units::newton_t scaledForceFF = forceFFNorm * math::cos(angleError);  // scale down force by error
 
   // matches velocity's sign and the FF force
   scaledForceFF = math::copysign(scaledForceFF, referenceState.speed);
