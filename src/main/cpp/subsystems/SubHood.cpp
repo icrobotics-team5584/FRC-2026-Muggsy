@@ -10,14 +10,15 @@
 
 SubHood::SubHood() {
   //_hoodPitchTable.insert(x_m, y_deg);
-  _config.encoder.PositionConversionFactor(1 / GEAR_RATIO);
-  _config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
-  _config.closedLoop.Pid(16, 0, 8);
-  _config.closedLoop.feedForward.kS(0.6);
-  _config.SmartCurrentLimit(30);
-  _config.Inverted(false);
-  _config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-  _hoodMotor.OverwriteConfig(_config);
+  rev::spark::SparkBaseConfig config;
+  config.encoder.PositionConversionFactor(1 / GEAR_RATIO);
+  config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
+  config.closedLoop.Pid(16, 0, 8);
+  config.closedLoop.feedForward.kS(0.6);
+  config.SmartCurrentLimit(30);
+  config.Inverted(false);
+  config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  _hoodMotor.OverwriteConfig(config);
 
   logger::Log("Hood/Motor", &_hoodMotor);
 }
@@ -96,7 +97,15 @@ void SubHood::SetManualAngleOffset(units::degree_t offset) {
 }
 
 frc2::CommandPtr SubHood::HoodToStowAngle() {
-  return RunOnce([this] { _hoodMotor.SetPositionTarget(STOW_ANGLE); });
+  return SetPositionTarget([] { return STOW_ANGLE; });
+}
+
+frc2::CommandPtr SubHood::HoodToEjectAngle() {
+  return SetPositionTarget([] { return LOWER_LIMIT + 5_deg; });
+}
+
+frc2::CommandPtr SubHood::HoodToPassingAngle() {
+  return SetPositionTarget([] { return PASSING_ANGLE; });
 }
 
 frc2::CommandPtr SubHood::SetPositionFromDistanceTarget(
@@ -126,16 +135,12 @@ frc2::CommandPtr SubHood::MoveHoodDown1Degree() {
   }).WithTimeout(1_ms);
 }
 
-frc2::CommandPtr SubHood::HoodToEjectAngle() {
-  return SubHood::GetInstance().SetPositionTarget([] { return LOWER_LIMIT + 5_deg; });
-}
-
 void SubHood::SetBrakeMode(bool brakeMode) {
-  rev::spark::SparkBaseConfig _brakeModeConfig;
+  rev::spark::SparkBaseConfig brakeModeConfig;
   if (brakeMode) {
-    _brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+    brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
   } else {
-    _brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+    brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
   }
-  _hoodMotor.AdjustConfigNoPersist(_brakeModeConfig);
+  _hoodMotor.AdjustConfigNoPersist(brakeModeConfig);
 }

@@ -25,27 +25,26 @@ class SubHood : public frc2::SubsystemBase {
     return inst;
   }
 
-  void SimulationPeriodic();
+  void SimulationPeriodic() override;
 
-  bool HoodCurrentCheck();
   bool IsAtTarget();
 
   units::ampere_t GetHoodMotorCurrent();
 
-  frc2::CommandPtr ManualHoodDown();
   frc2::CommandPtr RunZeroingSequence();
-  frc2::CommandPtr HoodToEjectAngle();
-  frc2::CommandPtr HoodToStowAngle();
-
   frc2::CommandPtr SetPositionTarget(std::function<units::degree_t()> angle);
   frc2::CommandPtr SetPositionFromDistanceTarget(std::function<units::meter_t()> distanceToTarget);
-  frc2::CommandPtr AddManualAngleOffset(units::degree_t offset);
   frc2::CommandPtr MoveHoodUp1Degree();
   frc2::CommandPtr MoveHoodDown1Degree();
   void SetBrakeMode(bool brakeMode);
 
+  frc2::CommandPtr HoodToEjectAngle();
+  frc2::CommandPtr HoodToStowAngle();
+  frc2::CommandPtr HoodToPassingAngle();
+
   units::degree_t GetManualAngleOffset();
   void SetManualAngleOffset(units::degree_t offset);
+  frc2::CommandPtr AddManualAngleOffset(units::degree_t offset);
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -60,7 +59,7 @@ class SubHood : public frc2::SubsystemBase {
   static constexpr units::degree_t UPPER_LIMIT = 30_deg;
   static constexpr units::degree_t LOWER_LIMIT = 5_deg;
 
-  units::ampere_t zeroingCurrentLimit = 20_A;
+  static constexpr units::ampere_t zeroingCurrentLimit = 20_A;
 
   static constexpr units::degree_t DEFAULT_ANGLE_OFFSET = 0_deg;
   //_manualAngleOffset should only be modified using the SetManualAngleOffset function
@@ -70,7 +69,6 @@ class SubHood : public frc2::SubsystemBase {
   bool _hasZeroed = false;
 
   ICSparkFlex _hoodMotor{canid::HOOD_MOTOR};
-  rev::spark::SparkBaseConfig _config;
 
   frc::Alert _hoodHighTempAlert{"Hood Motor high temperature!", frc::Alert::AlertType::kWarning};
   frc::Alert _hoodCurrentAlert{"Hood Motor overcurrent!", frc::Alert::AlertType::kWarning};
@@ -79,7 +77,7 @@ class SubHood : public frc2::SubsystemBase {
   frc::Alert _hoodStickyCurrentAlert{
     "Hood Motor max current was reached!", frc::Alert::AlertType::kWarning};
   alertController::MotorAlertConfig _hoodAlertConfig{_hoodHighTempAlert, _hoodCurrentAlert,
-    _hoodStickyTempAlert, _hoodStickyCurrentAlert, 60_degC, 20_A};
+    _hoodStickyTempAlert, _hoodStickyCurrentAlert, 60_degC, 30_A};
 
   wpi::interpolating_map<units::meter_t, units::degree_t> _hoodPitchTable;
 
