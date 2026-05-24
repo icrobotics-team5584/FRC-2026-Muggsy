@@ -51,33 +51,33 @@ SubShooter::SubShooter() {
 void SubShooter::Periodic() {
   auto loopStart = frc::GetTime();
 
-  Logger::LogFalcon("Shooter/Motor1", _shooterMotor1);
-  Logger::LogFalcon("Shooter/Motor2", _shooterMotor2);
-  Logger::LogFalcon("Shooter/Motor3", _shooterMotor3);
-  Logger::LogFalcon("Shooter/Motor4", _shooterMotor4);
-  Logger::Log("Shooter/IsReadyToShoot", IsReadyToShoot());
+  logger::LogFalcon("Shooter/Motor1", _shooterMotor1);
+  logger::LogFalcon("Shooter/Motor2", _shooterMotor2);
+  logger::LogFalcon("Shooter/Motor3", _shooterMotor3);
+  logger::LogFalcon("Shooter/Motor4", _shooterMotor4);
+  logger::Log("Shooter/IsReadyToShoot", IsReadyToShoot());
 
-  AlertController::UpdateTemperatureAlert(
+  alertController::UpdateTemperatureAlert(
     _shooter1AlertConfig, _shooterMotor1.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(
+  alertController::UpdateCurrentAlert(
     _shooter1AlertConfig, _shooterMotor1.GetStatorCurrent().GetValue());
 
-  AlertController::UpdateTemperatureAlert(
+  alertController::UpdateTemperatureAlert(
     _shooter2AlertConfig, _shooterMotor2.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(
+  alertController::UpdateCurrentAlert(
     _shooter2AlertConfig, _shooterMotor2.GetStatorCurrent().GetValue());
 
-  AlertController::UpdateTemperatureAlert(
+  alertController::UpdateTemperatureAlert(
     _shooter3AlertConfig, _shooterMotor3.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(
+  alertController::UpdateCurrentAlert(
     _shooter3AlertConfig, _shooterMotor3.GetStatorCurrent().GetValue());
 
-  AlertController::UpdateTemperatureAlert(
+  alertController::UpdateTemperatureAlert(
     _shooter4AlertConfig, _shooterMotor4.GetDeviceTemp().GetValue());
-  AlertController::UpdateCurrentAlert(
+  alertController::UpdateCurrentAlert(
     _shooter4AlertConfig, _shooterMotor4.GetStatorCurrent().GetValue());
 
-  Logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
+  logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
 }
 
 void SubShooter::SimulationPeriodic() {
@@ -92,7 +92,8 @@ void SubShooter::SimulationPeriodic() {
   simState.AddRotorPosition(_flywheelSim.GetAngularVelocity() * GEAR_RATIO * 20_ms);
 }
 
-frc2::CommandPtr SubShooter::SetSpeedTarget(std::function<units::turns_per_second_t()> speed) {
+frc2::CommandPtr SubShooter::SetSpeedTarget(
+  const std::function<units::turns_per_second_t()>& speed) {
   return Run(
     [this, speed] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(speed())); });
 }
@@ -124,7 +125,7 @@ bool SubShooter::IsReadyToShoot() {
 }
 
 frc2::CommandPtr SubShooter::SetSpeedFromDistanceTarget(
-  std::function<units::meter_t()> distance, std::function<bool()> isPassing) {
+  const std::function<units::meter_t()>& distance, const std::function<bool()>& isPassing) {
   return SetSpeedTarget([this, distance, isPassing] {
     return isPassing() ? _flyWheelSpeedTablePassing[distance()]
                        : _flyWheelSpeedTableScoring[distance()] + _manualSpeedOffset;
@@ -137,7 +138,7 @@ units::turns_per_second_t SubShooter::GetManualSpeedOffset() {
 
 void SubShooter::SetManualSpeedOffset(units::turns_per_second_t offset) {
   _manualSpeedOffset = offset;
-  Logger::Log("Shooter/Manual Speed Offset", _manualSpeedOffset);
+  logger::Log("Shooter/Manual Speed Offset", _manualSpeedOffset);
 }
 
 units::second_t SubShooter::GetTimeOfFlightFromDistance(units::meter_t distance) {
