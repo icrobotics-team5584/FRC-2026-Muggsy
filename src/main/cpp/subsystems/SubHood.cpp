@@ -32,7 +32,7 @@ void SubHood::Periodic() {
   alertController::UpdateTemperatureAlert(_hoodAlertConfig, hoodTemperature);
   alertController::UpdateCurrentAlert(_hoodAlertConfig, hoodCurrent);
 
-  if (_hasZeroed == false && _zeroing == false) {
+  if (!_hasZeroed && !_zeroing) {
     _hoodMotor.StopMotor();
   }
 
@@ -49,7 +49,7 @@ void SubHood::SimulationPeriodic() {
   _hoodMotor.IterateSim(_hoodSim.GetVelocity(), _hoodSim.GetAngle());
 }
 
-frc2::CommandPtr SubHood::SetPositionTarget(std::function<units::degree_t()> angle) {
+frc2::CommandPtr SubHood::SetPositionTarget(const std::function<units::degree_t()>& angle) {
   return Run([this, angle] {
     units::degree_t target = std::clamp(angle(), LOWER_LIMIT, UPPER_LIMIT);
 
@@ -67,7 +67,7 @@ frc2::CommandPtr SubHood::RunZeroingSequence() {
     _hoodMotor.SetVoltage(-1_V);  // start moving hood down slowly
   })
     .AndThen(frc2::cmd::WaitUntil([this] {
-      return (units::math::abs(GetHoodMotorCurrent()) > zeroingCurrentLimit ||
+      return (units::math::abs(GetHoodMotorCurrent()) > ZEROING_CURRENT_LIMIT ||
               frc::RobotBase::IsSimulation());  // stop moving down when current limit reached (i.e.
                                                 // hood hits the lower limit)
     }))
@@ -109,7 +109,7 @@ frc2::CommandPtr SubHood::HoodToPassingAngle() {
 }
 
 frc2::CommandPtr SubHood::SetPositionFromDistanceTarget(
-  std::function<units::meter_t()> distanceToTarget) {
+  const std::function<units::meter_t()>& distanceToTarget) {
   return SetPositionTarget(
     [this, distanceToTarget] { return _hoodPitchTable[distanceToTarget()] + _manualAngleOffset; });
 }

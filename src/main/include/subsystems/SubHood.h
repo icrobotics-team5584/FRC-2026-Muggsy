@@ -32,8 +32,8 @@ class SubHood : public frc2::SubsystemBase {
   units::ampere_t GetHoodMotorCurrent();
 
   frc2::CommandPtr RunZeroingSequence();
-  frc2::CommandPtr SetPositionTarget(std::function<units::degree_t()> angle);
-  frc2::CommandPtr SetPositionFromDistanceTarget(std::function<units::meter_t()> distanceToTarget);
+  frc2::CommandPtr SetPositionTarget(const std::function<units::degree_t()>& angle);
+  frc2::CommandPtr SetPositionFromDistanceTarget(const std::function<units::meter_t()>& distanceToTarget);
   frc2::CommandPtr MoveHoodUp1Degree();
   frc2::CommandPtr MoveHoodDown1Degree();
   void SetBrakeMode(bool brakeMode);
@@ -59,7 +59,7 @@ class SubHood : public frc2::SubsystemBase {
   static constexpr units::degree_t UPPER_LIMIT = 30_deg;
   static constexpr units::degree_t LOWER_LIMIT = 5_deg;
 
-  static constexpr units::ampere_t zeroingCurrentLimit = 20_A;
+  static constexpr units::ampere_t ZEROING_CURRENT_LIMIT = 20_A;
 
   static constexpr units::degree_t DEFAULT_ANGLE_OFFSET = 0_deg;
   //_manualAngleOffset should only be modified using the SetManualAngleOffset function
