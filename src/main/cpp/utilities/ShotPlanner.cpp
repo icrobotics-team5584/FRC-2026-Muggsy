@@ -10,17 +10,17 @@
 #include <utilities/ICGeometry.h>
 #include <utilities/Logger.h>
 
-ShotPlanner::ShotPlanner(){
-    Logger::Log("Shot Planner/override status", _overrideStatus);
+ShotPlanner::ShotPlanner() {
+  logger::Log("Shot Planner/override status", _overrideStatus);
 }
 
 ShotPlanner::ShotPlannerResults ShotPlanner::CalculateShotTarget(frc::Pose2d robotPos) {
   auto alliance = frc::DriverStation::GetAlliance();
   if (alliance) {
     if (alliance.value() == frc::DriverStation::kRed) {
-      robotPos = ICGeometry::xPoseFlip(robotPos);
+      robotPos = icGeometry::XPoseFlip(robotPos);
     }
-    Logger::FieldDisplay::GetInstance().DisplayPose("Shot Planner/Robot Position", robotPos);
+    logger::FieldDisplay::GetInstance().DisplayPose("Shot Planner/Robot Position", robotPos);
   }
 
   frc::Translation3d target;
@@ -31,52 +31,52 @@ ShotPlanner::ShotPlannerResults ShotPlanner::CalculateShotTarget(frc::Pose2d rob
   bool isInTopHalf = IsInTopHalf(robotPos);
   bool isInAllianceZone = IsInAllianceZone(robotPos);
 
-  Logger::Log("Shot Planner/Is Top Half", isInTopHalf);
-  Logger::Log("Shot Planner/Is Alliance Zone", isInAllianceZone);
+  logger::Log("Shot Planner/Is Top Half", isInTopHalf);
+  logger::Log("Shot Planner/Is Alliance Zone", isInAllianceZone);
 
-  if (isInAllianceZone && isOurHubActive){
+  if (isInAllianceZone && isOurHubActive) {
     target = fieldpos::HUB_POSITION;
     shouldShoot = true;
     isPassing = false;
   }
-  if (isInAllianceZone && !isOurHubActive){
+  if (isInAllianceZone && !isOurHubActive) {
     target = fieldpos::HUB_POSITION;
     shouldShoot = false;
     isPassing = false;
   }
-  if (!isInAllianceZone && isInTopHalf){
+  if (!isInAllianceZone && isInTopHalf) {
     target = fieldpos::BOTTOM_ALLIANCE_ZONE_POSITION;
     shouldShoot = true;
     isPassing = true;
   }
-  if (!isInAllianceZone && !isInTopHalf){
+  if (!isInAllianceZone && !isInTopHalf) {
     target = fieldpos::TOP_ALLIANCE_ZONE_POSITION;
     shouldShoot = true;
     isPassing = true;
   }
 
-  //Manual overrides, defaults to not using
-  if (_overrideStatus == Override::PASS && isInTopHalf){
+  // Manual overrides, defaults to not using
+  if (_overrideStatus == Override::PASS && isInTopHalf) {
     target = fieldpos::BOTTOM_ALLIANCE_ZONE_POSITION;
     shouldShoot = true;
     isPassing = true;
   }
-  if (_overrideStatus == Override::PASS && !isInTopHalf){
+  if (_overrideStatus == Override::PASS && !isInTopHalf) {
     target = fieldpos::TOP_ALLIANCE_ZONE_POSITION;
     shouldShoot = true;
     isPassing = true;
   }
-  if (_overrideStatus == Override::SCORE){
+  if (_overrideStatus == Override::SCORE) {
     target = fieldpos::HUB_POSITION;
     shouldShoot = true;
     isPassing = false;
   }
 
-    if (alliance) {
-      if (alliance.value() == frc::DriverStation::Alliance::kRed) {
-        target = ICGeometry::xTranslationFlip(target);
-      }
+  if (alliance) {
+    if (alliance.value() == frc::DriverStation::Alliance::kRed) {
+      target = icGeometry::XTranslationFlip(target);
     }
+  }
 
   return {target, shouldShoot, isPassing};
 }
@@ -92,17 +92,11 @@ bool ShotPlanner::IsWithinZone(
 }
 
 bool ShotPlanner::IsInTopHalf(frc::Pose2d robotPos) {
-  if (robotPos.Y() < 4_m) {
-    return true;
-  }
-  return false;
+  return robotPos.Y() < 4_m;
 }
 
-bool ShotPlanner::IsInAllianceZone(frc::Pose2d robotPos){
-  if (robotPos.X() < fieldpos::BLUE_ALLIANCE_ZONE_TOP_RIGHT.X()){
-    return true;
-  }
-  return false;
+bool ShotPlanner::IsInAllianceZone(frc::Pose2d robotPos) {
+  return robotPos.X() < fieldpos::BLUE_ALLIANCE_ZONE_TOP_RIGHT.X();
 }
 
 frc::Pose2d ShotPlanner::ConvertToPose2d(frc::Translation3d translation3d) {
@@ -111,14 +105,11 @@ frc::Pose2d ShotPlanner::ConvertToPose2d(frc::Translation3d translation3d) {
   return targetPose;
 }
 
-void ShotPlanner::SetOverride(Override override){
+void ShotPlanner::SetOverride(Override override) {
   _overrideStatus = override;
-  Logger::Log("Shot Planner/override status", _overrideStatus);
+  logger::Log("Shot Planner/override status", _overrideStatus);
 }
 
-bool ShotPlanner::GetOverrideEnabled(){
-  if (_overrideStatus != Override::NONE){
-    return true;
-  }
-  return false;
+bool ShotPlanner::GetOverrideEnabled() {
+  return _overrideStatus != Override::NONE;
 }

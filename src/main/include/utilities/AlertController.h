@@ -5,7 +5,7 @@
 #include <units/current.h>
 #include <units/temperature.h>
 
-namespace AlertController {
+namespace alertController {
 struct MotorAlertConfig {
   frc::Alert temperatureAlert;
   frc::Alert currentAlert;
@@ -21,4 +21,4 @@ void UpdateTemperatureAlert(MotorAlertConfig& config, units::celsius_t motorTemp
 
 // updates the alert for the current. automatically updates to true if has been over 3s or false.
 void UpdateCurrentAlert(MotorAlertConfig& config, units::ampere_t motorCurrent);
-};  // namespace AlertController
+};  // namespace alertController

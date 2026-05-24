@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rev/SparkFlex.h>
-
 #include "utilities/ICSpark.h"
+
+#include <rev/SparkFlex.h>
 
 /**
  * Helper class to setup an ICSpark to control a Spark Flex. See ICSpark for

@@ -3,15 +3,15 @@
 #include "utilities/Logger.h"
 
 void ShiftHandler::Periodic() {
-  Logger::Log("RebuiltShift/Hub Active", IsActiveShift());
-  Logger::Log("RebuiltShift/Won Auton Shift", GetShiftName(GetWinningShift()));
-  Logger::Log("RebuiltShift/Current Shift", GetShiftName(GetCurrentShift()));
-  Logger::Log("RebuiltShift/Seconds Left on Shift", GetTimeLeft());
-  Logger::Log("RebuiltShift/Seconds Left in Match", frc::DriverStation::GetMatchTime());
-  Logger::Log("RebuiltShift/Override Active", _overrideActive);
-  Logger::Log("RebuiltShift/Start shift offset", _beforeShiftOffset);
-  Logger::Log("RebuiltShift/End shift offset", _afterShiftOffset);
-  Logger::Log("RebuiltShift/GetCurrentShift/timeLeft", 140_s - getTimer());
+  logger::Log("RebuiltShift/Hub Active", IsActiveShift());
+  logger::Log("RebuiltShift/Won Auton Shift", GetShiftName(GetWinningShift()));
+  logger::Log("RebuiltShift/Current Shift", GetShiftName(GetCurrentShift()));
+  logger::Log("RebuiltShift/Seconds Left on Shift", GetTimeLeft());
+  logger::Log("RebuiltShift/Seconds Left in Match", frc::DriverStation::GetMatchTime());
+  logger::Log("RebuiltShift/Override Active", _overrideActive);
+  logger::Log("RebuiltShift/Start shift offset", _beforeShiftOffset);
+  logger::Log("RebuiltShift/End shift offset", _afterShiftOffset);
+  logger::Log("RebuiltShift/GetCurrentShift/timeLeft", 140_s - GetTimer());
 }
 
 RebuiltShift ShiftHandler::GetCurrentShift() {
@@ -19,7 +19,7 @@ RebuiltShift ShiftHandler::GetCurrentShift() {
     return RebuiltShift::AUTON;
   }
 
-  units::second_t timeLeft = 140_s - getTimer();
+  units::second_t timeLeft = 140_s - GetTimer();
 
   if (timeLeft == -1_s) { /* Isn't in home practise mode */
     return RebuiltShift::NONE;
@@ -66,13 +66,13 @@ RebuiltShift ShiftHandler::GetCurrentShift() {
 }
 
 RebuiltShift ShiftHandler::GetWinningShift() {
-  if (_overrideActive == true) {
+  if (_overrideActive) {
     return static_cast<RebuiltShift>(
       frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue));
   }
 
   std::string data = frc::DriverStation::GetGameSpecificMessage();
-  if (data.length() == 0) { /* No winning shift message recieved */
+  if (data.empty()) { /* No winning shift message recieved */
     return RebuiltShift::NONE;
   }
 
@@ -132,16 +132,16 @@ bool ShiftHandler::GetOverrideActive() {
 }
 
 bool ShiftHandler::IsShift(RebuiltShift shift) {
-  return GetCurrentShift() == shift ? true : false; /* check if matching */
+  return GetCurrentShift() == shift; /* check if matching */
 }
 
 bool ShiftHandler::IsActiveShift() {
-  if (_overrideActive == true) {
+  if (_overrideActive) {
     return true;
   }
-  if (frc::DriverStation::IsFMSAttached() == false && /* Isn't at comp? */
-      frc::DriverStation::GetMatchTime() == -1_s &&   /* Isn't home practise mode */
-      frc::DriverStation::IsDisabled() == false       /* Isn't disabled */
+  if (!frc::DriverStation::IsFMSAttached() &&       /* Isn't at comp? */
+      frc::DriverStation::GetMatchTime() == -1_s && /* Isn't home practise mode */
+      !frc::DriverStation::IsDisabled()             /* Isn't disabled */
   ) {
     return true; /* Don't respect shifts */
   }
@@ -149,27 +149,24 @@ bool ShiftHandler::IsActiveShift() {
   RebuiltShift myShift = static_cast<RebuiltShift>(
     frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue));
 
-  if (currentShift == RebuiltShift::AUTON || currentShift == RebuiltShift::TRANS ||
-      currentShift == RebuiltShift::ENDGAME || myShift == currentShift) {
-    return true;
-  }
-  return false;
+  return currentShift == RebuiltShift::AUTON || currentShift == RebuiltShift::TRANS ||
+         currentShift == RebuiltShift::ENDGAME || myShift == currentShift;
 }
 
 void ShiftHandler::SetOverrideActive(bool isActive) {
   _overrideActive = isActive;
 }
 
-void ShiftHandler::SetTOFOffset(units::second_t TOF) {
-  _tof = TOF;
-  _beforeShiftOffset = TOF;
-  _afterShiftOffset = _baseOffset - TOF;
+void ShiftHandler::SetTOFOffset(units::second_t tof) {
+  _tof = tof;
+  _beforeShiftOffset = tof;
+  _afterShiftOffset = _baseOffset - tof;
 }
 
-void ShiftHandler::resetTimer() {
+void ShiftHandler::ResetTimer() {
   _teleopTimer.Restart();
 }
 
-units::second_t ShiftHandler::getTimer() {
+units::second_t ShiftHandler::GetTimer() {
   return _teleopTimer.Get();
 }
