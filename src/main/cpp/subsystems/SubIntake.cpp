@@ -29,7 +29,7 @@ void SubIntake::Periodic() {
 
   RobotVisualisation::GetInstance()._intakeMechWheel.SetAngle(_motor1.GetPosition().GetValue());
 
-  Logger::Log("Intake/Is Running", _intakeOn);
+  Logger::Log("Intake/Is Intaking", _intakeOn);
 
   Logger::Log("Intake/Loop Time", (frc::GetTime() - loopStart));
 }
@@ -59,17 +59,13 @@ frc2::CommandPtr SubIntake::RunIntake() {
 frc2::CommandPtr SubIntake::RunReverseIntake() {
   return StartEnd(
     [this] {
-      _intakeOn = true;
-
       _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{-5_V});
     },
     [this] {
-      _intakeOn = false;
-
       _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{0_V});
     });
 }
 
-bool SubIntake::IsIntakeEnabled() {
+bool SubIntake::IsIntaking() {
   return _intakeOn;
 }

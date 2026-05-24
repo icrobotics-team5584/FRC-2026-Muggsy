@@ -27,7 +27,7 @@ class SubIntake : public frc2::SubsystemBase {
   frc2::CommandPtr RunIntake();
   frc2::CommandPtr RunReverseIntake();
 
-  bool IsIntakeEnabled();
+  bool IsIntaking();
 
  private:
   bool _intakeOn = false;
