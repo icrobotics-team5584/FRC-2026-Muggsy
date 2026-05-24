@@ -63,7 +63,7 @@ class SubHood : public frc2::SubsystemBase {
   units::ampere_t zeroingCurrentLimit = 20_A;
 
   static constexpr units::degree_t DEFAULT_ANGLE_OFFSET = 0_deg;
-  //_manualSpeedOffset should only be modified using the SetManualAngleOffset function
+  //_manualAngleOffset should only be modified using the SetManualAngleOffset function
   units::degree_t _manualAngleOffset{DEFAULT_ANGLE_OFFSET};
 
   bool _zeroing = false;
