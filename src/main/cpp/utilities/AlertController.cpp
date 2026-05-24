@@ -1,6 +1,6 @@
 #include "utilities/AlertController.h"
 
-namespace AlertController {
+namespace alertController {
 
 // updates the alert for the temperature. automatically updates to true or false
 void UpdateTemperatureAlert(MotorAlertConfig& config, units::celsius_t motorTemperature) {
@@ -26,4 +26,4 @@ void UpdateCurrentAlert(MotorAlertConfig& config, units::ampere_t motorCurrent) 
   }
 }
 
-}  // namespace AlertController
+}  // namespace alertController

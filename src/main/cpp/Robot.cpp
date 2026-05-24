@@ -28,12 +28,12 @@ void Robot::RobotPeriodic() {
 
   ShiftHandler::GetInstance().Periodic();
 
-  Logger::Log("Robot/RioBrownOut", frc::RobotController::IsBrownedOut());
-  Logger::Log("Robot/RioInputVoltage", frc::RobotController::GetInputVoltage() * 1_V);
-  Logger::Log("Robot/RioInputCurrent", frc::RobotController::GetInputCurrent() * 1_A);
-  Logger::Log("Robot/BatteryVoltage", frc::RobotController::GetBatteryVoltage());
-  Logger::Log("Robot/PDHInputVoltage", _pdh.GetVoltage() * 1_V);
-  Logger::Log("Robot/PDHTotalCurrent", _pdh.GetTotalCurrent() * 1_A);
+  logger::Log("Robot/RioBrownOut", frc::RobotController::IsBrownedOut());
+  logger::Log("Robot/RioInputVoltage", frc::RobotController::GetInputVoltage() * 1_V);
+  logger::Log("Robot/RioInputCurrent", frc::RobotController::GetInputCurrent() * 1_A);
+  logger::Log("Robot/BatteryVoltage", frc::RobotController::GetBatteryVoltage());
+  logger::Log("Robot/PDHInputVoltage", _pdh.GetVoltage() * 1_V);
+  logger::Log("Robot/PDHTotalCurrent", _pdh.GetTotalCurrent() * 1_A);
 }
 
 void Robot::DisabledInit() {}

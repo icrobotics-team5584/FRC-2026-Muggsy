@@ -14,12 +14,12 @@ SubIndexer::SubIndexer() {
 
   _indexerMotorConfig.SmartCurrentLimit(CURRENT_LIMIT.value());
   _indexerMotor.OverwriteConfig(_indexerMotorConfig);
-  Logger::Log("Indexer/Indexer Motor", &_indexerMotor);
+  logger::Log("Indexer/Indexer Motor", &_indexerMotor);
 
   _indexerFollowMotorConfig.SmartCurrentLimit(CURRENT_LIMIT.value());
   _indexerFollowMotorConfig.Follow(_indexerMotor, true);
   _indexerFollowMotor.OverwriteConfig(_indexerFollowMotorConfig);
-  Logger::Log("Indexer/Indexer Follow Motor", &_indexerFollowMotor);
+  logger::Log("Indexer/Indexer Follow Motor", &_indexerFollowMotor);
 }
 
 // This method will be called once per scheduler run
