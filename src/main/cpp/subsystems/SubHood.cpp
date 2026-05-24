@@ -19,7 +19,7 @@ SubHood::SubHood() {
   _config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
   _hoodMotor.OverwriteConfig(_config);
 
-  Logger::Log("Hood/Motor", &_hoodMotor);
+  logger::Log("Hood/Motor", &_hoodMotor);
 }
 
 // This method will be called once per scheduler run
@@ -28,18 +28,18 @@ void SubHood::Periodic() {
   units::celsius_t hoodTemperature = _hoodMotor.GetTemperature();
   units::ampere_t hoodCurrent = _hoodMotor.GetStatorCurrent();
 
-  AlertController::UpdateTemperatureAlert(_hoodAlertConfig, hoodTemperature);
-  AlertController::UpdateCurrentAlert(_hoodAlertConfig, hoodCurrent);
+  alertController::UpdateTemperatureAlert(_hoodAlertConfig, hoodTemperature);
+  alertController::UpdateCurrentAlert(_hoodAlertConfig, hoodCurrent);
 
   if (_hasZeroed == false && _zeroing == false) {
     _hoodMotor.StopMotor();
   }
 
-  Logger::Log("Hood/Has zeroed", _hasZeroed);
-  Logger::Log("Hood/Zeroing", _zeroing);
-  Logger::Log("Hood/IsAtTarget", IsAtTarget());
-    
-  Logger::Log("Hood/Loop Time", (frc::GetTime() - loopStart));
+  logger::Log("Hood/Has zeroed", _hasZeroed);
+  logger::Log("Hood/Zeroing", _zeroing);
+  logger::Log("Hood/IsAtTarget", IsAtTarget());
+
+  logger::Log("Hood/Loop Time", (frc::GetTime() - loopStart));
 }
 
 void SubHood::SimulationPeriodic() {
@@ -60,23 +60,25 @@ frc2::CommandPtr SubHood::SetPositionTarget(std::function<units::degree_t()> ang
 
 frc2::CommandPtr SubHood::RunZeroingSequence() {
   return frc2::cmd::RunOnce([this] {
-      _hasZeroed = false;
-      _zeroing = true;
-      //ToggleSoftLimit(false); // disable soft limit (here be dragons!!)
-      _hoodMotor.SetVoltage(-1_V); // start moving arm down slowly
-    })
+    _hasZeroed = false;
+    _zeroing = true;
+    // ToggleSoftLimit(false); // disable soft limit
+    _hoodMotor.SetVoltage(-1_V);  // start moving hood down slowly
+  })
     .AndThen(frc2::cmd::WaitUntil([this] {
-      return (units::math::abs(GetHoodMotorCurrent()) > zeroingCurrentLimit || frc::RobotBase::IsSimulation()); // stop moving down when current limit reached (i.e. arm hits the ground)
+      return (units::math::abs(GetHoodMotorCurrent()) > zeroingCurrentLimit ||
+              frc::RobotBase::IsSimulation());  // stop moving down when current limit reached (i.e.
+                                                // hood hits the lower limit)
     }))
     .AndThen([this] {
-      _hoodMotor.StopMotor(); // stop motors
+      _hoodMotor.StopMotor();  // stop motors
       _hoodMotor.SetPosition(LOWER_LIMIT);
       _hasZeroed = true;
-    }) // set both arm motors to zero at ground
+    })  // set both hood motors to zero at lower limit
     .FinallyDo([this] {
       _hoodMotor.SetPositionTarget(LOWER_LIMIT);
       _zeroing = false;
-      //ToggleSoftLimit(true); // re-enable soft limit
+      // ToggleSoftLimit(true); // re-enable soft limit
     });
 };
 
@@ -90,7 +92,7 @@ units::degree_t SubHood::GetManualAngleOffset() {
 
 void SubHood::SetManualAngleOffset(units::degree_t offset) {
   _manualAngleOffset = offset;
-  Logger::Log("Hood/Manual Angle Offset", _manualAngleOffset);
+  logger::Log("Hood/Manual Angle Offset", _manualAngleOffset);
 }
 
 frc2::CommandPtr SubHood::HoodToStowAngle() {
@@ -99,16 +101,13 @@ frc2::CommandPtr SubHood::HoodToStowAngle() {
 
 frc2::CommandPtr SubHood::SetPositionFromDistanceTarget(
   std::function<units::meter_t()> distanceToTarget) {
-  return SetPositionTarget([this, distanceToTarget] {
-    return _hoodPitchTable[distanceToTarget()] + _manualAngleOffset;
-  });
+  return SetPositionTarget(
+    [this, distanceToTarget] { return _hoodPitchTable[distanceToTarget()] + _manualAngleOffset; });
 }
 
 frc2::CommandPtr SubHood::AddManualAngleOffset(units::degree_t offset) {
   // Using frc2 cmd so we dont require subsystem
-  return frc2::cmd::RunOnce([this, offset] {
-    SetManualAngleOffset(_manualAngleOffset + offset);
-  });
+  return frc2::cmd::RunOnce([this, offset] { SetManualAngleOffset(_manualAngleOffset + offset); });
 }
 
 bool SubHood::IsAtTarget() {
@@ -116,18 +115,22 @@ bool SubHood::IsAtTarget() {
 }
 
 frc2::CommandPtr SubHood::MoveHoodUp1Degree() {
-  return SetPositionTarget([this] { return _hoodMotor.GetPositionTarget() + 1_deg; }).WithTimeout(1_ms);
+  return SetPositionTarget([this] {
+    return _hoodMotor.GetPositionTarget() + 1_deg;
+  }).WithTimeout(1_ms);
 }
 
 frc2::CommandPtr SubHood::MoveHoodDown1Degree() {
-  return SetPositionTarget([this] { return _hoodMotor.GetPositionTarget() - 1_deg; }).WithTimeout(1_ms);
+  return SetPositionTarget([this] {
+    return _hoodMotor.GetPositionTarget() - 1_deg;
+  }).WithTimeout(1_ms);
 }
 
 frc2::CommandPtr SubHood::HoodToEjectAngle() {
   return SubHood::GetInstance().SetPositionTarget([] { return LOWER_LIMIT + 5_deg; });
 }
 
-void SubHood::SetBrakeMode(bool brakeMode){
+void SubHood::SetBrakeMode(bool brakeMode) {
   rev::spark::SparkBaseConfig _brakeModeConfig;
   if (brakeMode) {
     _brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);

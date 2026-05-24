@@ -53,8 +53,8 @@ class SubHood : public frc2::SubsystemBase {
   void Periodic() override;
 
  private:
-  static constexpr units::degree_t TOLERANCE =  1.0_deg;
-  
+  static constexpr units::degree_t TOLERANCE = 1.0_deg;
+
   static constexpr units::degree_t STOW_ANGLE = 5_deg;
   static constexpr units::degree_t PASSING_ANGLE = 40_deg;
   static constexpr units::degree_t UPPER_LIMIT = 30_deg;
@@ -72,16 +72,15 @@ class SubHood : public frc2::SubsystemBase {
   ICSparkFlex _hoodMotor{canid::HOOD_MOTOR};
   rev::spark::SparkBaseConfig _config;
 
-  frc::Alert _hoodHighTempAlert{
-    "Hood Motor high temperature!", frc::Alert::AlertType::kWarning};
+  frc::Alert _hoodHighTempAlert{"Hood Motor high temperature!", frc::Alert::AlertType::kWarning};
   frc::Alert _hoodCurrentAlert{"Hood Motor overcurrent!", frc::Alert::AlertType::kWarning};
   frc::Alert _hoodStickyTempAlert{
     "Hood Motor max temperature was reached!", frc::Alert::AlertType::kWarning};
   frc::Alert _hoodStickyCurrentAlert{
     "Hood Motor max current was reached!", frc::Alert::AlertType::kWarning};
-  AlertController::MotorAlertConfig _hoodAlertConfig{_hoodHighTempAlert, _hoodCurrentAlert,
+  alertController::MotorAlertConfig _hoodAlertConfig{_hoodHighTempAlert, _hoodCurrentAlert,
     _hoodStickyTempAlert, _hoodStickyCurrentAlert, 60_degC, 20_A};
-  
+
   wpi::interpolating_map<units::meter_t, units::degree_t> _hoodPitchTable;
 
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex(1);
@@ -92,9 +91,9 @@ class SubHood : public frc2::SubsystemBase {
   static constexpr bool SIMULATE_GRAVITY = false;
   static constexpr units::degree_t STARTING_ANGLE = 5_deg;
   static constexpr units::centimeter_t ARM_LENGTH = 20_cm;
-  
+
   frc::LinearSystem<2, 1, 2> _hoodSystem =
     frc::LinearSystemId::SingleJointedArmSystem(MOTOR_MODEL, MOI, GEAR_RATIO);
-  frc::sim::SingleJointedArmSim _hoodSim{_hoodSystem, MOTOR_MODEL, GEAR_RATIO,
-    ARM_LENGTH, LOWER_LIMIT, UPPER_LIMIT, SIMULATE_GRAVITY, STARTING_ANGLE};
+  frc::sim::SingleJointedArmSim _hoodSim{_hoodSystem, MOTOR_MODEL, GEAR_RATIO, ARM_LENGTH,
+    LOWER_LIMIT, UPPER_LIMIT, SIMULATE_GRAVITY, STARTING_ANGLE};
 };
