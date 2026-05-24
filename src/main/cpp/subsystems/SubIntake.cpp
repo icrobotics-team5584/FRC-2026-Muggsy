@@ -24,14 +24,14 @@ SubIntake::SubIntake() {
 void SubIntake::Periodic() {
   units::second_t loopStart = frc::GetTime();
 
-  Logger::LogFalcon("Intake/Motor1", _motor1);
-  Logger::LogFalcon("Intake/Motor2", _motor2);
+  logger::LogFalcon("Intake/Motor1", _motor1);
+  logger::LogFalcon("Intake/Motor2", _motor2);
 
   RobotVisualisation::GetInstance()._intakeMechWheel.SetAngle(_motor1.GetPosition().GetValue());
 
-  Logger::Log("Intake/Is Intaking", _intakeOn);
+  logger::Log("Intake/Is Intaking", _intakeOn);
 
-  Logger::Log("Intake/Loop Time", (frc::GetTime() - loopStart));
+  logger::Log("Intake/Loop Time", (frc::GetTime() - loopStart));
 }
 
 void SubIntake::SimulationPeriodic() {
@@ -57,13 +57,8 @@ frc2::CommandPtr SubIntake::RunIntake() {
 }
 
 frc2::CommandPtr SubIntake::RunReverseIntake() {
-  return StartEnd(
-    [this] {
-      _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{-5_V});
-    },
-    [this] {
-      _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{0_V});
-    });
+  return StartEnd([this] { _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{-5_V}); },
+    [this] { _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{0_V}); });
 }
 
 bool SubIntake::IsIntaking() {
