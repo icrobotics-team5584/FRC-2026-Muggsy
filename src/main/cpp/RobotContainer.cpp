@@ -6,6 +6,7 @@
 
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubIndexer.h"
+#include "subsystems/SubDeploy.h"
 
 #include "utilities/Logger.h"
 
@@ -17,7 +18,11 @@ RobotContainer::RobotContainer() {
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
 
-void RobotContainer::ConfigureBindings() {}
+void RobotContainer::ConfigureBindings() {
+  _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
+  _driverController.AxisMagnitudeGreaterThan(5, 0.1).OnTrue(
+    SubDeploy::GetInstance().ExtendToLerp(_driverController.GetRightY()));
+}
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");
