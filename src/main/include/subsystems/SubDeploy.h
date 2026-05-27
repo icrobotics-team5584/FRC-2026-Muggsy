@@ -38,9 +38,9 @@ class SubDeploy : public frc2::SubsystemBase {
   bool IsAtTarget();
 
  private:
-  units::meter_t ConvertPositionToLength(units::turn_t pos);
-  units::turn_t ConvertLengthToPosition(units::meter_t length);
-  units::turns_per_second_t ConvertVelocityToAngularVelocity(units::meters_per_second_t velo);
+  static units::meter_t ConvertPositionToLength(units::turn_t pos);
+  static units::turn_t ConvertLengthToPosition(units::meter_t length);
+  static units::turns_per_second_t ConvertVelocityToAngularVelocity(units::meters_per_second_t velo);
 
   ICSparkFlex _motor{canid::DEPLOY_MOTOR};
   rev::spark::SparkFlexConfig _motorConfig;
@@ -53,7 +53,9 @@ class SubDeploy : public frc2::SubsystemBase {
   static constexpr units::meter_t PINION_RAD = 0.05_m;
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * M_PI;
   static constexpr double GEARING = 1.0;
-
+  
+  units::turn_t TOLERENCE = ConvertLengthToPosition(0.05_m);
+  
   /* Simulation */
   static constexpr units::kilogram_t MASS = 5_kg;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex();
