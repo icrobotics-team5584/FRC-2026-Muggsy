@@ -10,10 +10,10 @@ void RegisterAlertConfig(std::weak_ptr<AlertConfig> config) {
 }
 
 // Check Every Alert for the Motor and Set them accordingly
-void MotorCheck(MotorVariant motor, AlertConfig& config) {
+void MotorCheck(AlertConfig& config) {
   //  High Temperature Check
-  units::celsius_t motorTemp = GetMotorTemperature(motor);
-  units::ampere_t motorCurrent = GetMotorCurrent(motor);
+  units::celsius_t motorTemp = GetMotorTemperature(config.motor);
+  units::ampere_t motorCurrent = GetMotorCurrent(config.motor);
 
   if (motorTemp >= config.maxDegrees) {
     if (config.shouldRecordTemp) {
@@ -108,4 +108,11 @@ frc2::CommandPtr RemoveAlerts() {
     .IgnoringDisable(true);
 }
 
+void UpdateMotorAlerts() {
+  for (auto& weak : configList) {
+    if (auto config = weak.lock()) {
+      MotorCheck(*config);
+    }
+  }
+}
 }  // namespace alertController

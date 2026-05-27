@@ -39,11 +39,6 @@ SubShooter::SubShooter() {
   _shooterMotor3.GetConfigurator().Apply(_shooterMotorConfig);
   _shooterMotor4.GetConfigurator().Apply(_shooterMotorConfig);
 
-  alertController::MotorCheck(&_shooterMotor1, *_shooterMotor1AlertConfig);
-  alertController::MotorCheck(&_shooterMotor2, *_shooterMotor2AlertConfig);
-  alertController::MotorCheck(&_shooterMotor3, *_shooterMotor3AlertConfig);
-  alertController::MotorCheck(&_shooterMotor4, *_shooterMotor4AlertConfig);
-
   // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 

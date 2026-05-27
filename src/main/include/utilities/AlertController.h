@@ -16,18 +16,18 @@ struct AlertConfig;
 
 void RegisterAlertConfig(std::weak_ptr<AlertConfig> config);
 
-void MotorCheck(
-  std::variant<ICSpark*, ctre::phoenix6::hardware::TalonFX*> motor, AlertConfig& config);
+void MotorCheck(MotorVariant motor, AlertConfig& config);
 
 units::celsius_t GetMotorTemperature(MotorVariant motor);
 units::ampere_t GetMotorCurrent(MotorVariant motor);
 
 frc2::CommandPtr RemoveAlerts();
+void UpdateMotorAlerts();
 
 struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   std::string motorString;
+  MotorVariant motor;
   units::celsius_t maxDegrees;
-
   units::ampere_t maxCurrent;
 
   // Tempurature Alerts//
@@ -49,7 +49,9 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   bool shouldRecordTemp = true;
   bool shouldRecordHighCurrent = true;
 
-  AlertConfig(std::string motorName, units::celsius_t maxTemp, units::ampere_t maxCurr) {
+  AlertConfig(std::string motorName, MotorVariant motorVar, units::celsius_t maxTemp,
+    units::ampere_t maxCurr) {
+    motor = motorVar;
     responsiveHighTemperatureAlert.SetText(motorName + ": " + " HIGH TEMP");
 
     responsiveHighCurrentAlert.SetText(motorName + ": " + "HIGH CURRENT");
@@ -62,11 +64,11 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
     maxCurrent = maxCurr;
   }
   static std::shared_ptr<AlertConfig> Create(
-    std::string motorName, units::celsius_t maxTemp, units::ampere_t maxCurr) {
-    auto cfg = std::make_shared<AlertConfig>(motorName, maxTemp, maxCurr);
+    std::string motorName, MotorVariant motor, units::celsius_t maxTemp, units::ampere_t maxCurr) {
+    auto cfg = std::make_shared<AlertConfig>(motorName, motor, maxTemp, maxCurr);
     RegisterAlertConfig(cfg->weak_from_this());
     return cfg;
-  };
+  }
 };
 
 };  // namespace alertController

@@ -4,6 +4,7 @@
 
 #include "Robot.h"
 
+#include "utilities/AlertController.h"
 #include "utilities/Logger.h"
 #include "utilities/ShiftHandler.h"
 
@@ -34,6 +35,8 @@ void Robot::RobotPeriodic() {
   logger::Log("Robot/BatteryVoltage", frc::RobotController::GetBatteryVoltage());
   logger::Log("Robot/PDHInputVoltage", _pdh.GetVoltage() * 1_V);
   logger::Log("Robot/PDHTotalCurrent", _pdh.GetTotalCurrent() * 1_A);
+
+  alertController::UpdateMotorAlerts();
 }
 
 void Robot::DisabledInit() {}
