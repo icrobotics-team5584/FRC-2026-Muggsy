@@ -4,16 +4,17 @@
 
 #pragma once
 
-#include <math.h>
+#include "utilities/ICSparkFlex.h"
 
-#include <frc/system/plant/LinearSystemId.h>
 #include <frc/simulation/ElevatorSim.h>
+#include <frc/system/plant/LinearSystemId.h>
 #include <frc2/command/SubsystemBase.h>
+
+#include <math.h>
 #include <rev/config/SparkFlexConfig.h>
 #include <units/angular_velocity.h>
 
 #include "Constants.h"
-#include "utilities/ICSparkFlex.h"
 
 class SubDeploy : public frc2::SubsystemBase {
  public:
@@ -56,8 +57,7 @@ class SubDeploy : public frc2::SubsystemBase {
   /* Simulation */
   static constexpr units::kilogram_t MASS = 5_kg;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex();
-  frc::LinearSystem<2, 1, 2> _rackSystem = 
+  frc::LinearSystem<2, 1, 2> _rackSystem =
     frc::LinearSystemId::ElevatorSystem(MOTOR_MODEL, MASS, PINION_RAD, GEARING);
-  frc::sim::ElevatorSim _rackSim{_rackSystem, MOTOR_MODEL, 0_m, 
-    MAX_LENGTH, false, STOW_LENGTH};
+  frc::sim::ElevatorSim _rackSim{_rackSystem, MOTOR_MODEL, 0_m, MAX_LENGTH, false, STOW_LENGTH};
 };

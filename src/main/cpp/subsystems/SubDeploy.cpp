@@ -2,13 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include <frc2/command/CommandPtr.h>
-#include <frc2/command/Commands.h>
-#include <frc/RobotBase.h>
-
 #include "subsystems/SubDeploy.h"
+
 #include "utilities/Logger.h"
 #include "utilities/RobotVisualisation.h"
+
+#include <frc/RobotBase.h>
+#include <frc2/command/CommandPtr.h>
+#include <frc2/command/Commands.h>
 
 SubDeploy::SubDeploy() {
   _motorConfig.SmartCurrentLimit(60);
@@ -23,7 +24,7 @@ SubDeploy::SubDeploy() {
 }
 
 void SubDeploy::Periodic() {
-    units::second_t loopStart = frc::GetTime();
+  units::second_t loopStart = frc::GetTime();
   logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
   if (!_hasZeroed && !_zeroing) {
     _motor.StopMotor();
@@ -38,10 +39,10 @@ void SubDeploy::Periodic() {
 
 void SubDeploy::SimulationPeriodic() {
   _rackSim.SetInputVoltage(_motor.CalcSimVoltage());
-  
+
   _rackSim.Update(20_ms);
   RobotVisualisation::GetInstance()._deployLigament->SetLength(_rackSim.GetPosition().value());
-  
+
   _motor.IterateSim(ConvertVelocityToAngularVelocity(_rackSim.GetVelocity()));
 }
 
@@ -52,12 +53,10 @@ frc2::CommandPtr SubDeploy::Zero() {
     _hasZeroed = false;
     _motor.SetVoltage(-1_V);
   })
-    .AndThen(frc2::cmd::WaitUntil(
-      [this] { 
-        return std::abs(
-          _motor.GetStatorCurrent() > ZERO_CURRENT_LIMIT) ||
-          frc::RobotBase::IsSimulation(); 
-        }))
+    .AndThen(frc2::cmd::WaitUntil([this] {
+      return std::abs(_motor.GetStatorCurrent() > ZERO_CURRENT_LIMIT) ||
+             frc::RobotBase::IsSimulation();
+    }))
     .AndThen([this] {
       _motor.SetPosition(0_deg);
       _motor.StopMotor();
@@ -132,6 +131,7 @@ units::turn_t SubDeploy::ConvertLengthToPosition(units::meter_t length) {
   return 1_tr * (length / PINION_CIRCUM).value();
 }
 
-units::turns_per_second_t SubDeploy::ConvertVelocityToAngularVelocity(units::meters_per_second_t velo) {
-    return 1_tps * (velo / PINION_CIRCUM).value();
+units::turns_per_second_t SubDeploy::ConvertVelocityToAngularVelocity(
+  units::meters_per_second_t velo) {
+  return 1_tps * (velo / PINION_CIRCUM).value();
 }

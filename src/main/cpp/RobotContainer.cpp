@@ -4,9 +4,9 @@
 
 #include "RobotContainer.h"
 
+#include "subsystems/SubDeploy.h"
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubIndexer.h"
-#include "subsystems/SubDeploy.h"
 
 #include "utilities/Logger.h"
 
