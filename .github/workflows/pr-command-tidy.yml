@@ -1,0 +1,255 @@
+# Listens for "/tidy" comments on pull requests and automatically applies
+# clang-tidy auto-fixes (modernize-*, readability-*, and other fixable checks),
+# then pushes a new commit back to the PR branch.
+#
+# Only team members with write access can trigger this command.
+# Does not run on PRs from forks (can't push to a repo you don't own).
+#
+# Note: clang-tidy --fix only resolves auto-fixable checks. bugprone-* and
+# other semantic issues still require manual attention — the clang-tidy check
+# workflow will flag any remaining problems on the new commit.
+#
+# Usage: comment "/tidy" on any open pull request targeting main.
+#
+# The workflow is split into three jobs because the fix step must run inside
+# the WPILib build container (for Gradle / compile_commands.json), but
+# GitHub API calls (permissions, reactions, comments) require Node.js, which
+# that container does not provide.
+name: PR Command — /tidy
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  # ─── Job 1: Authorise ──────────────────────────────────────────────────────
+  # Check write permissions, react to the comment, and gather PR metadata.
+  # Runs on ubuntu-latest so that actions/github-script (Node.js) is available.
+  gate:
+    name: Authorize /tidy command
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/tidy')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write        # react to the triggering comment
+      pull-requests: read  # read PR metadata
+    outputs:
+      head_ref: ${{ steps.pr.outputs.head_ref }}
+      base_ref: ${{ steps.pr.outputs.base_ref }}
+      is_fork:  ${{ steps.pr.outputs.is_fork }}
+
+    steps:
+      # Fail immediately if the commenter doesn't have write access.
+      - name: Check commenter permissions
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let level = 'none';
+            try {
+              const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: context.actor,
+              });
+              level = data.permission;
+            } catch (_) {}
+            if (!['admin', 'write'].includes(level)) {
+              core.setFailed(
+                `@${context.actor} needs write access to run /tidy (current permission: ${level})`
+              );
+            }
+
+      # Add 👀 so the commenter knows the command was received and is running.
+      - name: Acknowledge command
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes',
+            });
+
+      # Fetch head/base branch names and detect fork PRs.
+      - name: Get PR metadata
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            core.setOutput('head_ref', pr.head.ref);
+            core.setOutput('base_ref', pr.base.ref);
+            const isFork =
+              pr.head.repo.full_name !== `${context.repo.owner}/${context.repo.repo}`;
+            core.setOutput('is_fork', String(isFork));
+
+      - name: Fail for fork PRs
+        if: steps.pr.outputs.is_fork == 'true'
+        run: |
+          echo "Cannot push fixes to a fork PR."
+          echo "Please apply clang-tidy --fix locally and push:"
+          echo "  DB=build/BinaryCompileCommands/compileFrcUserProgramLinuxathenaDebugExecutableFrcUserProgramCppCompileCommands"
+          echo "  git diff --name-only origin/main...HEAD | grep -E '^src/main/cpp/.*\\.cpp$' | xargs clang-tidy -p \"\$DB\" --fix"
+          exit 1
+
+  # ─── Job 2: Fix ────────────────────────────────────────────────────────────
+  # Run clang-tidy --fix inside the WPILib cross-build container. This is the
+  # same environment used by the clang-tidy check workflow so fixes are
+  # guaranteed to be consistent.
+  fix:
+    name: Apply clang-tidy fixes
+    needs: gate
+    runs-on: self-hosted
+    container: wpilib/roborio-cross-ubuntu:2025-24.04
+    permissions:
+      contents: write  # push the fix commit
+    outputs:
+      had_files: ${{ steps.changed-files.outputs.had_files }}
+      committed: ${{ steps.commit.outputs.committed }}
+
+    steps:
+      # The container runs as a different user than the checkout owner, so git
+      # would refuse to operate without this safety override.
+      - name: Declare repo as git safe directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.gate.outputs.head_ref }}
+          fetch-depth: 0
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Install clang-tidy
+        run: apt-get update -qq && apt-get install -y clang-tidy
+
+      # Find .cpp files that were added or modified in this PR relative to the
+      # base branch. Matching the same filter as the clang-tidy check workflow.
+      - name: Get changed .cpp files
+        id: changed-files
+        env:
+          BASE_REF: ${{ needs.gate.outputs.base_ref }}
+        run: |
+          FILES=$(git diff --name-only --diff-filter=ACMR \
+            "origin/$BASE_REF" HEAD \
+            | grep -E '^src/main/cpp/.*\.cpp$' || true)
+          if [ -z "$FILES" ]; then
+            echo "had_files=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "had_files=true" >> "$GITHUB_OUTPUT"
+            echo "files<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$FILES" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Generate a compile_commands.json so clang-tidy knows how each file is
+      # compiled (include paths, flags, defines, etc.).
+      - name: Generate compile_commands.json
+        if: steps.changed-files.outputs.had_files == 'true'
+        run: ./gradlew compileFrcUserProgramLinuxathenaDebugExecutableFrcUserProgramCppCompileCommands
+
+      # Run clang-tidy --fix sequentially (not parallel) to avoid conflicting
+      # edits when two files share a header that both need patching.
+      # We use "|| true" so a non-fixable warning doesn't abort the loop —
+      # the clang-tidy check workflow will report any remaining issues after
+      # this commit is pushed.
+      - name: Apply clang-tidy --fix
+        if: steps.changed-files.outputs.had_files == 'true'
+        env:
+          FILES: ${{ steps.changed-files.outputs.files }}
+        run: |
+          COMPILE_DB="build/BinaryCompileCommands/compileFrcUserProgramLinuxathenaDebugExecutableFrcUserProgramCppCompileCommands"
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            echo "Running clang-tidy --fix on $FILE"
+            clang-tidy \
+              -p "$COMPILE_DB" \
+              --header-filter="$GITHUB_WORKSPACE/src/main/include/.*" \
+              --fix \
+              "$FILE" || true
+          done <<< "$FILES"
+
+      - name: Commit and push
+        if: steps.changed-files.outputs.had_files == 'true'
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+          else
+            git add -u
+            git commit -m "refactor: apply clang-tidy auto-fixes [skip ci]"
+            git push
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ─── Job 3: Notify ─────────────────────────────────────────────────────────
+  # Post a friendly result comment back on the PR regardless of outcome.
+  # Runs on ubuntu-latest so that actions/github-script (Node.js) is available.
+  notify:
+    name: Post result
+    needs: [gate, fix]
+    # Always run so the commenter gets feedback even when earlier jobs fail.
+    if: always() && github.event.issue.pull_request && contains(github.event.comment.body, '/tidy')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Post result comment
+        uses: actions/github-script@v7
+        env:
+          GATE_RESULT: ${{ needs.gate.result }}
+          FIX_RESULT:  ${{ needs.fix.result }}
+          HAD_FILES:   ${{ needs.fix.outputs.had_files }}
+          COMMITTED:   ${{ needs.fix.outputs.committed }}
+          IS_FORK:     ${{ needs.gate.outputs.is_fork }}
+          RUN_URL:     ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const gateResult = process.env.GATE_RESULT;
+            const fixResult  = process.env.FIX_RESULT;
+            const hadFiles   = process.env.HAD_FILES  === 'true';
+            const committed  = process.env.COMMITTED  === 'true';
+            const isFork     = process.env.IS_FORK    === 'true';
+            const runUrl     = process.env.RUN_URL;
+
+            let body;
+            if (gateResult !== 'success') {
+              if (isFork) {
+                body =
+                  '⚠️ `/tidy` cannot push to fork PRs.\n\n' +
+                  'Please apply the fixes locally and push:\n' +
+                  '```bash\n' +
+                  'DB="build/BinaryCompileCommands/compileFrcUserProgramLinuxathenaDebugExecutableFrcUserProgramCppCompileCommands"\n' +
+                  "git diff --name-only origin/main...HEAD | grep -E '^src/main/cpp/.*\\.cpp$' | xargs clang-tidy -p \"$DB\" --fix\n" +
+                  '```';
+              } else {
+                body = `❌ \`/tidy\` failed at the authorization step. [View run](${runUrl})`;
+              }
+            } else if (fixResult === 'failure') {
+              body = `❌ \`/tidy\` failed during the fix step. [View run](${runUrl})`;
+            } else if (!hadFiles) {
+              body = '✅ `/tidy` — no C++ source files changed in this PR, nothing to tidy.';
+            } else if (!committed) {
+              body = '✅ `/tidy` — all changed files already pass clang-tidy, no auto-fixes needed.';
+            } else {
+              body =
+                '✅ `/tidy` — auto-fixable issues applied and pushed as a new commit.\n\n' +
+                '> **Note:** `clang-tidy --fix` only resolves auto-fixable checks (e.g. `modernize-*`, `readability-*`). ' +
+                'Semantic issues like `bugprone-*` require manual review — ' +
+                'check the clang-tidy workflow on the new commit for any remaining problems.';
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
