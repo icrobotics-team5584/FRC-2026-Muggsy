@@ -5,13 +5,14 @@
 
 #include <frc/geometry/Translation3d.h>
 #include <frc2/command/Commands.h>
+
 #include <photon/PhotonCamera.h>
 #include <photon/PhotonPoseEstimator.h>
 #include <photon/simulation/PhotonCameraSim.h>
 
 class ICCamera {
-public:
-  ICCamera(std::string name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap);
+ public:
+  ICCamera(const std::string& name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap);
 
   void Update();
 
@@ -23,11 +24,12 @@ public:
 
   std::optional<photon::EstimatedRobotPose> GetLatestEstPose();
 
-  std::optional<frc::Transform3d> CalculateRobotToCamera(photon::PhotonPipelineResult &result, frc::Transform3d robotToTag);
+  std::optional<frc::Transform3d> CalculateRobotToCamera(
+    photon::PhotonPipelineResult& result, frc::Transform3d robotToTag);
 
   void CalibrateRobotToCamera(frc::Transform3d robotToTag);
 
-private:
+ private:
   std::string _camName;
 
   frc::Transform3d _botToCam;

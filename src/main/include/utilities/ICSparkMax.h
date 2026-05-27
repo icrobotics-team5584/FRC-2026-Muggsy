@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rev/SparkMax.h>
-
 #include "utilities/ICSpark.h"
+
+#include <rev/SparkMax.h>
 
 /**
  * Helper class to setup an ICSpark to control a Spark Max. See ICSpark for
