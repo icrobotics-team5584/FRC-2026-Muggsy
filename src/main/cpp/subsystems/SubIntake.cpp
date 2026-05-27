@@ -57,11 +57,9 @@ frc2::CommandPtr SubIntake::RunIntake(double motorOut) {
 frc2::CommandPtr SubIntake::RunReverseIntake(double motorOut) {
   return StartEnd(
     [this, motorOut] {
-      _intakeOn = true;
       _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{-motorOut});
     },
     [this] {
-      _intakeOn = false;
       _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.0});
     });
 }
