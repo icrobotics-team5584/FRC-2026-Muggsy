@@ -13,7 +13,7 @@ SubHood::SubHood() {
   rev::spark::SparkBaseConfig config;
   config.encoder.PositionConversionFactor(1 / GEAR_RATIO);
   config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
-  config.closedLoop.Pid(16, 0, 8);
+  config.closedLoop.Pid(2, 0, 0);
   config.closedLoop.feedForward.kS(0.6);
   config.SmartCurrentLimit(30);
   config.Inverted(false);
