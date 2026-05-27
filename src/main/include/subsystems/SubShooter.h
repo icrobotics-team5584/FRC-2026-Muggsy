@@ -61,14 +61,14 @@ class SubShooter : public frc2::SubsystemBase {
   ctre::phoenix6::configs::TalonFXConfiguration _shooterMotorConfig;
   ctre::phoenix6::controls::VelocityVoltage _flywheelTargetVelocity{0_tps};
 
-  std::shared_ptr<alertController::AlertConfig> _shooterMotor1AlertConfig = std::make_shared<alertController::AlertConfig>(
-    "Shooter Motor 1", 60_degC, 40_A);
-     std::shared_ptr<alertController::AlertConfig> _shooterMotor2AlertConfig = std::make_shared<alertController::AlertConfig>(
-    "Shooter Motor 2", 60_degC, 40.0_A);
-     std::shared_ptr<alertController::AlertConfig> _shooterMotor3AlertConfig = std::make_shared<alertController::AlertConfig>(
-    "Shooter Motor 3", 60_degC, 40.0_A);
-     std::shared_ptr<alertController::AlertConfig> _shooterMotor4AlertConfig = std::make_shared<alertController::AlertConfig>(
-    "Shooter Motor 4", 60_degC, -1.0_A);
+  std::shared_ptr<alertController::AlertConfig> _shooterMotor1AlertConfig =
+    alertController::AlertConfig::Create("Shooter Motor 1", 60_degC, 40_A);
+  std::shared_ptr<alertController::AlertConfig> _shooterMotor2AlertConfig =
+    alertController::AlertConfig::Create("Shooter Motor 2", 60_degC, 40_A);
+  std::shared_ptr<alertController::AlertConfig> _shooterMotor3AlertConfig =
+    alertController::AlertConfig::Create("Shooter Motor 3", 60_degC, 40_A);
+  std::shared_ptr<alertController::AlertConfig> _shooterMotor4AlertConfig =
+    alertController::AlertConfig::Create("Shooter Motor 4", 60_degC, 40_A);
 
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTableScoring;
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTablePassing;
