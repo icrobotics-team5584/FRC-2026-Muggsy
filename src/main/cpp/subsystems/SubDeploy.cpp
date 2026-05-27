@@ -22,6 +22,8 @@ SubDeploy::SubDeploy() {
 }
 
 void SubDeploy::Periodic() {
+    units::second_t loopStart = frc::GetTime();
+  logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
   if (!_hasZeroed && !_zeroing) {
     _motor.StopMotor();
   }
@@ -30,6 +32,7 @@ void SubDeploy::Periodic() {
   logger::Log("Deploy/Zeroing", _zeroing);
   logger::Log("Deploy/On Target", IsAtTarget());
   logger::Log("Deploy/Extension", GetLength());
+  logger::Log("Deploy/Loop Time", (frc::GetTime() - loopStart));
 }
 
 /* Command Functions*/
