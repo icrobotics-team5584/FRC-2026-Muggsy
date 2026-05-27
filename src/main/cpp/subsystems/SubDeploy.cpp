@@ -25,7 +25,6 @@ SubDeploy::SubDeploy() {
 
 void SubDeploy::Periodic() {
   units::second_t loopStart = frc::GetTime();
-  logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
   if (!_hasZeroed && !_zeroing) {
     _motor.StopMotor();
   }
