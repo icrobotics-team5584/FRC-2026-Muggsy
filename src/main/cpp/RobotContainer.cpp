@@ -19,9 +19,9 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
-  _driverController.AxisMagnitudeGreaterThan(5, 0.1).OnTrue(
-    SubDeploy::GetInstance().ExtendToLerp(_driverController.GetRightY()));
+  _driverController.Start().WhileTrue(SubDeploy::GetInstance().Zero());
+  _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().MannualExtendUp());
+  _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().MannualExtendDown());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
