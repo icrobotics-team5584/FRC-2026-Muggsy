@@ -126,13 +126,13 @@ bool SubHood::IsAtTarget() {
 frc2::CommandPtr SubHood::MoveHoodUp1Degree() {
   return SetPositionTarget([this] {
     return _hoodMotor.GetPositionTarget() + 1_deg;
-  }).WithTimeout(1_ms); //stops the command from running repeatedly
+  }).WithTimeout(1_ms);  // stops the command from running repeatedly
 }
 
 frc2::CommandPtr SubHood::MoveHoodDown1Degree() {
   return SetPositionTarget([this] {
     return _hoodMotor.GetPositionTarget() - 1_deg;
-  }).WithTimeout(1_ms); //stops the command from running repeatedly
+  }).WithTimeout(1_ms);  // stops the command from running repeatedly
 }
 
 void SubHood::SetBrakeMode(bool brakeMode) {
