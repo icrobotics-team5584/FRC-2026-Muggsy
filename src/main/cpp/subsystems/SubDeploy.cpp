@@ -8,6 +8,7 @@
 
 #include "subsystems/SubDeploy.h"
 #include "utilities/Logger.h"
+#include "utilities/RobotVisualisation.h"
 
 SubDeploy::SubDeploy() {
   _motorConfig.SmartCurrentLimit(60);
@@ -33,6 +34,15 @@ void SubDeploy::Periodic() {
   logger::Log("Deploy/On Target", IsAtTarget());
   logger::Log("Deploy/Extension", GetLength());
   logger::Log("Deploy/Loop Time", (frc::GetTime() - loopStart));
+}
+
+void SubDeploy::SimulationPeriodic() {
+  _rackSim.SetInputVoltage(_motor.CalcSimVoltage());
+  
+  _rackSim.Update(20_ms);
+  RobotVisualisation::GetInstance()._deployLigament->SetLength(_rackSim.GetPosition().value());
+  
+  _motor.IterateSim(ConvertVelocityToAngularVelocity(_rackSim.GetVelocity()));
 }
 
 /* Command Functions*/
@@ -120,4 +130,8 @@ units::meter_t SubDeploy::ConvertPositionToLength(units::turn_t pos) {
 
 units::turn_t SubDeploy::ConvertLengthToPosition(units::meter_t length) {
   return 1_tr * (length / PINION_CIRCUM).value();
+}
+
+units::turns_per_second_t SubDeploy::ConvertVelocityToAngularVelocity(units::meters_per_second_t velo) {
+    return 1_tps * (velo / PINION_CIRCUM).value();
 }

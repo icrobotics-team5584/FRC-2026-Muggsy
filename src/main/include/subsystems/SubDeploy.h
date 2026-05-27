@@ -7,8 +7,10 @@
 #include <math.h>
 
 #include <frc/system/plant/LinearSystemId.h>
+#include <frc/simulation/ElevatorSim.h>
 #include <frc2/command/SubsystemBase.h>
 #include <rev/config/SparkFlexConfig.h>
+#include <units/angular_velocity.h>
 
 #include "Constants.h"
 #include "utilities/ICSparkFlex.h"
@@ -33,6 +35,7 @@ class SubDeploy : public frc2::SubsystemBase {
  private:
   units::meter_t ConvertPositionToLength(units::turn_t pos);
   units::turn_t ConvertLengthToPosition(units::meter_t length);
+  units::turns_per_second_t ConvertVelocityToAngularVelocity(units::meters_per_second_t velo);
 
   ICSparkFlex _motor{canid::DEPLOY_MOTOR};
   rev::spark::SparkFlexConfig _motorConfig;
@@ -40,7 +43,7 @@ class SubDeploy : public frc2::SubsystemBase {
   bool _zeroing = false;
 
   static constexpr units::ampere_t ZERO_CURRENT_LIMIT = 40_A;
-  static constexpr units::meter_t MAX_LENGTH = 300_mm;
+  static constexpr units::meter_t MAX_LENGTH = 0.3_m;
   static constexpr units::meter_t STOW_LENGTH = 0_m;
   static constexpr units::meter_t PINION_RAD = 0.05_m;
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * M_PI;
@@ -49,6 +52,8 @@ class SubDeploy : public frc2::SubsystemBase {
   /* Simulation */
   static constexpr units::kilogram_t MASS = 5_kg;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex();
-  frc::LinearSystem<2, 1, 2> _linearArmSystem = 
+  frc::LinearSystem<2, 1, 2> _rackSystem = 
     frc::LinearSystemId::ElevatorSystem(MOTOR_MODEL, MASS, PINION_RAD, GEARING);
+  frc::sim::ElevatorSim _rackSim{_rackSystem, MOTOR_MODEL, 0_m, 
+    MAX_LENGTH, false, STOW_LENGTH};
 };
