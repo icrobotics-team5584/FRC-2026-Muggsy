@@ -2,9 +2,119 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+#include <frc2/command/CommandPtr.h>
+#include <frc2/command/Commands.h>
+#include <frc/RobotBase.h>
+
 #include "subsystems/SubDeploy.h"
+#include "utilities/Logger.h"
 
-SubDeploy::SubDeploy() = default;
+SubDeploy::SubDeploy() {
+  _motorConfig.SmartCurrentLimit(60);
+  _motorConfig.encoder.PositionConversionFactor(1 / GEARING);
+  _motorConfig.encoder.VelocityConversionFactor(1 / GEARING);
+  _motorConfig.closedLoop.Pid(1.0, 0.0, 0.0);
+  _motorConfig.SetIdleMode(rev::spark::SparkBaseConfig::kCoast);
 
-// This method will be called once per scheduler run
-void SubDeploy::Periodic() {}
+  _motor.OverwriteConfig(_motorConfig);
+
+  logger::Log("Deploy/Motor1", &_motor);
+}
+
+void SubDeploy::Periodic() {
+  if (!_hasZeroed && !_zeroing) {
+    _motor.StopMotor();
+  }
+
+  logger::Log("Deploy/Has Zeroed", _hasZeroed);
+  logger::Log("Deploy/Zeroing", _zeroing);
+  logger::Log("Deploy/On Target", IsAtTarget());
+  logger::Log("Deploy/Extension", GetLength());
+}
+
+/* Command Functions*/
+frc2::CommandPtr SubDeploy::Zero() {
+  return frc2::cmd::RunOnce([this] {
+    _zeroing = true;
+    _hasZeroed = false;
+    _motor.SetVoltage(-1_V);
+  })
+    .AndThen(frc2::cmd::WaitUntil(
+      [this] { 
+        return std::abs(
+          _motor.GetStatorCurrent() > ZERO_CURRENT_LIMIT) ||
+          frc::RobotBase::IsSimulation(); 
+        }))
+    .AndThen([this] {
+      _motor.SetPosition(0_deg);
+      _motor.StopMotor();
+      _hasZeroed = true;
+    })
+    .FinallyDo([this] { _zeroing = false; });
+}
+
+frc2::CommandPtr SubDeploy::ExtendTo(units::meter_t length) {
+  return frc2::cmd::RunOnce([this, length] {
+    if (_hasZeroed) {
+      units::meter_t clampedLength = std::clamp(length, 0_m, MAX_LENGTH);
+      _motor.SetPositionTarget(ConvertLengthToPosition(clampedLength));
+    }
+  });
+}
+
+frc2::CommandPtr SubDeploy::ExtendToLerp(double t) {
+  t = std::clamp(t, 0.0, 1.0);
+  units::meter_t length = MAX_LENGTH * t;
+  return ExtendTo(length);
+}
+
+frc2::CommandPtr SubDeploy::MannualExtendDown() {
+  return frc2::cmd::StartEnd(
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(-1_V);
+      }
+    },
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(0_V);
+      }
+    });
+}
+
+frc2::CommandPtr SubDeploy::MannualExtendUp() {
+  return frc2::cmd::StartEnd(
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(1_V);
+      }
+    },
+    [this] {
+      if (_hasZeroed) {
+        _motor.SetVoltage(0_V);
+      }
+    });
+}
+
+frc2::CommandPtr SubDeploy::Stow() {
+  return ExtendTo(STOW_LENGTH);
+}
+
+/* Instant Functions*/
+
+bool SubDeploy::IsAtTarget() {
+  units::turn_t tolerence = ConvertLengthToPosition(0.05_m);
+  return _motor.OnPosTarget(tolerence);
+}
+
+units::meter_t SubDeploy::GetLength() {
+  return ConvertPositionToLength(_motor.GetPosition());
+}
+
+units::meter_t SubDeploy::ConvertPositionToLength(units::turn_t pos) {
+  return (pos.value() * PINION_CIRCUM);
+}
+
+units::turn_t SubDeploy::ConvertLengthToPosition(units::meter_t length) {
+  return 1_tr * (length / PINION_CIRCUM).value();
+}
