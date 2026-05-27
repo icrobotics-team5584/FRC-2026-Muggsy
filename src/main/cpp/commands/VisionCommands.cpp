@@ -40,16 +40,15 @@ frc2::CommandPtr AddVisionMeasurement() {
 
         // If the pose is usable, or the timestamp is recent
         bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose.value());
-        bool timestampVaild = frc::Timer::GetFPGATimestamp() - pose.value().timestamp < 0.2_s;
+        bool timestampValid = frc::Timer::GetFPGATimestamp() - pose.value().timestamp < 0.2_s;
         Logger::Log("Vision/" + name + "/Est pose usable", poseUsable);
         Logger::Log("Vision/" + name + "/Timestamp difference",
           frc::Timer::GetFPGATimestamp() - pose.value().timestamp);
-        Logger::Log("Vision/" + name + "/Vaild timestamp", timestampVaild);
-        if (!poseUsable || !timestampVaild) {
+        Logger::Log("Vision/" + name + "/Valid timestamp", timestampValid);
+        if (!poseUsable || !timestampValid) {
           continue;
         }
 
-        //
         frc::Pose2d botPose;
         if (name == SubVision::GetInstance().SHOOTER_CAM_NAME) {
           botPose = pose.value().estimatedPose.ToPose2d();

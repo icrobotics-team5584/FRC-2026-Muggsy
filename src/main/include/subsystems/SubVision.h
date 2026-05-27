@@ -30,13 +30,7 @@ class SubVision : public frc2::SubsystemBase {
 
   void UpdateVision();
 
-  void StableCameraProcess();
-
-  void TurretCameraProcess();
-
   void SimulationPeriodic() override;
-
-  enum Side { Left = 1, Right = 2 };
 
   std::optional<frc::Pose2d> GetAprilTagPose(int id);
 
