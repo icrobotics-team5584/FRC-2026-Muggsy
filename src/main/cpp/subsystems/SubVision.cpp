@@ -101,9 +101,8 @@ std::optional<frc::Pose2d> SubVision::GetAprilTagPose(int id) {
   auto pose = _tagMap.GetTagPose(id);
   if (pose.has_value()) {
     return pose.value().ToPose2d();
-  } 
-    return std::nullopt;
- 
+  }
+  return std::nullopt;
 }
 
 int SubVision::GetClosestTag(frc::Pose2d currentPose) {
