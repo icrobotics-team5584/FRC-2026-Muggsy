@@ -39,6 +39,11 @@ SubShooter::SubShooter() {
   _shooterMotor3.GetConfigurator().Apply(_shooterMotorConfig);
   _shooterMotor4.GetConfigurator().Apply(_shooterMotorConfig);
 
+  alertController::MotorCheck(&_shooterMotor1, *_shooterMotor1AlertConfig);
+  alertController::MotorCheck(&_shooterMotor2, *_shooterMotor2AlertConfig);
+  alertController::MotorCheck(&_shooterMotor3, *_shooterMotor3AlertConfig);
+  alertController::MotorCheck(&_shooterMotor4, *_shooterMotor4AlertConfig);
+
   // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 
@@ -56,26 +61,6 @@ void SubShooter::Periodic() {
   logger::LogFalcon("Shooter/Motor3", _shooterMotor3);
   logger::LogFalcon("Shooter/Motor4", _shooterMotor4);
   logger::Log("Shooter/IsReadyToShoot", IsReadyToShoot());
-
-  alertController::UpdateTemperatureAlert(
-    _shooter1AlertConfig, _shooterMotor1.GetDeviceTemp().GetValue());
-  alertController::UpdateCurrentAlert(
-    _shooter1AlertConfig, _shooterMotor1.GetStatorCurrent().GetValue());
-
-  alertController::UpdateTemperatureAlert(
-    _shooter2AlertConfig, _shooterMotor2.GetDeviceTemp().GetValue());
-  alertController::UpdateCurrentAlert(
-    _shooter2AlertConfig, _shooterMotor2.GetStatorCurrent().GetValue());
-
-  alertController::UpdateTemperatureAlert(
-    _shooter3AlertConfig, _shooterMotor3.GetDeviceTemp().GetValue());
-  alertController::UpdateCurrentAlert(
-    _shooter3AlertConfig, _shooterMotor3.GetStatorCurrent().GetValue());
-
-  alertController::UpdateTemperatureAlert(
-    _shooter4AlertConfig, _shooterMotor4.GetDeviceTemp().GetValue());
-  alertController::UpdateCurrentAlert(
-    _shooter4AlertConfig, _shooterMotor4.GetStatorCurrent().GetValue());
 
   logger::Log("Shooter/Loop Time", (frc::GetTime() - loopStart));
 }
