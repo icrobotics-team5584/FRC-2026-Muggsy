@@ -79,7 +79,7 @@ frc2::CommandPtr SubDeploy::ExtendToLerp(double t) {
   return ExtendTo(length);
 }
 
-frc2::CommandPtr SubDeploy::MannualExtendDown() {
+frc2::CommandPtr SubDeploy::ManualExtendDown() {
   return frc2::cmd::StartEnd(
     [this] {
       if (_hasZeroed) {
@@ -93,7 +93,7 @@ frc2::CommandPtr SubDeploy::MannualExtendDown() {
     });
 }
 
-frc2::CommandPtr SubDeploy::MannualExtendUp() {
+frc2::CommandPtr SubDeploy::ManualExtendUp() {
   return frc2::cmd::StartEnd(
     [this] {
       if (_hasZeroed) {

@@ -30,8 +30,8 @@ class SubDeploy : public frc2::SubsystemBase {
   frc2::CommandPtr Zero();
   frc2::CommandPtr ExtendTo(units::meter_t length);
   frc2::CommandPtr ExtendToLerp(double t);
-  frc2::CommandPtr MannualExtendDown();
-  frc2::CommandPtr MannualExtendUp();
+  frc2::CommandPtr ManualExtendDown();
+  frc2::CommandPtr ManualExtendUp();
   frc2::CommandPtr Stow();
 
   units::meter_t GetLength();

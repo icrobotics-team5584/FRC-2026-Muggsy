@@ -20,8 +20,8 @@ RobotContainer::RobotContainer() {
 
 void RobotContainer::ConfigureBindings() {
   _driverController.Start().WhileTrue(SubDeploy::GetInstance().Zero());
-  _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().MannualExtendUp());
-  _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().MannualExtendDown());
+  _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
+  _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().ManualExtendDown());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
