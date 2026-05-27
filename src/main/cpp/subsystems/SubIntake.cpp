@@ -42,11 +42,11 @@ void SubIntake::SimulationPeriodic() {
   _motor1.GetSimState().AddRotorPosition(_sim.GetAngularVelocity() * 20_ms * GEAR_RATIO);
 }
 
-frc2::CommandPtr SubIntake::RunIntake() {
+frc2::CommandPtr SubIntake::RunIntake(double motorOut = MOTOR_OUTPUT) {
   return StartEnd(
-    [this] {
+    [this, motorOut] {
       _intakeOn = true;
-      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{MOTOR_OUTPUT});
+      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{motorOut});
     },
     [this] {
       _intakeOn = false;
@@ -54,11 +54,11 @@ frc2::CommandPtr SubIntake::RunIntake() {
     });
 }
 
-frc2::CommandPtr SubIntake::RunReverseIntake() {
+frc2::CommandPtr SubIntake::RunReverseIntake(double motorOut = MOTOR_OUTPUT) {
   return StartEnd(
-    [this] {
+    [this, motorOut] {
       _intakeOn = true;
-      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{-MOTOR_OUTPUT});
+      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{-motorOut});
     },
     [this] {
       _intakeOn = false;

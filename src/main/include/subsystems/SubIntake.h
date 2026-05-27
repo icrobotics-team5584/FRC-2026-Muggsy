@@ -24,8 +24,8 @@ class SubIntake : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
-  frc2::CommandPtr RunIntake();
-  frc2::CommandPtr RunReverseIntake();
+  frc2::CommandPtr RunIntake(double motorOut = MOTOR_OUTPUT);
+  frc2::CommandPtr RunReverseIntake(double motorOut = MOTOR_OUTPUT);
 
   bool IsIntaking();
 
