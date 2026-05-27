@@ -18,11 +18,10 @@
 class SubDeploy : public frc2::SubsystemBase {
  public:
   SubDeploy();
-    SubDeploy();
-    static SubDeploy& GetInstance() {
-      static SubDeploy inst;
+  static SubDeploy& GetInstance() {
+    static SubDeploy inst;
     return inst;
-    }
+  }
 
   void Periodic() override;
   void SimulationPeriodic() override;
