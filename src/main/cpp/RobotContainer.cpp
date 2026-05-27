@@ -10,14 +10,18 @@
 #include "utilities/Logger.h"
 
 #include <frc2/command/Commands.h>
-
+#include <frc/smartdashboard/SmartDashboard.h>
+#include "subsystems/SubShooter.h"
 RobotContainer::RobotContainer() {
   ConfigureBindings();
+ SubShooter::GetInstance();
   SubDrivebase::GetInstance().SetDefaultCommand(
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
 
-void RobotContainer::ConfigureBindings() {}
+void RobotContainer::ConfigureBindings() {
+    frc::SmartDashboard::PutData("Remove Alerts", removeAlerts.get());
+}
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");

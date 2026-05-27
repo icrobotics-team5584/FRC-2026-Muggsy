@@ -22,7 +22,7 @@ void MotorCheck(
 units::celsius_t GetMotorTemperature(MotorVariant motor);
 units::ampere_t GetMotorCurrent(MotorVariant motor);
 
-frc2::CommandPtr ForceRemoveAllAlerts();
+frc2::CommandPtr RemoveAlerts();
 
 struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   std::string motorString;

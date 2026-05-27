@@ -89,7 +89,7 @@ units::ampere_t GetMotorCurrent(MotorVariant motor) {
     motor);
 }
 // Command to Force Remove All Alerts
-frc2::CommandPtr ForceRemoveAllAlerts() {
+frc2::CommandPtr RemoveAlerts() {
   return frc2::cmd::RunOnce([] {
     for (auto& weak : configList) {
       if (auto config = weak.lock()) {
@@ -97,10 +97,15 @@ frc2::CommandPtr ForceRemoveAllAlerts() {
         config->responsiveHighTemperatureAlert.Set(false);
         config->responsiveHighCurrentAlert.Set(false);
         config->reachedHighCurrentAlert.Set(false);
+        config->tempuratureReachedCount = 0;
+        config->highCurrentReachedCount = 0;
+        config->shouldRecordTemp = true;
+        config->shouldRecordHighCurrent = true;
+        config->highCurrentTimer.Reset();
       }
     }
   })
-    .WithName("Force Remove All Alerts")
+    .WithName("Remove Alerts")
     .IgnoringDisable(true);
 }
 

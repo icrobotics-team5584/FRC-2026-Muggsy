@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #pragma once
-
+#include <utilities/AlertController.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
 
@@ -18,4 +18,5 @@ class RobotContainer {
   void ConfigureBindings();
   frc2::CommandXboxController _driverController{0};
   frc2::CommandXboxController _operatorController{1};
+  frc2::CommandPtr removeAlerts = alertController::RemoveAlerts();
 };
