@@ -42,7 +42,7 @@ void SubIntake::SimulationPeriodic() {
   _motor1.GetSimState().AddRotorPosition(_sim.GetAngularVelocity() * 20_ms * GEAR_RATIO);
 }
 
-frc2::CommandPtr SubIntake::RunIntake(double motorOut = MOTOR_OUTPUT) {
+frc2::CommandPtr SubIntake::RunIntake(double motorOut) {
   return StartEnd(
     [this, motorOut] {
       _intakeOn = true;
@@ -54,7 +54,7 @@ frc2::CommandPtr SubIntake::RunIntake(double motorOut = MOTOR_OUTPUT) {
     });
 }
 
-frc2::CommandPtr SubIntake::RunReverseIntake(double motorOut = MOTOR_OUTPUT) {
+frc2::CommandPtr SubIntake::RunReverseIntake(double motorOut) {
   return StartEnd(
     [this, motorOut] {
       _intakeOn = true;
