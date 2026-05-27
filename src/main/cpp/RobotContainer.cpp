@@ -20,6 +20,7 @@ RobotContainer::RobotContainer() {
 
 void RobotContainer::ConfigureBindings() {
   _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
+  _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
