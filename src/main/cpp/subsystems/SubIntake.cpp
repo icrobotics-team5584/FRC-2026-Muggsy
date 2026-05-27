@@ -46,19 +46,24 @@ frc2::CommandPtr SubIntake::RunIntake() {
   return StartEnd(
     [this] {
       _intakeOn = true;
-
-      _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{5_V});
+      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{MOTOR_OUTPUT});
     },
     [this] {
       _intakeOn = false;
-
-      _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{0_V});
+      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.0});
     });
 }
 
 frc2::CommandPtr SubIntake::RunReverseIntake() {
-  return StartEnd([this] { _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{-5_V}); },
-    [this] { _motor1.SetControl(ctre::phoenix6::controls::VoltageOut{0_V}); });
+  return StartEnd(
+    [this] {
+      _intakeOn = true;
+      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{-MOTOR_OUTPUT});
+    },
+    [this] {
+      _intakeOn = false;
+      _motor1.SetControl(ctre::phoenix6::controls::DutyCycleOut{0.0});
+    });
 }
 
 bool SubIntake::IsIntaking() {
