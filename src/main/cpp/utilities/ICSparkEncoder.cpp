@@ -1,7 +1,8 @@
-#include <utilities/ICSparkEncoder.h>
 #include <frc/RobotBase.h>
-#include <utility>
 #include <frc/smartdashboard/SmartDashboard.h>
+
+#include <utilities/ICSparkEncoder.h>
+#include <utility>
 
 ICSparkEncoder::ICSparkEncoder(rev::spark::SparkRelativeEncoder& inbuilt) : _inbuilt(inbuilt) {}
 
@@ -30,11 +31,11 @@ double ICSparkEncoder::GetVelocity() {
 }
 
 void ICSparkEncoder::SetPosition(double pos) {
-  if(_relative){
+  if (_relative) {
     _relative->SetPosition(pos);
   }
   _inbuilt.SetPosition(pos);
-  _absoluteSimPos = pos; // Doesn't do anything for a real life absolute encoder
+  _absoluteSimPos = pos;  // Doesn't do anything for a real life absolute encoder
 }
 
 void ICSparkEncoder::UseAbsolute(rev::spark::SparkAbsoluteEncoder& encoder) {

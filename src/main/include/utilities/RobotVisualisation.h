@@ -9,7 +9,7 @@
 
 class RobotVisualisation {
  public:
-  RobotVisualisation() { Logger::Log("RobotVisualisation", &_display); }
+  RobotVisualisation() { logger::Log("RobotVisualisation", &_display); }
   static RobotVisualisation& GetInstance() {
     static RobotVisualisation intstance;
     return intstance;

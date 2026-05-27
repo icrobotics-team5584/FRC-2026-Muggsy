@@ -1,8 +1,9 @@
 #include "utilities/AlertController.h"
 
 #include <unordered_map>
+namespace alertController {
 
-namespace AlertController {
+
 std::vector<std::weak_ptr<AlertConfig>> configList;
 // Registers the Alert Config to be used in the ForceRemoveAllAlerts Command
 void RegisterAlertConfig(std::weak_ptr<AlertConfig> config) {

@@ -9,7 +9,7 @@
 #include <units/current.h>
 #include <units/temperature.h>
 #include <utilities/ICSpark.h>
-namespace AlertController {
+namespace alertController {
 using MotorVariant = std::variant<ICSpark*, ctre::phoenix6::hardware::TalonFX*>;
 
 struct AlertConfig;
@@ -65,4 +65,4 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   }
 };
 
-};  // namespace AlertController
+};  // namespace alertController
