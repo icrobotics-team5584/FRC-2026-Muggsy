@@ -62,13 +62,13 @@ class SubShooter : public frc2::SubsystemBase {
   ctre::phoenix6::controls::VelocityVoltage _flywheelTargetVelocity{0_tps};
 
   std::shared_ptr<alertController::AlertConfig> _shooterMotor1AlertConfig =
-    alertController::AlertConfig::Create("Shooter Motor 1", &_shooterMotor1, -1_degC, -1_A);
+    alertController::AlertConfig::Create("Shooter Motor 1", &_shooterMotor1 ,60_degC, 40_A);
   std::shared_ptr<alertController::AlertConfig> _shooterMotor2AlertConfig =
-    alertController::AlertConfig::Create("Shooter Motor 2", &_shooterMotor2, 60_degC, 40_A);
+    alertController::AlertConfig::Create("Shooter Motor 2", &_shooterMotor2 ,60_degC, 40_A);
   std::shared_ptr<alertController::AlertConfig> _shooterMotor3AlertConfig =
-    alertController::AlertConfig::Create("Shooter Motor 3", &_shooterMotor3, 60_degC, 40_A);
+    alertController::AlertConfig::Create("Shooter Motor 3", &_shooterMotor3 ,60_degC, 40_A);
   std::shared_ptr<alertController::AlertConfig> _shooterMotor4AlertConfig =
-    alertController::AlertConfig::Create("Shooter Motor 4", &_shooterMotor4, 60_degC, 40_A);
+    alertController::AlertConfig::Create("Shooter Motor 4", &_shooterMotor4 ,60_degC, 40_A);
 
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTableScoring;
   wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTablePassing;
