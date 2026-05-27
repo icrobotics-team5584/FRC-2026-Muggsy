@@ -60,14 +60,13 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
     motorString = motorName;
     maxDegrees = maxTemp;
     maxCurrent = maxCurr;
-
   }
-    static std::shared_ptr<AlertConfig> Create(
+  static std::shared_ptr<AlertConfig> Create(
     std::string motorName, units::celsius_t maxTemp, units::ampere_t maxCurr) {
     auto cfg = std::make_shared<AlertConfig>(motorName, maxTemp, maxCurr);
     RegisterAlertConfig(cfg->weak_from_this());
     return cfg;
-};
+  };
 };
 
 };  // namespace alertController

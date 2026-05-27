@@ -3,7 +3,6 @@
 #include <unordered_map>
 namespace alertController {
 
-
 std::vector<std::weak_ptr<AlertConfig>> configList;
 // Registers the Alert Config to be used in the ForceRemoveAllAlerts Command
 void RegisterAlertConfig(std::weak_ptr<AlertConfig> config) {
@@ -109,4 +108,4 @@ frc2::CommandPtr RemoveAlerts() {
     .IgnoringDisable(true);
 }
 
-}  // namespace AlertController
+}  // namespace alertController

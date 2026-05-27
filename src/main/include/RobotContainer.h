@@ -3,9 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #pragma once
-#include <utilities/AlertController.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
+
+#include <utilities/AlertController.h>
 
 class RobotContainer {
  public:
