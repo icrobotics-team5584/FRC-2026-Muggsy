@@ -27,6 +27,8 @@ constexpr int SHOOTER_MOTOR_4 = 17;
 constexpr int INDEXER_MOTOR = 18;
 constexpr int INDEXER_FOLLOW_MOTOR = 19;
 
+constexpr int DEPLOY_MOTOR = 20;
+
 constexpr int PDH = 40;
 }  // namespace canid
 
