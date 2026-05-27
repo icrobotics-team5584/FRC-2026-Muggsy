@@ -33,7 +33,7 @@ class SubHood : public frc2::SubsystemBase {
 
   frc2::CommandPtr RunZeroingSequence();
   frc2::CommandPtr SetPositionTarget(const std::function<units::degree_t()>& angle);
-  frc2::CommandPtr SetPositionFromDistanceTarget(
+  frc2::CommandPtr SetPositionFromDistanceToTarget(
     const std::function<units::meter_t()>& distanceToTarget);
   frc2::CommandPtr MoveHoodUp1Degree();
   frc2::CommandPtr MoveHoodDown1Degree();

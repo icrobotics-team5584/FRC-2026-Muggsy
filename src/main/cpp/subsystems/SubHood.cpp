@@ -108,7 +108,7 @@ frc2::CommandPtr SubHood::HoodToPassingAngle() {
   return SetPositionTarget([] { return PASSING_ANGLE; });
 }
 
-frc2::CommandPtr SubHood::SetPositionFromDistanceTarget(
+frc2::CommandPtr SubHood::SetPositionFromDistanceToTarget(
   const std::function<units::meter_t()>& distanceToTarget) {
   return SetPositionTarget(
     [this, distanceToTarget] { return _hoodPitchTable[distanceToTarget()] + _manualAngleOffset; });
