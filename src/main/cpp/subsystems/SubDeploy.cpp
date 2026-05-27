@@ -54,7 +54,7 @@ frc2::CommandPtr SubDeploy::Zero() {
     _motor.SetVoltage(-1_V);
   })
     .AndThen(frc2::cmd::WaitUntil([this] {
-      return std::abs(_motor.GetStatorCurrent() > ZERO_CURRENT_LIMIT) ||
+      return units::math::abs(_motor.GetStatorCurrent()) > ZERO_CURRENT_LIMIT ||
              frc::RobotBase::IsSimulation();
     }))
     .AndThen([this] {
