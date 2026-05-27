@@ -38,7 +38,7 @@ SubVision::SubVision() {
   }
 
   // Display tags on field
-  for (auto target : _visionSim.GetVisionTargets()) {
+  for (const auto& target : _visionSim.GetVisionTargets()) {
     logger::FieldDisplay::GetInstance().DisplayPose(
       fmt::format("tag{}", target.GetFiducialId()), target.GetPose().ToPose2d());
   }
@@ -73,12 +73,12 @@ double SubVision::GetDev(units::length::meter_t distance) {
   return _devTable[distance];
 }
 
-units::length::meter_t SubVision::GetAvgDistanceFromCamera(photon::EstimatedRobotPose est) {
+units::length::meter_t SubVision::GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est) {
   units::meter_t distance = 0_m;
-  if (est.targetsUsed.size() == 0) {
+  if (est.targetsUsed.empty()) {
     return 0_m;
   }
-  for (auto target : est.targetsUsed) {
+  for (const auto& target : est.targetsUsed) {
     distance += target.GetBestCameraToTarget().Translation().Norm();
   }
   distance /= est.targetsUsed.size();
@@ -86,7 +86,7 @@ units::length::meter_t SubVision::GetAvgDistanceFromCamera(photon::EstimatedRobo
   return distance;
 }
 
-bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose est) {
+bool SubVision::IsEstimateUsable(const photon::EstimatedRobotPose& est) {
   bool targetsUsable = (GetAvgDistanceFromCamera(est) < 5_m) || (est.targetsUsed.size() > 1);
   auto pose = est.estimatedPose;
   bool estimateOnField =
@@ -101,9 +101,9 @@ std::optional<frc::Pose2d> SubVision::GetAprilTagPose(int id) {
   auto pose = _tagMap.GetTagPose(id);
   if (pose.has_value()) {
     return pose.value().ToPose2d();
-  } else {
+  } 
     return std::nullopt;
-  }
+ 
 }
 
 int SubVision::GetClosestTag(frc::Pose2d currentPose) {

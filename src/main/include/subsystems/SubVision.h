@@ -38,9 +38,9 @@ class SubVision : public frc2::SubsystemBase {
 
   int GetClosestTag(frc::Pose2d currentPose);
 
-  units::length::meter_t GetAvgDistanceFromCamera(photon::EstimatedRobotPose est);
+  units::length::meter_t GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est);
 
-  bool IsEstimateUsable(photon::EstimatedRobotPose est);
+  bool IsEstimateUsable(const photon::EstimatedRobotPose& est);
 
   double GetDev(units::length::meter_t distance);
 

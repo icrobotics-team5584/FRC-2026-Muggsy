@@ -70,7 +70,7 @@ frc2::CommandPtr AddVisionMeasurement() {
 
       ProcessedPose bestResult = processedResults.front();
 
-      for (auto result : processedResults) {
+      for (const auto& result : processedResults) {
         // Compare distance
         if (result.distance < bestResult.distance) {
           bestResult = result;
