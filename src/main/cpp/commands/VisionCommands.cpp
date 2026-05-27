@@ -15,10 +15,10 @@ namespace cmd {
 using namespace frc2::cmd;
 
 frc2::CommandPtr AddVisionMeasurement() {
-  Logger::Log("Vision/Timestamp limit", 0.2_s);
+  logger::Log("Vision/Timestamp limit", 0.2_s);
   return Run(
     [] {
-      if (!Logger::Tune("Vision/Add pose measurement", frc::RobotBase::IsReal())) {
+      if (!logger::Tune("Vision/Add pose measurement", frc::RobotBase::IsReal())) {
         return;
       }
 
@@ -27,13 +27,13 @@ frc2::CommandPtr AddVisionMeasurement() {
       std::vector<ProcessedPose> processedResults = {};
 
       for (auto [name, pose] : poses) {
-        Logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", {});
-        Logger::Log("Vision/" + name + "/Est pose usable", false);
-        Logger::Log("Vision/" + name + "/Timestamp difference", 0_s);
-        Logger::Log("Vision/" + name + "/Valid timestamp", false);
+        logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", {});
+        logger::Log("Vision/" + name + "/Est pose usable", false);
+        logger::Log("Vision/" + name + "/Timestamp difference", 0_s);
+        logger::Log("Vision/" + name + "/Valid timestamp", false);
 
         // If the pose has value
-        Logger::Log("Vision/" + name + "/Has value", pose.has_value());
+        logger::Log("Vision/" + name + "/Has value", pose.has_value());
         if (!pose.has_value()) {
           continue;
         }
@@ -41,10 +41,10 @@ frc2::CommandPtr AddVisionMeasurement() {
         // If the pose is usable, or the timestamp is recent
         bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose.value());
         bool timestampValid = frc::Timer::GetFPGATimestamp() - pose.value().timestamp < 0.2_s;
-        Logger::Log("Vision/" + name + "/Est pose usable", poseUsable);
-        Logger::Log("Vision/" + name + "/Timestamp difference",
+        logger::Log("Vision/" + name + "/Est pose usable", poseUsable);
+        logger::Log("Vision/" + name + "/Timestamp difference",
           frc::Timer::GetFPGATimestamp() - pose.value().timestamp);
-        Logger::Log("Vision/" + name + "/Valid timestamp", timestampValid);
+        logger::Log("Vision/" + name + "/Valid timestamp", timestampValid);
         if (!poseUsable || !timestampValid) {
           continue;
         }
@@ -54,7 +54,7 @@ frc2::CommandPtr AddVisionMeasurement() {
           botPose = pose.value().estimatedPose.ToPose2d();
         }
 
-        Logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
+        logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
 
         // Distance between tag and camera
         units::length::meter_t distance =

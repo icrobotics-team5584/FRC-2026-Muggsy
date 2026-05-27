@@ -39,7 +39,7 @@ SubVision::SubVision() {
 
   // Display tags on field
   for (auto target : _visionSim.GetVisionTargets()) {
-    Logger::FieldDisplay::GetInstance().DisplayPose(
+    logger::FieldDisplay::GetInstance().DisplayPose(
       fmt::format("tag{}", target.GetFiducialId()), target.GetPose().ToPose2d());
   }
 }
@@ -48,7 +48,7 @@ void SubVision::Periodic() {
   auto loopStart = frc::GetTime();
   UpdateVision();
 
-  Logger::Log("Vision/Loop Time", (frc::GetTime() - loopStart));
+  logger::Log("Vision/Loop Time", (frc::GetTime() - loopStart));
 }
 
 void SubVision::UpdateVision() {
@@ -91,9 +91,9 @@ bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose est) {
   auto pose = est.estimatedPose;
   bool estimateOnField =
     (pose.X() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
-      pose.X() < ICGeometry::FIELD_LENGTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
+      pose.X() < icGeometry::FIELD_LENGTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
       pose.Y() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
-      pose.Y() < ICGeometry::FIELD_WIDTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE);
+      pose.Y() < icGeometry::FIELD_WIDTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE);
   return (targetsUsable && estimateOnField);
 }
 
