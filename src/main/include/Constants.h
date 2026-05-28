@@ -30,6 +30,8 @@ constexpr int INDEXER_FOLLOW_MOTOR = 19;
 constexpr int INTAKE_MOTOR_1 = 20;
 constexpr int INTAKE_MOTOR_2 = 21; /* Follower */
 
+constexpr int HOOD_MOTOR = 22;
+
 constexpr int PDH = 40;
 }  // namespace canid
 

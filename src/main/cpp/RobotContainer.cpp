@@ -5,6 +5,7 @@
 #include "RobotContainer.h"
 
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubHood.h"
 #include "subsystems/SubIndexer.h"
 #include "subsystems/SubIntake.h"
 
