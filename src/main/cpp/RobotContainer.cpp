@@ -6,7 +6,9 @@
 
 #include "subsystems/SubDeploy.h"
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubHood.h"
 #include "subsystems/SubIndexer.h"
+#include "subsystems/SubIntake.h"
 
 #include "utilities/Logger.h"
 
@@ -22,6 +24,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
   _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
   _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().ManualExtendDown());
+  _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
+  _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
