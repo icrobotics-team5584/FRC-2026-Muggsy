@@ -21,6 +21,10 @@ on:
   issue_comment:
     types: [created]
 
+concurrency:
+  group: pr-command-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
 jobs:
   # ─── Job 1: Authorise ──────────────────────────────────────────────────────
   # Check write permissions, react to the comment, and gather PR metadata.
