@@ -42,7 +42,9 @@ SubShooter::SubShooter() {
   // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 
-  //_flyWheelSpeedTableScoring.insert(x_m, y_tps);
+  _flyWheelSpeedTableScoring.insert(1_m, 5_tps);
+  _flyWheelSpeedTableScoring.insert(5_m, 10_tps);
+
 
   //_flyWheelSpeedTablePassing.insert(x_m, y_tps);
 }
@@ -127,6 +129,7 @@ bool SubShooter::IsReadyToShoot() {
 frc2::CommandPtr SubShooter::SetSpeedFromDistanceTarget(
   const std::function<units::meter_t()>& distance, const std::function<bool()>& isPassing) {
   return SetSpeedTarget([this, distance, isPassing] {
+    logger::Log("Shooter/Distance Target", distance());
     return isPassing() ? _flyWheelSpeedTablePassing[distance()]
                        : _flyWheelSpeedTableScoring[distance()] + _manualSpeedOffset;
   });
