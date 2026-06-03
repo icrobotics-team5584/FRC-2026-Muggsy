@@ -1,0 +1,184 @@
+# Listens for "/format" comments on pull requests and automatically applies
+# clang-format fixes, then pushes a new commit back to the PR branch.
+#
+# Only team members with write access can trigger this command.
+# Does not run on PRs from forks (can't push to a repo you don't own).
+#
+# Usage: comment "/format" on any open pull request targeting main.
+name: PR Command — /format
+
+on:
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: pr-command-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    name: Apply clang-format fixes
+    # Only run when a PR comment contains "/format".
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/format')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # push the fix commit
+      pull-requests: write # post result comment
+      issues: write        # react to the triggering comment
+
+    steps:
+      # Fail immediately if the commenter doesn't have write access.
+      # This prevents random contributors from triggering auto-commits.
+      - name: Check commenter permissions
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let level = 'none';
+            try {
+              const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: context.actor,
+              });
+              level = data.permission;
+            } catch (_) {}
+            if (!['admin', 'write'].includes(level)) {
+              core.setFailed(
+                `@${context.actor} needs write access to run /format (current permission: ${level})`
+              );
+            }
+
+      # Add 👀 so the commenter knows the command was received and is running.
+      - name: Acknowledge command
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes',
+            });
+
+      # Fetch the PR's head branch name, base branch name, and whether it
+      # comes from a fork (we can't push to forks with GITHUB_TOKEN).
+      - name: Get PR metadata
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            core.setOutput('head_ref', pr.head.ref);
+            core.setOutput('base_ref', pr.base.ref);
+            const isFork =
+              pr.head.repo.full_name !== `${context.repo.owner}/${context.repo.repo}`;
+            core.setOutput('is_fork', String(isFork));
+
+      - name: Fail for fork PRs
+        if: steps.pr.outputs.is_fork == 'true'
+        run: |
+          echo "Cannot push fixes to a fork PR."
+          echo "Please apply clang-format locally and push:"
+          echo '  git diff --name-only origin/main...HEAD | grep -E "\.(cpp|h)$" | xargs clang-format --style=file -i'
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.head_ref }}
+          fetch-depth: 0
+
+      - name: Install clang-format-17
+        run: sudo apt-get update -qq && sudo apt-get install -y clang-format-17
+
+      # Find C++ files that were added or modified in this PR relative to the
+      # base branch. Matching the same filter as the clang-format check workflow.
+      - name: Get changed C++ files
+        id: changed-files
+        env:
+          BASE_REF: ${{ steps.pr.outputs.base_ref }}
+        run: |
+          FILES=$(git diff --name-only --diff-filter=ACMR \
+            "origin/$BASE_REF" HEAD \
+            | grep -E '^src/main/(cpp|include)/.*\.(cpp|h)$' || true)
+          if [ -z "$FILES" ]; then
+            echo "had_files=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "had_files=true" >> "$GITHUB_OUTPUT"
+            echo "files<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$FILES" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply clang-format
+        if: steps.changed-files.outputs.had_files == 'true'
+        env:
+          FILES: ${{ steps.changed-files.outputs.files }}
+        run: |
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            clang-format-17 --style=file -i "$FILE"
+            echo "Formatted: $FILE"
+          done <<< "$FILES"
+
+      - name: Commit and push
+        if: steps.changed-files.outputs.had_files == 'true'
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+          else
+            git add -u
+            git commit -m "style: apply clang-format fixes [skip ci]"
+            git push
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Post a friendly result comment even when earlier steps failed so the
+      # commenter always gets feedback.
+      - name: Post result comment
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          JOB_STATUS: ${{ job.status }}
+          HAD_FILES: ${{ steps.changed-files.outputs.had_files }}
+          COMMITTED: ${{ steps.commit.outputs.committed }}
+          IS_FORK: ${{ steps.pr.outputs.is_fork }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const status    = process.env.JOB_STATUS;
+            const hadFiles  = process.env.HAD_FILES  === 'true';
+            const committed = process.env.COMMITTED  === 'true';
+            const isFork    = process.env.IS_FORK    === 'true';
+            const runUrl    = process.env.RUN_URL;
+
+            let body;
+            if (isFork) {
+              body =
+                '⚠️ `/format` cannot push to fork PRs.\n\n' +
+                'Please apply the fixes locally and push:\n' +
+                '```bash\n' +
+                "git diff --name-only origin/main...HEAD | grep -E '\\.(cpp|h)$' | xargs clang-format --style=file -i\n" +
+                '```';
+            } else if (status !== 'success') {
+              body = `❌ \`/format\` failed. [View run](${runUrl})`;
+            } else if (!hadFiles) {
+              body = '✅ `/format` — no C++ files changed in this PR, nothing to format.';
+            } else if (!committed) {
+              body = '✅ `/format` — all changed files are already correctly formatted, no changes needed.';
+            } else {
+              body = '✅ `/format` — clang-format fixes applied and pushed as a new commit.';
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
