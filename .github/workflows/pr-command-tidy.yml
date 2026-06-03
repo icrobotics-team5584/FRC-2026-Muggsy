@@ -30,8 +30,7 @@ jobs:
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/tidy')
     runs-on: ubuntu-latest
     permissions:
-      issues: write        # react to the triggering comment
-      pull-requests: read  # read PR metadata
+      pull-requests: write  # react to PR comments and read PR metadata
     outputs:
       head_ref: ${{ steps.pr.outputs.head_ref }}
       base_ref: ${{ steps.pr.outputs.base_ref }}
