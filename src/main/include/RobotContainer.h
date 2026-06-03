@@ -14,7 +14,7 @@ class RobotContainer {
   frc2::CommandPtr GetAutonomousCommand();
   frc2::CommandPtr Rumble(double force, units::second_t duration);
 
- private:  
+ private:
   void ConfigureBindings();
   frc2::CommandXboxController _driverController{0};
   frc2::CommandXboxController _operatorController{1};

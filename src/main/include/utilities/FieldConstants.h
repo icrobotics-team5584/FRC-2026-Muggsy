@@ -1,8 +1,8 @@
 #pragma once
 
+#include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/geometry/Translation3d.h>
-#include <frc/geometry/Pose2d.h>
 
 namespace fieldpos {
 constexpr frc::Translation2d BLUE_ALLIANCE_ZONE_TOP_RIGHT{4.2_m, 8_m};
