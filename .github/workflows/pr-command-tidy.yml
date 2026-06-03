@@ -166,6 +166,7 @@ jobs:
       # this commit is pushed.
       - name: Apply clang-tidy --fix
         if: steps.changed-files.outputs.had_files == 'true'
+        shell: bash
         env:
           FILES: ${{ steps.changed-files.outputs.files }}
         run: |
