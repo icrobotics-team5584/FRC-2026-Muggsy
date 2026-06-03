@@ -21,10 +21,6 @@ on:
   issue_comment:
     types: [created]
 
-concurrency:
-  group: pr-command-${{ github.event.issue.number }}
-  cancel-in-progress: true
-
 jobs:
   # ─── Job 1: Authorise ──────────────────────────────────────────────────────
   # Check write permissions, react to the comment, and gather PR metadata.
@@ -107,6 +103,13 @@ jobs:
   fix:
     name: Apply clang-tidy fixes
     needs: gate
+    # Concurrency is scoped to this job only (not the whole workflow) to avoid
+    # self-cancellation: with a workflow-level group and cancel-in-progress:true,
+    # each queued job counts as a separate waiting request, which causes gate to
+    # cancel itself when fix is queued behind it.
+    concurrency:
+      group: pr-tidy-${{ github.event.issue.number }}
+      cancel-in-progress: true
     runs-on: self-hosted
     container: wpilib/roborio-cross-ubuntu:2025-24.04
     permissions:
