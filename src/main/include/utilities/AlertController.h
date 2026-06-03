@@ -2,7 +2,6 @@
 #include <frc/Alert.h>
 #include <frc/Timer.h>
 #include <frc2/command/Commands.h>
-#include <frc2/command/SubsystemBase.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <memory>
@@ -16,7 +15,7 @@ struct AlertConfig;
 
 void RegisterAlertConfig(std::weak_ptr<AlertConfig> config);
 
-void MotorCheck(MotorVariant motor, AlertConfig& config);
+void MotorCheck(AlertConfig& config);
 
 units::celsius_t GetMotorTemperature(MotorVariant motor);
 units::ampere_t GetMotorCurrent(MotorVariant motor);
@@ -30,7 +29,7 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   units::celsius_t maxDegrees;
   units::ampere_t maxCurrent;
 
-  // Tempurature Alerts//
+  // Temperature Alerts//
   frc::Alert responsiveHighTemperatureAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
   frc::Alert reachedTemperatureAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
 
@@ -56,7 +55,11 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
 
     responsiveHighCurrentAlert.SetText(motorName + ": " + "HIGH CURRENT");
     reachedHighCurrentAlert.SetText(
-      motorName + "Reached Max Current Threshold: " + std::to_string(highCurrentReachedCount) +
+      motorName + " Reached Max Current Threshold: " + std::to_string(highCurrentReachedCount) +
+      (highCurrentReachedCount > 1 ? " Times" : " Time"));
+
+     reachedTemperatureAlert.SetText(
+      motorName + " Reached Max Current Threshold: " + std::to_string(highCurrentReachedCount) +
       (highCurrentReachedCount > 1 ? " Times" : " Time"));
 
     motorString = motorName;
