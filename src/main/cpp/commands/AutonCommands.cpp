@@ -25,11 +25,36 @@ frc2::CommandPtr IntakePass(bool flip) {
       ICGeometry::MaybeFlip(frc::Pose2d{2.4_m, 0.5_m, 0_deg}, flip), 1.0, 80_cm, 15_deg));
 }
 
-frc2::CommandPtr Auton(){
-
+frc2::CommandPtr TopAuton(bool flip){
+  return frc2::cmd::Sequence(
+     SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{4.954_m, 7.623_m, 270.0_deg}, flip), 1.0, 80_cm, 15_deg),
+    SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{7.713_m, 7.638_m, 270.0_deg}, flip), 1.0, 80_cm, 15_deg),
+        SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{8.370_m, 5.248_m, 270.0_deg}, flip), 1.0, 80_cm, 15_deg),
+         SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{5.087_m, 5.289_m, 180.0_deg}, flip), 1.0, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{2.208_m, 5.923_m, 140.0_deg}, flip), 1.0, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{0.287_m, 5.949_m, 140.0_deg}, flip), 0.5, 80_cm, 15_deg),
+      frc2::cmd::Wait(1_s),
+      SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{4.954_m, 7.623_m, 270.0_deg}, flip), 1, 80_cm, 15_deg),
+          SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{7.713_m, 7.638_m, 270.0_deg}, flip), 1.0, 80_cm, 15_deg),
+        SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{8.370_m, 5.248_m, 270.0_deg}, flip), 1.0, 80_cm, 15_deg),
+         SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{5.087_m, 5.289_m, 180.0_deg}, flip), 1.0, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+      ICGeometry::MaybeFlip(frc::Pose2d{2.283_m, 4.552_m, 140.0_deg}, flip), 1.0, 80_cm, 15_deg)
+  );
 }
 
 frc2::CommandPtr IntakeAuton() {
-  return cmd::IntakePass(false).AndThen(cmd::IntakePass(false));
+  //return cmd::IntakePass(false).AndThen(cmd::IntakePass(false));
+  return cmd::TopAuton(false);
 }
 }  // namespace cmd
