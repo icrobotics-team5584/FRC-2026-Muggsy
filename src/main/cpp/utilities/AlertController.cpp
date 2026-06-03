@@ -5,7 +5,7 @@ namespace alertController {
 
 std::vector<std::weak_ptr<AlertConfig>> configList;
 // Registers the Alert Config to be used in the ForceRemoveAllAlerts Command
-void RegisterAlertConfig(std::weak_ptr<AlertConfig> config) {
+void RegisterAlertConfig(const std::weak_ptr<AlertConfig>& config) {
   configList.emplace_back(config);
 }
 
