@@ -13,7 +13,6 @@
 #include <frc/DriverStation.h>
 #include <frc/MathUtil.h>
 #include <frc/RobotBase.h>
-#include <frc/smartdashboard/SmartDashboard.h>
 
 #include <photon/estimation/CameraTargetRelation.h>
 

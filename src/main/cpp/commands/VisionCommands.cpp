@@ -50,9 +50,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         }
 
         frc::Pose2d botPose;
-        if (name == SubVision::GetInstance().SHOOTER_CAM_NAME) {
-          botPose = pose.value().estimatedPose.ToPose2d();
-        }
+        botPose = pose.value().estimatedPose.ToPose2d();
 
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
 
@@ -63,7 +61,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         processedResults.push_back({name, botPose, pose.value().timestamp, distance});
       }
 
-      // Compare results, prioritize static camera with cloest distance
+      // Compare results, prioritize static camera with closest distance
       if (processedResults.empty()) {
         return;
       }
