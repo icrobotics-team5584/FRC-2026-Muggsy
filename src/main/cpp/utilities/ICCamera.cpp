@@ -7,10 +7,8 @@
 #include "utilities/Logger.h"
 #include "utilities/PoseHandler.h"
 
-#include <frc/smartdashboard/SmartDashboard.h>
-
 ICCamera::ICCamera(
-  const std::string& name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap)
+  const std::string_view& name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap)
   : _camName(name),
     _botToCam(botToCam),
     _tagMap(std::move(tagMap)),
@@ -29,7 +27,6 @@ void ICCamera::Update() {
   }
 
   auto result = _latestResults.back();
-  std::optional<photon::EstimatedRobotPose> poseEst;
   if (result.targets.size() == 1) {
     _latestEstPose = _poseEstimator.EstimateLowestAmbiguityPose(result);
   } else {
@@ -39,7 +36,7 @@ void ICCamera::Update() {
   for (const photon::PhotonTrackedTarget& target : result.targets) {
     targets += std::to_string(target.GetFiducialId()) + ", ";
   }
-  frc::SmartDashboard::PutString("Vision/" + _camName + "/targets", targets);
+  logger::Log("Vision/" + _camName + "/targets", targets);
 }
 
 std::string ICCamera::GetCamName() {
