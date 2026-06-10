@@ -22,7 +22,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         return;
       }
 
-      std::map<std::string, std::optional<photon::EstimatedRobotPose>> poses = 
+      std::map<std::string, std::optional<photon::EstimatedRobotPose>> poses =
         SubVision::GetInstance().GetPose();
 
       std::vector<ProcessedPose> processedResults = {};
@@ -56,8 +56,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
 
         // Distance between tag and camera
-        units::meter_t distance =
-          SubVision::GetInstance().GetAvgDistanceFromCamera(pose.value());
+        units::meter_t distance = SubVision::GetInstance().GetAvgDistanceFromCamera(pose.value());
 
         processedResults.push_back({name, botPose, pose.value().timestamp, distance});
       }

@@ -72,7 +72,8 @@ double SubVision::GetDev(units::meter_t distance) {
   return _devTable[distance];
 }
 
-std::optional<units::meter_t> SubVision::GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est) {
+std::optional<units::meter_t> SubVision::GetAvgDistanceFromCamera(
+  const photon::EstimatedRobotPose& est) {
   units::meter_t distance = 0_m;
   if (est.targetsUsed.empty()) {
     return std::nullopt;
@@ -111,7 +112,8 @@ std::optional<int> SubVision::GetClosestTag(frc::Pose2d currentPose) {
 
   for (const frc::AprilTag tag : tagList) {
     int id = tag.ID;
-    units::meter_t distance = currentPose.Translation().Distance(GetAprilTagPose(id).value().Translation());
+    units::meter_t distance =
+      currentPose.Translation().Distance(GetAprilTagPose(id).value().Translation());
     if (distance < closestDistance) {
       closestDistance = distance;
       closestTagID = id;
