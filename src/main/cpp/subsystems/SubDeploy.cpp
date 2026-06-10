@@ -80,31 +80,23 @@ frc2::CommandPtr SubDeploy::ExtendToLerp(double t) {
 }
 
 frc2::CommandPtr SubDeploy::ManualExtendDown() {
-  return frc2::cmd::StartEnd(
-    [this] {
-      if (_hasZeroed && GetLength() > 0_m) {
-        _motor.SetVoltage(-1_V);
-      }
-    },
-    [this] {
-      if (_hasZeroed) {
-        _motor.SetVoltage(0_V);
-      }
-    });
+  return frc2::cmd::RunOnce([this] {
+    if (_hasZeroed && GetLength() > 0_m) {
+      _motor.SetVoltage(-1_V);
+    }
+  })
+    .AndThen(frc2::cmd::WaitUntil([this] { return GetLength() <= 0_m; }))
+    .FinallyDo([this] { _motor.SetVoltage(0_V); });
 }
 
 frc2::CommandPtr SubDeploy::ManualExtendUp() {
-  return frc2::cmd::StartEnd(
-    [this] {
-      if (_hasZeroed && GetLength() < MAX_LENGTH) {
-        _motor.SetVoltage(1_V);
-      }
-    },
-    [this] {
-      if (_hasZeroed) {
-        _motor.SetVoltage(0_V);
-      }
-    });
+  return frc2::cmd::RunOnce([this] {
+    if (_hasZeroed && GetLength() < MAX_LENGTH) {
+      _motor.SetVoltage(1_V);
+    }
+  })
+    .AndThen(frc2::cmd::WaitUntil([this] { return GetLength() >= MAX_LENGTH; }))
+    .FinallyDo([this] { _motor.SetVoltage(0_V); });
 }
 
 frc2::CommandPtr SubDeploy::Stow() {
