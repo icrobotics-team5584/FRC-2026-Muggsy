@@ -54,7 +54,7 @@ class SubDeploy : public frc2::SubsystemBase {
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * M_PI;
   static constexpr double GEARING = 1.0;
   
-  units::turn_t TOLERENCE = ConvertLengthToPosition(0.05_m);
+  units::turn_t TOLERANCE = ConvertLengthToPosition(0.05_m);
   
   /* Simulation */
   static constexpr units::kilogram_t MASS = 5_kg;

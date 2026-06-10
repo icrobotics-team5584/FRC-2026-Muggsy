@@ -114,7 +114,7 @@ frc2::CommandPtr SubDeploy::Stow() {
 /* Instant Functions*/
 
 bool SubDeploy::IsAtTarget() {
-  return _motor.OnPosTarget(TOLERENCE);
+  return _motor.OnPosTarget(TOLERANCE);
 }
 
 units::meter_t SubDeploy::GetLength() {
