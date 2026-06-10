@@ -54,6 +54,11 @@ class SubDeploy : public frc2::SubsystemBase {
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * M_PI;
   static constexpr double GEARING = 1.0;
   
+  /* Since ConvertLengthToPosition is defined in a class, it cannot be defined
+   * as a static constexpr function and called in a constexpr expression within
+   * the class. Constexpr functions require to be defined before being called 
+   * and the compiler will not recognise the function defintion as complete 
+   * until the entire class is also complete. */
   units::turn_t TOLERANCE = ConvertLengthToPosition(0.05_m);
   
   /* Simulation */
