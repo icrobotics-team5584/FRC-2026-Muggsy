@@ -35,7 +35,7 @@ frc2::CommandPtr AddVisionMeasurement() {
 
         // If the pose has value
         logger::Log("Vision/" + name + "/Has value", pose.has_value());
-        if (!pose.has_value()) {
+        if (!pose) {
           continue;
         }
 
