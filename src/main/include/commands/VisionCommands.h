@@ -11,8 +11,8 @@
 struct ProcessedPose {
   std::string camName;
   frc::Pose2d pose;
-  units::time::second_t timestamp;
-  units::length::meter_t distance;
+  units::second_t timestamp;
+  units::meter_t distance;
 };
 
 namespace cmd {

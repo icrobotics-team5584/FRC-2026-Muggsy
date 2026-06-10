@@ -56,7 +56,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
 
         // Distance between tag and camera
-        units::length::meter_t distance =
+        units::meter_t distance =
           SubVision::GetInstance().GetAvgDistanceFromCamera(pose.value());
 
         processedResults.push_back({name, botPose, pose.value().timestamp, distance});

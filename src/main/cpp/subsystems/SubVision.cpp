@@ -68,11 +68,11 @@ std::map<std::string, std::optional<photon::EstimatedRobotPose>> SubVision::GetP
   return poses;
 }
 
-double SubVision::GetDev(units::length::meter_t distance) {
+double SubVision::GetDev(units::meter_t distance) {
   return _devTable[distance];
 }
 
-units::length::meter_t SubVision::GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est) {
+units::meter_t SubVision::GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est) {
   units::meter_t distance = 0_m;
   if (est.targetsUsed.empty()) {
     return 0_m;
@@ -106,7 +106,7 @@ std::optional<frc::Pose2d> SubVision::GetAprilTagPose(int id) {
 
 int SubVision::GetClosestTag(frc::Pose2d currentPose) {
   int closestTagID = 0;
-  units::length::meter_t closestDistance = 999_m;
+  units::meter_t closestDistance = 999_m;
   std::vector<frc::AprilTag> tagList = _tagMap.GetTags();
 
   for (const frc::AprilTag tag : tagList) {
