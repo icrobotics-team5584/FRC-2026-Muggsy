@@ -87,7 +87,12 @@ std::optional<units::meter_t> SubVision::GetAvgDistanceFromCamera(
 }
 
 bool SubVision::IsEstimateUsable(const photon::EstimatedRobotPose& est) {
-  bool targetsUsable = (GetAvgDistanceFromCamera(est) < 5_m) || (est.targetsUsed.size() > 1);
+  std::optional<units::meter_t> avgDist = GetAvgDistanceFromCamera(est);
+  if (!avgDist) {
+    return false;
+  }
+
+  bool targetsUsable = (avgDist.value() < 5_m) || (est.targetsUsed.size() > 1);
   frc::Pose3d pose = est.estimatedPose;
   bool estimateOnField =
     (pose.X() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
