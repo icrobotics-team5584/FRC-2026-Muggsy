@@ -67,6 +67,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         return;
       }
 
+      /* grabs first/top element */
       ProcessedPose bestResult = processedResults.front();
 
       for (const ProcessedPose& result : processedResults) {
