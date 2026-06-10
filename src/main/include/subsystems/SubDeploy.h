@@ -52,7 +52,7 @@ class SubDeploy : public frc2::SubsystemBase {
   static constexpr units::meter_t STOW_LENGTH = 0_m;
   static constexpr units::meter_t PINION_RAD = 0.05_m;
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * M_PI;
-  static constexpr double GEARING = 1.0;
+  static constexpr double GEARING = 5.0;
   
   /* Since ConvertLengthToPosition is defined in a class, it cannot be defined
    * as a static constexpr function and called in a constexpr expression within
