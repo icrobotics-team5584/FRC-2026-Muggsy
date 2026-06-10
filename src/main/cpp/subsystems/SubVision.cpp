@@ -117,10 +117,11 @@ std::optional<int> SubVision::GetClosestTag(frc::Pose2d currentPose) {
 
   for (const frc::AprilTag tag : tagList) {
     int id = tag.ID;
-    if (!GetAprilTagPose(id)) {
+    std::optional<frc::Pose2d> aprilTagPoseResult = GetAprilTagPose(id);
+    if (!aprilTagPoseResult) {
       continue;
     }
-    frc::Pose2d aprilTagPose = GetAprilTagPose(id).value();
+    frc::Pose2d aprilTagPose = aprilTagPoseResult.value();
     
     units::meter_t distance = 
       currentPose.Translation().Distance(aprilTagPose.Translation());
