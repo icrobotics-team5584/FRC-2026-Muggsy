@@ -31,10 +31,10 @@ class SubVision : public frc2::SubsystemBase {
   void UpdateVision();
 
   std::map<std::string, std::optional<photon::EstimatedRobotPose>> GetPose();
-  units::meter_t GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est);
-  
-  int GetClosestTag(frc::Pose2d currentPose);
+  std::optional<units::meter_t> GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est);
+  std::optional<int> GetClosestTag(frc::Pose2d currentPose);
   std::optional<frc::Pose2d> GetAprilTagPose(int id);
+  
   double GetDev(units::meter_t distance);
   bool IsEstimateUsable(const photon::EstimatedRobotPose& est);
   
