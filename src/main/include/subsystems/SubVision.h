@@ -27,23 +27,17 @@ class SubVision : public frc2::SubsystemBase {
   }
 
   void Periodic() override;
-
+  void SimulationPeriodic() override;
   void UpdateVision();
 
-  void SimulationPeriodic() override;
-
-  std::optional<frc::Pose2d> GetAprilTagPose(int id);
-
   std::map<std::string, std::optional<photon::EstimatedRobotPose>> GetPose();
-
-  int GetClosestTag(frc::Pose2d currentPose);
-
   units::length::meter_t GetAvgDistanceFromCamera(const photon::EstimatedRobotPose& est);
-
-  bool IsEstimateUsable(const photon::EstimatedRobotPose& est);
-
+  
+  int GetClosestTag(frc::Pose2d currentPose);
+  std::optional<frc::Pose2d> GetAprilTagPose(int id);
   double GetDev(units::length::meter_t distance);
-
+  bool IsEstimateUsable(const photon::EstimatedRobotPose& est);
+  
   const std::string SHOOTER_CAM_NAME = "shooter";
 
  private:
