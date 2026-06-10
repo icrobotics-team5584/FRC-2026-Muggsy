@@ -37,14 +37,14 @@ SubVision::SubVision() {
   }
 
   // Display tags on field
-  for (const auto& target : _visionSim.GetVisionTargets()) {
+  for (const photon::VisionTargetSim& target : _visionSim.GetVisionTargets()) {
     logger::FieldDisplay::GetInstance().DisplayPose(
       fmt::format("tag{}", target.GetFiducialId()), target.GetPose().ToPose2d());
   }
 }
 
 void SubVision::Periodic() {
-  auto loopStart = frc::GetTime();
+  units::second_t loopStart = frc::GetTime();
   UpdateVision();
 
   logger::Log("Vision/Loop Time", (frc::GetTime() - loopStart));
@@ -77,7 +77,7 @@ units::length::meter_t SubVision::GetAvgDistanceFromCamera(const photon::Estimat
   if (est.targetsUsed.empty()) {
     return 0_m;
   }
-  for (const auto& target : est.targetsUsed) {
+  for (const photon::PhotonTrackedTarget& target : est.targetsUsed) {
     distance += target.GetBestCameraToTarget().Translation().Norm();
   }
   distance /= est.targetsUsed.size();
@@ -87,7 +87,7 @@ units::length::meter_t SubVision::GetAvgDistanceFromCamera(const photon::Estimat
 
 bool SubVision::IsEstimateUsable(const photon::EstimatedRobotPose& est) {
   bool targetsUsable = (GetAvgDistanceFromCamera(est) < 5_m) || (est.targetsUsed.size() > 1);
-  auto pose = est.estimatedPose;
+  frc::Pose3d pose = est.estimatedPose;
   bool estimateOnField =
     (pose.X() > drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
       pose.X() < icGeometry::FIELD_LENGTH - drivebaseConfig::CENTRE_TO_BUMPER_EDGE &&
@@ -97,7 +97,7 @@ bool SubVision::IsEstimateUsable(const photon::EstimatedRobotPose& est) {
 }
 
 std::optional<frc::Pose2d> SubVision::GetAprilTagPose(int id) {
-  auto pose = _tagMap.GetTagPose(id);
+  std::optional<frc::Pose3d> pose = _tagMap.GetTagPose(id);
   if (pose.has_value()) {
     return pose.value().ToPose2d();
   }
@@ -111,7 +111,7 @@ int SubVision::GetClosestTag(frc::Pose2d currentPose) {
 
   for (const frc::AprilTag tag : tagList) {
     int id = tag.ID;
-    auto distance = currentPose.Translation().Distance(GetAprilTagPose(id).value().Translation());
+    units::meter_t distance = currentPose.Translation().Distance(GetAprilTagPose(id).value().Translation());
     if (closestTagID == 0 || distance < closestDistance) {
       closestDistance = distance;
       closestTagID = id;

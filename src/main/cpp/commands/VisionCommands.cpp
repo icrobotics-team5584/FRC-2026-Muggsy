@@ -22,7 +22,8 @@ frc2::CommandPtr AddVisionMeasurement() {
         return;
       }
 
-      auto poses = SubVision::GetInstance().GetPose();
+      std::map<std::string, std::optional<photon::EstimatedRobotPose>> poses = 
+        SubVision::GetInstance().GetPose();
 
       std::vector<ProcessedPose> processedResults = {};
 
@@ -68,7 +69,7 @@ frc2::CommandPtr AddVisionMeasurement() {
 
       ProcessedPose bestResult = processedResults.front();
 
-      for (const auto& result : processedResults) {
+      for (const ProcessedPose& result : processedResults) {
         // Compare distance
         if (result.distance < bestResult.distance) {
           bestResult = result;
