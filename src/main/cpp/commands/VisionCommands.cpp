@@ -56,9 +56,13 @@ frc2::CommandPtr AddVisionMeasurement() {
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
 
         // Distance between tag and camera
-        units::meter_t distance = SubVision::GetInstance().GetAvgDistanceFromCamera(pose.value());
+        std::optional<units::meter_t> distance = 
+          SubVision::GetInstance().GetAvgDistanceFromCamera(pose.value());
+        if(!distance) {
+          continue;
+        }
 
-        processedResults.push_back({name, botPose, pose.value().timestamp, distance});
+        processedResults.push_back({name, botPose, pose.value().timestamp, distance.value()});
       }
 
       // Compare results, prioritize static camera with closest distance
