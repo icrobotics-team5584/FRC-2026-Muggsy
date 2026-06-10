@@ -12,7 +12,7 @@
 
 class ICCamera {
  public:
-  ICCamera(const std::string& name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap);
+  ICCamera(const std::string_view& name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap);
 
   void Update();
 

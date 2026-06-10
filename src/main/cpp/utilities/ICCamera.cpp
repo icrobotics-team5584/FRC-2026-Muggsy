@@ -8,7 +8,7 @@
 #include "utilities/PoseHandler.h"
 
 ICCamera::ICCamera(
-  const std::string& name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap)
+  const std::string_view& name, frc::Transform3d botToCam, frc::AprilTagFieldLayout tagMap)
   : _camName(name),
     _botToCam(botToCam),
     _tagMap(std::move(tagMap)),
