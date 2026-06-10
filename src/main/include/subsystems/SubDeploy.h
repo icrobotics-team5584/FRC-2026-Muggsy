@@ -40,7 +40,8 @@ class SubDeploy : public frc2::SubsystemBase {
  private:
   static units::meter_t ConvertPositionToLength(units::turn_t pos);
   static units::turn_t ConvertLengthToPosition(units::meter_t length);
-  static units::turns_per_second_t ConvertVelocityToAngularVelocity(units::meters_per_second_t velo);
+  static units::turns_per_second_t ConvertVelocityToAngularVelocity(
+    units::meters_per_second_t velo);
 
   ICSparkFlex _motor{canid::DEPLOY_MOTOR};
   rev::spark::SparkFlexConfig _motorConfig;
@@ -53,14 +54,14 @@ class SubDeploy : public frc2::SubsystemBase {
   static constexpr units::meter_t PINION_RAD = 0.05_m;
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * M_PI;
   static constexpr double GEARING = 5.0;
-  
+
   /* Since ConvertLengthToPosition is defined in a class, it cannot be defined
    * as a static constexpr function and called in a constexpr expression within
-   * the class. Constexpr functions require to be defined before being called 
-   * and the compiler will not recognise the function defintion as complete 
+   * the class. Constexpr functions require to be defined before being called
+   * and the compiler will not recognise the function defintion as complete
    * until the entire class is also complete. */
   units::turn_t TOLERANCE = ConvertLengthToPosition(0.05_m);
-  
+
   /* Simulation */
   static constexpr units::kilogram_t MASS = 5_kg;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex();
