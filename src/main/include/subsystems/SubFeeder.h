@@ -5,17 +5,27 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/Commands.h>
+#include <rev/SparkFlex.h>
+#include "Constants.h"
 
 class SubFeeder : public frc2::SubsystemBase {
  public:
+ static SubFeeder& GetInstance() {
+    static SubFeeder inst;
+    return inst;
+  }
   SubFeeder();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  frc2::CommandPtr Feed();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
+
+  rev::spark::SparkFlex _feederMotor{canid::FEEDER_MOTOR, rev::spark::SparkLowLevel::MotorType::kBrushless};
 };
