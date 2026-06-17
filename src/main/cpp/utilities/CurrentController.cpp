@@ -1,4 +1,5 @@
 #include <utilities/CurrentController.h>
+#include <utilities/Logger.h>
 
 int CurrentController::RegisterSubsystem(
   const CurrentControllerSubsystem& conf, std::optional<YellowCurrentLevel> yellowConf) {
@@ -44,13 +45,14 @@ void CurrentController::Periodic() {
      * cld = 0: no change.
      * cld < 0: go down a current level cld times.
      */
+    CurrentLevel cl = GetCurrentLevel(id, data.getSubsystemCurrent());
     int lcl = static_cast<int>(data.currentLevel);
-    int ccl = static_cast<int>(GetCurrentLevel(id, data.getSubsystemCurrent()));
+    int ccl = static_cast<int>(cl);
     int cld = std::clamp(ccl - lcl, -2, 2);
 
     if (!cld) {
       continue;
-}
+    }
 
     switch (cld) {
       case 2:
@@ -68,6 +70,8 @@ void CurrentController::Periodic() {
         DecreaseCurrentLevel(id);
         break;
     }
+
+    logger::Log("Current Management System/" + data.name + "/CurrentLevel", CurrentLevelToString(cl));
   }
 }
 
@@ -139,4 +143,15 @@ CurrentLevel CurrentController::GetCurrentLevel(unsigned int id, units::ampere_t
   }
 
   return CurrentLevel::RED;
+}
+
+std::string CurrentController::CurrentLevelToString(enum CurrentLevel level) {
+    switch(level) {
+        case CurrentLevel::RED:
+            return "Red";
+        case CurrentLevel::YELLOW:
+            return "Yellow";
+        case CurrentLevel::GREEN:
+            return "Green";
+    }
 }

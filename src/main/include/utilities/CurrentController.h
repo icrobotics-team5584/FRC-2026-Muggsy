@@ -43,11 +43,11 @@ class CurrentController {
   void DecreaseCurrentLevel(unsigned int id);
   void IncreaseCurrentLevel(unsigned int id);
   CurrentLevel GetCurrentLevel(unsigned int id, units::ampere_t current);
-  std::string ConvertCurrentLevelToString(enum CurrentLevel level);
+  std::string CurrentLevelToString(enum CurrentLevel level);
 
  private:
   struct SubsystemData {
-    std::string_view name;
+    std::string name;
     CurrentLevel currentLevel;
 
     units::ampere_t greenMaxCurrentThreshold;
