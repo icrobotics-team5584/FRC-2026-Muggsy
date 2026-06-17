@@ -5,6 +5,7 @@
 #pragma once
 
 #include <frc2/command/Commands.h>
+#include <frc/geometry/Pose2d.h>
 
 struct ProcessedPose {
   std::string camName;
