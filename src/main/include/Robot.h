@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "utilities/CurrentController.h"
+
 #include <frc/PowerDistribution.h>
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
@@ -12,8 +14,6 @@
 
 #include "Constants.h"
 #include "RobotContainer.h"
-
-#include "utilities/CurrentController.h"
 
 class Robot : public frc::TimedRobot {
  public:
