@@ -18,7 +18,13 @@ RobotContainer::RobotContainer() {
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
 
-void RobotContainer::ConfigureBindings() {}
+void RobotContainer::ConfigureBindings() {
+  _driverController.A().OnTrue(frc2::cmd::RunOnce([]{
+    SubDrivebase::GetInstance().SetPose(frc::Pose2d{3.478_m, 7.450_m, 0.0_deg});
+  }));
+
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ZeroRotation([]{return 0_deg;}));
+}
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return cmd::IntakeAuton();
@@ -35,3 +41,4 @@ frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) 
       logger::Log("DriverStation/Rumble", false);
     });
 }
+
