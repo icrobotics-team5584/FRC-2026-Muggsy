@@ -4,9 +4,9 @@
 #include <units/current.h>
 
 enum CurrentLevel {
-  RED = 2, /* Highest Current Level */
-  YELLOW = 1,
-  GREEN = 0, /* Lowest Current Level */
+  CURRENT_RED = 2, /* Highest Current Level */
+  CURRENT_YELLOW = 1,
+  CURRENT_GREEN = 0, /* Lowest Current Level */
 };
 
 struct CurrentControllerSubsystem {

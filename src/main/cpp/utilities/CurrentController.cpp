@@ -83,22 +83,22 @@ void CurrentController::DecreaseCurrentLevel(unsigned int id) {
 
   SubsystemData data = _subsystemList[id];
   if (data.yellowCurrentLevelEnabled) {
-    if (data.currentLevel == CurrentLevel::RED) {
+    if (data.currentLevel == CurrentLevel::CURRENT_RED) {
       data.exitRedCurrentLevel();
       data.enterYellowCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::YELLOW;
+      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_YELLOW;
     }
 
-    if (data.currentLevel == CurrentLevel::YELLOW) {
+    if (data.currentLevel == CurrentLevel::CURRENT_YELLOW) {
       data.exitYellowCurrentLevel();
       data.enterGreenCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::GREEN;
+      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_GREEN;
     }
   } else {
-    if (data.currentLevel == CurrentLevel::RED) {
+    if (data.currentLevel == CurrentLevel::CURRENT_RED) {
       data.exitRedCurrentLevel();
       data.enterGreenCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::GREEN;
+      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_GREEN;
     }
   }
 }
@@ -109,50 +109,50 @@ void CurrentController::IncreaseCurrentLevel(unsigned int id) {
 
   SubsystemData data = _subsystemList[id];
   if (data.yellowCurrentLevelEnabled) {
-    if (data.currentLevel == CurrentLevel::GREEN) {
+    if (data.currentLevel == CurrentLevel::CURRENT_GREEN) {
       data.exitGreenCurrentLevel();
       data.enterYellowCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::YELLOW;
+      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_YELLOW;
     }
 
-    if (data.currentLevel == CurrentLevel::YELLOW) {
+    if (data.currentLevel == CurrentLevel::CURRENT_YELLOW) {
       data.exitYellowCurrentLevel();
       data.enterRedCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::RED;
+      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_RED;
     }
   } else {
-    if (data.currentLevel == CurrentLevel::GREEN) {
+    if (data.currentLevel == CurrentLevel::CURRENT_GREEN) {
       data.exitGreenCurrentLevel();
       data.enterRedCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::RED;
+      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_RED;
     }
   }
 }
 
 CurrentLevel CurrentController::GetCurrentLevel(unsigned int id, units::ampere_t current) {
   if (!_subsystemList.contains(id)) {
-    return CurrentLevel::GREEN;
+    return CurrentLevel::CURRENT_GREEN;
   }
 
   SubsystemData data = _subsystemList[id];
   if (current < data.greenMaxCurrentThreshold) {
-    return CurrentLevel::GREEN;
+    return CurrentLevel::CURRENT_GREEN;
   }
 
   if (current < data.yellowMaxCurrentThreshold && data.yellowCurrentLevelEnabled) {
-    return CurrentLevel::YELLOW;
+    return CurrentLevel::CURRENT_YELLOW;
   }
 
-  return CurrentLevel::RED;
+  return CurrentLevel::CURRENT_RED;
 }
 
 std::string CurrentController::CurrentLevelToString(enum CurrentLevel level) {
   switch (level) {
-    case CurrentLevel::RED:
+    case CurrentLevel::CURRENT_RED:
       return "Red";
-    case CurrentLevel::YELLOW:
+    case CurrentLevel::CURRENT_YELLOW:
       return "Yellow";
-    case CurrentLevel::GREEN:
+    case CurrentLevel::CURRENT_GREEN:
       return "Green";
   }
 }
