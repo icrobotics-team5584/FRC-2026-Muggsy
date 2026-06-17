@@ -83,6 +83,8 @@ frc2::CommandPtr AddVisionMeasurement() {
 
       // Add result to PoseHandler
       double dev = SubVision::GetInstance().GetDev(bestResult.distance);
+      /* We chose 0.9 for rotary deviation because our gryo estimations are
+       * vastly more accurate. (dev = 0; max trust, dev = 1; min trust)  */
       PoseHandler::GetInstance().AddVisionMeasurement(
         bestResult.pose, bestResult.timestamp, {dev, dev, 0.9});
     },
