@@ -58,8 +58,7 @@ frc2::CommandPtr AddVisionMeasurement() {
           continue;
         }
 
-        frc::Pose2d botPose;
-        botPose = pose.estimatedPose.ToPose2d();
+        frc::Pose2d botPose = pose.estimatedPose.ToPose2d();
 
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
         
