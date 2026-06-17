@@ -13,6 +13,7 @@
 #include "utilities/Logger.h"
 
 #include <frc2/command/Commands.h>
+
 #include <commands/AutonCommands.h>
 
 RobotContainer::RobotContainer() {
@@ -22,11 +23,11 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.A().OnTrue(frc2::cmd::RunOnce([]{
+  _driverController.A().OnTrue(frc2::cmd::RunOnce([] {
     SubDrivebase::GetInstance().SetPose(frc::Pose2d{3.478_m, 7.450_m, 0.0_deg});
   }));
 
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ZeroRotation([]{return 0_deg;}));
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }));
   _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
   _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
   _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().ManualExtendDown());
@@ -49,4 +50,3 @@ frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) 
       logger::Log("DriverStation/Rumble", false);
     });
 }
-
