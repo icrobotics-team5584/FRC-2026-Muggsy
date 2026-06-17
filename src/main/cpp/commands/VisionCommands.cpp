@@ -40,8 +40,15 @@ frc2::CommandPtr AddVisionMeasurement() {
         }
         photon::EstimatedRobotPose pose = pose_value.value();
 
+        /* precompute distance */
+        std::optional<units::meter_t> distance =
+          SubVision::GetInstance().GetAvgDistanceFromCamera(pose);
+        if (!distance) {
+          continue;
+        }
+        
         // If the pose is usable, or the timestamp is recent
-        bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose);
+        bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose, distance);
         bool timestampValid = frc::Timer::GetFPGATimestamp() - pose.timestamp < 0.2_s;
         logger::Log("Vision/" + name + "/Est pose usable", poseUsable);
         logger::Log("Vision/" + name + "/Timestamp difference",
@@ -55,14 +62,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         botPose = pose.estimatedPose.ToPose2d();
 
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
-
-        // Distance between tag and camera
-        std::optional<units::meter_t> distance =
-          SubVision::GetInstance().GetAvgDistanceFromCamera(pose);
-        if (!distance) {
-          continue;
-        }
-
+        
         processedResults.push_back({name, botPose, pose.timestamp, distance.value()});
       }
 
