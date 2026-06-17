@@ -35,7 +35,7 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return cmd::IntakeAuton();
+  return cmd::AutonCommand();
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {

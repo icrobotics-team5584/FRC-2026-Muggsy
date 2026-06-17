@@ -3,6 +3,7 @@
 #include "Subsystems/SubShooter.h"
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubIndexer.h"
+#include "subsystems/SubIntake.h"
 
 #include "utilities/FieldConstants.h"
 #include "utilities/ICGeometry.h"
@@ -13,9 +14,6 @@
 
 #include <math.h>
 namespace cmd {
-
-
-
 
 frc2::CommandPtr IntakePass(bool flip) {
   return frc2::cmd::Sequence(
@@ -34,7 +32,7 @@ frc2::CommandPtr IntakePass(bool flip) {
       icGeometry::MaybeFlip(frc::Pose2d{2.4_m, 0.5_m, 0_deg}, flip), 1.0, 80_cm, 15_deg))
     .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
       [] { return CalcDist(PoseHandler::GetInstance().GetPose(), GetHubPos()); },
-      [] { return false; }));
+      [] { return false; })).AlongWith(SubIntake::GetInstance().RunIntake());
 }
 
 frc2::CommandPtr DepotAuton(bool flip) {
@@ -71,9 +69,10 @@ frc2::CommandPtr DepotAuton(bool flip) {
       icGeometry::MaybeFlip(frc::Pose2d{2.283_m, 4.552_m, 140.0_deg}, flip), 0.2, 80_cm, 15_deg))
     .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
       [] { return CalcDist(PoseHandler::GetInstance().GetPose(), GetHubPos()); },
-      [] { return false; }));
+      [] { return false; })).AlongWith(SubIntake::GetInstance().RunIntake());;
 }
-frc2::CommandPtr IntakeAuton(){// return cmd::IntakePass(false).AndThen(cmd::IntakePass(false));
+frc2::CommandPtr AutonCommand(){
+  // return cmd::IntakePass(false).AndThen(cmd::IntakePass(false));
   return cmd::DepotAuton(false);
 }
 
