@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include "utilities/AutonHelper.h"
+
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
-#include "utilities/AutonHelper.h"
 
 class RobotContainer {
  public:
@@ -16,7 +17,6 @@ class RobotContainer {
   frc2::CommandPtr Rumble(double force, units::second_t duration);
 
  private:
-
   autonHelper::AutonManager _autoManager;
 
   void ConfigureBindings();
