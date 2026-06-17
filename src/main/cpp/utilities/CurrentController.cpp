@@ -27,11 +27,17 @@ int CurrentController::RegisterSubsystem(CurrentControllerSubsystem conf, std::o
 	    data.exitYellowCurrentLevel = conf.exitRedCurrentLevel;
     }
 
-    int id = 0;
+    unsigned int id = 0;
     while(_subsystemList.contains(id)) {
         id++;
     }
     _subsystemList[id] = data;
 
     return id;
+}
+
+void CurrentController::UnregisterSubsystem(unsigned int id) {
+    if(_subsystemList.contains(id)) {
+        _subsystemList.erase(id);
+    }
 }
