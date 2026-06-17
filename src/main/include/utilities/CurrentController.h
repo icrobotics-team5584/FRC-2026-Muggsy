@@ -4,9 +4,9 @@
 #include <units/current.h>
 
 enum CurrentLevel {
-  Red = 2, /* Highest Current Level */
-  Yellow = 1,
-  Green = 0, /* Lowest Current Level */
+  RED = 2, /* Highest Current Level */
+  YELLOW = 1,
+  GREEN = 0, /* Lowest Current Level */
 };
 
 struct CurrentControllerSubsystem {
@@ -29,7 +29,7 @@ class CurrentController {
  public:
   /* Turn into singleton */
   CurrentController() = default;
-  static CurrentController& getInstance() {
+  static CurrentController& GetInstance() {
     static CurrentController inst;
     return inst;
   }
@@ -37,7 +37,7 @@ class CurrentController {
   void operator=(CurrentController const&) = delete;
 
   int RegisterSubsystem(
-    CurrentControllerSubsystem conf, std::optional<YellowCurrentLevel> yellowConf);
+    const CurrentControllerSubsystem& conf, std::optional<YellowCurrentLevel> yellowConf);
   void UnregisterSubsystem(unsigned int id);
   void Periodic();
   void DecreaseCurrentLevel(unsigned int id);

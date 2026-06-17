@@ -1,8 +1,8 @@
 #include <utilities/CurrentController.h>
 
 int CurrentController::RegisterSubsystem(
-  CurrentControllerSubsystem conf, std::optional<YellowCurrentLevel> yellowConf) {
-  SubsystemData data = {0};
+  const CurrentControllerSubsystem& conf, std::optional<YellowCurrentLevel> yellowConf) {
+  SubsystemData data = {nullptr};
   data.name = conf.name;
   data.greenMaxCurrentThreshold = conf.greenMaxCurrentThreshold;
   data.getSubsystemCurrent = conf.getSubsystemCurrent;
@@ -12,7 +12,7 @@ int CurrentController::RegisterSubsystem(
   data.exitRedCurrentLevel = conf.exitRedCurrentLevel;
 
   if (yellowConf) {
-    YellowCurrentLevel yconf = yellowConf.value();
+    const YellowCurrentLevel& yconf = yellowConf.value();
     if (yconf.currentThreshold < conf.greenMaxCurrentThreshold) {
       return -1;
     }
@@ -48,8 +48,9 @@ void CurrentController::Periodic() {
     int ccl = static_cast<int>(GetCurrentLevel(id, data.getSubsystemCurrent()));
     int cld = std::clamp(ccl - lcl, -2, 2);
 
-    if (!cld)
+    if (!cld) {
       continue;
+}
 
     switch (cld) {
       case 2:
@@ -77,22 +78,22 @@ void CurrentController::DecreaseCurrentLevel(unsigned int id) {
 
   SubsystemData data = _subsystemList[id];
   if (data.yellowCurrentLevelEnabled) {
-    if (data.currentLevel == CurrentLevel::Red) {
+    if (data.currentLevel == CurrentLevel::RED) {
       data.exitRedCurrentLevel();
       data.enterYellowCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::Yellow;
+      _subsystemList[id].currentLevel = CurrentLevel::YELLOW;
     }
 
-    if (data.currentLevel == CurrentLevel::Yellow) {
+    if (data.currentLevel == CurrentLevel::YELLOW) {
       data.exitYellowCurrentLevel();
       data.enterGreenCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::Green;
+      _subsystemList[id].currentLevel = CurrentLevel::GREEN;
     }
   } else {
-    if (data.currentLevel == CurrentLevel::Red) {
+    if (data.currentLevel == CurrentLevel::RED) {
       data.exitRedCurrentLevel();
       data.enterGreenCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::Green;
+      _subsystemList[id].currentLevel = CurrentLevel::GREEN;
     }
   }
 }
@@ -103,39 +104,39 @@ void CurrentController::IncreaseCurrentLevel(unsigned int id) {
 
   SubsystemData data = _subsystemList[id];
   if (data.yellowCurrentLevelEnabled) {
-    if (data.currentLevel == CurrentLevel::Green) {
+    if (data.currentLevel == CurrentLevel::GREEN) {
       data.exitGreenCurrentLevel();
       data.enterYellowCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::Yellow;
+      _subsystemList[id].currentLevel = CurrentLevel::YELLOW;
     }
 
-    if (data.currentLevel == CurrentLevel::Yellow) {
+    if (data.currentLevel == CurrentLevel::YELLOW) {
       data.exitYellowCurrentLevel();
       data.enterRedCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::Red;
+      _subsystemList[id].currentLevel = CurrentLevel::RED;
     }
   } else {
-    if (data.currentLevel == CurrentLevel::Green) {
+    if (data.currentLevel == CurrentLevel::GREEN) {
       data.exitGreenCurrentLevel();
       data.enterRedCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::Red;
+      _subsystemList[id].currentLevel = CurrentLevel::RED;
     }
   }
 }
 
 CurrentLevel CurrentController::GetCurrentLevel(unsigned int id, units::ampere_t current) {
   if (!_subsystemList.contains(id)) {
-    return CurrentLevel::Green;
+    return CurrentLevel::GREEN;
   }
 
   SubsystemData data = _subsystemList[id];
   if (current < data.greenMaxCurrentThreshold) {
-    return CurrentLevel::Green;
+    return CurrentLevel::GREEN;
   }
 
   if (current < data.yellowMaxCurrentThreshold && data.yellowCurrentLevelEnabled) {
-    return CurrentLevel::Yellow;
+    return CurrentLevel::YELLOW;
   }
 
-  return CurrentLevel::Red;
+  return CurrentLevel::RED;
 }
