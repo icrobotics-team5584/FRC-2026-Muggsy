@@ -4,9 +4,9 @@
 #include <units/current.h>
 
 enum CurrentLevel {
-    Red = 2,
+    Red = 2, /* Highest Current Level */
     Yellow = 1,
-    Green = 0,
+    Green = 0, /* Lowest Current Level */
 };
 
 struct CurrentControllerSubsystem {
@@ -40,13 +40,15 @@ class CurrentController {
         int RegisterSubsystem(CurrentControllerSubsystem conf, std::optional<YellowCurrentLevel> yellowConf);
         void UnregisterSubsystem(unsigned int id);
         void Periodic();
-        enum CurrentLevel GetCurrentLevel(unsigned int id, units::ampere_t current);
+        void DecreaseCurrentLevel(unsigned int id);
+        void IncreaseCurrentLevel(unsigned int id); 
+        CurrentLevel GetCurrentLevel(unsigned int id, units::ampere_t current);
         std::string ConvertCurrentLevelToString(enum CurrentLevel level);
 
     private:
         struct SubsystemData {
             std::string_view name;
-            CurrentLevel lastCurrentLevel;
+            CurrentLevel currentLevel;
 
             units::ampere_t greenCurrentThreshold;
             units::ampere_t redCurrentThreshold;
