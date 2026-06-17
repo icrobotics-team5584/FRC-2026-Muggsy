@@ -10,6 +10,9 @@
 #include "subsystems/SubHood.h"
 #include "subsystems/SubIndexer.h"
 #include "subsystems/SubIntake.h"
+#include "subsystems/SubVision.h"
+
+#include "commands/VisionCommands.h"
 
 #include "utilities/Logger.h"
 
@@ -17,6 +20,7 @@
 
 RobotContainer::RobotContainer() {
   ConfigureBindings();
+  SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
   SubDrivebase::GetInstance().SetDefaultCommand(
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
