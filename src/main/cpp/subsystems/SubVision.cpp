@@ -86,8 +86,9 @@ std::optional<units::meter_t> SubVision::GetAvgDistanceFromCamera(
   return distance;
 }
 
-bool SubVision::IsEstimateUsable(const photon::EstimatedRobotPose& est) {
-  std::optional<units::meter_t> avgDist = GetAvgDistanceFromCamera(est);
+bool SubVision::IsEstimateUsable(const photon::EstimatedRobotPose& est, std::optional<units::meter_t> precomputedDistance) {
+  /* If precomputed distance exists, set avg dist as precomputed distance, else call a function */
+  std::optional<units::meter_t> avgDist = precomputedDistance ? precomputedDistance : GetAvgDistanceFromCamera(est);
   if (!avgDist) {
     return false;
   }
