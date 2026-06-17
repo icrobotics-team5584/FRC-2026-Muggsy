@@ -30,9 +30,9 @@ frc2::CommandPtr IntakePass(bool flip) {
     SubIndexer::GetInstance().SpinIndexer().WithTimeout(1.5_s),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.4_m, 0.5_m, 0_deg}, flip), 1.0, 80_cm, 15_deg))
-    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
+    .DeadlineFor(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
       [] { return CalcDist(PoseHandler::GetInstance().GetPose(), GetHubPos()); },
-      [] { return false; })).AlongWith(SubIntake::GetInstance().RunIntake());
+      [] { return false; })).DeadlineFor(SubIntake::GetInstance().RunIntake());
 }
 
 frc2::CommandPtr DepotAuton(bool flip) {
@@ -67,13 +67,12 @@ frc2::CommandPtr DepotAuton(bool flip) {
       icGeometry::MaybeFlip(frc::Pose2d{5.087_m, 5.289_m, 180.0_deg}, flip), 0.2, 80_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.283_m, 4.552_m, 140.0_deg}, flip), 0.2, 80_cm, 15_deg))
-    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
+    .DeadlineFor(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
       [] { return CalcDist(PoseHandler::GetInstance().GetPose(), GetHubPos()); },
-      [] { return false; })).AlongWith(SubIntake::GetInstance().RunIntake());;
+      [] { return false; })).DeadlineFor(SubIntake::GetInstance().RunIntake());;
 }
-frc2::CommandPtr AutonCommand(){
-  // return cmd::IntakePass(false).AndThen(cmd::IntakePass(false));
-  return cmd::DepotAuton(false);
+frc2::CommandPtr IntakePassAuton(){
+   return cmd::IntakePass(false).AndThen(cmd::IntakePass(false));
 }
 
 units::meter_t CalcDist(frc::Pose2d robotPos, frc::Translation2d targetPos) {

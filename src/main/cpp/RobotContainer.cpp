@@ -19,6 +19,11 @@ RobotContainer::RobotContainer() {
   ConfigureBindings();
   SubDrivebase::GetInstance().SetDefaultCommand(
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
+
+    _autoManager.AddDefaultAuton("DepotAuto", autonHelper::MakeCommandPtrAuto(cmd::DepotAuton(false)));
+    _autoManager.AddDefaultAuton("IntakePass", autonHelper::MakeCommandPtrAuto(cmd::IntakePassAuton()));
+
+    frc::SmartDashboard::PutData("CHOSEN AUTON", &_autoManager.GetAutonChooser());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -34,8 +39,9 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return cmd::AutonCommand();
+std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
+  autonHelper::AutonPtr chosen = _autoManager.GetChosenAuton();
+  return chosen;
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {
