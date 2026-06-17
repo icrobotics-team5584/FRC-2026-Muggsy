@@ -36,7 +36,8 @@ class SubVision : public frc2::SubsystemBase {
   std::optional<frc::Pose2d> GetAprilTagPose(int id);
 
   double GetDev(units::meter_t distance);
-  bool IsEstimateUsable(const photon::EstimatedRobotPose& est, std::optional<units::meter_t> precomputedDistance = std::nullopt);
+  bool IsEstimateUsable(const photon::EstimatedRobotPose& est,
+    std::optional<units::meter_t> precomputedDistance = std::nullopt);
 
  private:
   // Create field layout
