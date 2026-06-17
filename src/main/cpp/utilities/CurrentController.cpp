@@ -1,7 +1,7 @@
 #include <utilities/CurrentController.h>
 #include <utilities/Logger.h>
 
-int CurrentController::RegisterSubsystem(
+std::optional<int> CurrentController::RegisterSubsystem(
   const CurrentControllerSubsystem& conf, std::optional<YellowCurrentLevel> yellowConf) {
   SubsystemData data = {nullptr};
   data.name = conf.name;
@@ -15,7 +15,7 @@ int CurrentController::RegisterSubsystem(
   if (yellowConf) {
     const YellowCurrentLevel& yconf = yellowConf.value();
     if (yconf.currentThreshold < conf.greenMaxCurrentThreshold) {
-      return -1;
+      return std::nullopt;
     }
     data.yellowCurrentLevelEnabled = true;
     data.yellowMaxCurrentThreshold = yconf.currentThreshold;
