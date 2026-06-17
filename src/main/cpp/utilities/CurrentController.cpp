@@ -19,8 +19,8 @@ int CurrentController::RegisterSubsystem(
     }
     data.yellowCurrentLevelEnabled = true;
     data.yellowMaxCurrentThreshold = yconf.currentThreshold;
-    data.enterYellowCurrentLevel = conf.enterRedCurrentLevel;
-    data.exitYellowCurrentLevel = conf.exitRedCurrentLevel;
+    data.enterYellowCurrentLevel = yconf.enterCurrentLevel;
+    data.exitYellowCurrentLevel = yconf.exitCurrentLevel;
   }
 
   unsigned int id = 0;
