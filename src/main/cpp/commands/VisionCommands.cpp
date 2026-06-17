@@ -27,42 +27,43 @@ frc2::CommandPtr AddVisionMeasurement() {
 
       std::vector<ProcessedPose> processedResults = {};
 
-      for (auto [name, pose] : poses) {
+      for (auto [name, pose_value] : poses) {
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", {});
         logger::Log("Vision/" + name + "/Est pose usable", false);
         logger::Log("Vision/" + name + "/Timestamp difference", 0_s);
         logger::Log("Vision/" + name + "/Valid timestamp", false);
 
         // If the pose has value
-        logger::Log("Vision/" + name + "/Has value", pose.has_value());
-        if (!pose) {
+        logger::Log("Vision/" + name + "/Has value", pose_value.has_value());
+        if (!pose_value) {
           continue;
         }
+        photon::EstimatedRobotPose pose = pose_value.value();
 
         // If the pose is usable, or the timestamp is recent
-        bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose.value());
-        bool timestampValid = frc::Timer::GetFPGATimestamp() - pose.value().timestamp < 0.2_s;
+        bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose);
+        bool timestampValid = frc::Timer::GetFPGATimestamp() - pose.timestamp < 0.2_s;
         logger::Log("Vision/" + name + "/Est pose usable", poseUsable);
         logger::Log("Vision/" + name + "/Timestamp difference",
-          frc::Timer::GetFPGATimestamp() - pose.value().timestamp);
+          frc::Timer::GetFPGATimestamp() - pose.timestamp);
         logger::Log("Vision/" + name + "/Valid timestamp", timestampValid);
         if (!poseUsable || !timestampValid) {
           continue;
         }
 
         frc::Pose2d botPose;
-        botPose = pose.value().estimatedPose.ToPose2d();
+        botPose = pose.estimatedPose.ToPose2d();
 
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
 
         // Distance between tag and camera
         std::optional<units::meter_t> distance =
-          SubVision::GetInstance().GetAvgDistanceFromCamera(pose.value());
+          SubVision::GetInstance().GetAvgDistanceFromCamera(pose);
         if (!distance) {
           continue;
         }
 
-        processedResults.push_back({name, botPose, pose.value().timestamp, distance.value()});
+        processedResults.push_back({name, botPose, pose.timestamp, distance.value()});
       }
 
       // Compare results, prioritize static camera with closest distance
