@@ -2,14 +2,9 @@
 
 
 int CurrentController::RegisterSubsystem(CurrentControllerSubsystem conf, std::optional<YellowCurrentLevel> yellowConf) {
-    if(conf.greenCurrentThreshold > conf.redCurrentThreshold) {
-        return -1;
-    }
-
     SubsystemData data = {0};
     data.name = conf.name;
-    data.greenCurrentThreshold = conf.greenCurrentThreshold;
-    data.redCurrentThreshold = conf.redCurrentThreshold;
+    data.greenMaxCurrentThreshold = conf.greenMaxCurrentThreshold;
 	data.getSubsystemCurrent = conf.getSubsystemCurrent;
 	data.enterGreenCurrentLevel = conf.enterGreenCurrentLevel;
 	data.exitGreenCurrentLevel = conf.exitGreenCurrentLevel;
@@ -18,11 +13,11 @@ int CurrentController::RegisterSubsystem(CurrentControllerSubsystem conf, std::o
 
     if(yellowConf) {
         YellowCurrentLevel yconf = yellowConf.value();
-        if(yconf.currentThreshold > conf.redCurrentThreshold || yconf.currentThreshold < conf.greenCurrentThreshold) {
+        if(yconf.currentThreshold < conf.greenMaxCurrentThreshold) {
             return -1;
         }
         data.yellowCurrentLevelEnabled = true;
-        data.yellowcurrentThreshold = yconf.currentThreshold;
+        data.yellowMaxCurrentThreshold = yconf.currentThreshold;
         data.enterYellowCurrentLevel = conf.enterRedCurrentLevel;
 	    data.exitYellowCurrentLevel = conf.exitRedCurrentLevel;
     }
@@ -130,7 +125,19 @@ void CurrentController::IncreaseCurrentLevel(unsigned int id) {
 } 
 
 
-CurrentLevel GetCurrentLevel(unsigned int id, units::ampere_t current) {
-    /*tmp dummy func*/
-    return CurrentLevel::Green;
+CurrentLevel CurrentController::GetCurrentLevel(unsigned int id, units::ampere_t current) {
+    if(!_subsystemList.contains(id)) {
+        return CurrentLevel::Green;
+    }
+
+    SubsystemData data = _subsystemList[id];
+    if(current < data.greenMaxCurrentThreshold) {
+        return CurrentLevel::Green;
+    }
+
+    if(current < data.yellowMaxCurrentThreshold && data.yellowCurrentLevelEnabled) {
+        return CurrentLevel::Yellow;
+    }
+
+    return CurrentLevel::Red;
 }

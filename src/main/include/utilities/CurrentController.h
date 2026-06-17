@@ -11,8 +11,7 @@ enum CurrentLevel {
 
 struct CurrentControllerSubsystem {
     std::string_view name;
-    units::ampere_t greenCurrentThreshold;
-    units::ampere_t redCurrentThreshold;
+    units::ampere_t greenMaxCurrentThreshold;
     std::function<units::ampere_t()> getSubsystemCurrent;
     std::function<void()> enterGreenCurrentLevel;
     std::function<void()> exitGreenCurrentLevel;
@@ -50,8 +49,7 @@ class CurrentController {
             std::string_view name;
             CurrentLevel currentLevel;
 
-            units::ampere_t greenCurrentThreshold;
-            units::ampere_t redCurrentThreshold;
+            units::ampere_t greenMaxCurrentThreshold;
             std::function<units::ampere_t()> getSubsystemCurrent;
             std::function<void()> enterGreenCurrentLevel;
             std::function<void()> exitGreenCurrentLevel;
@@ -59,7 +57,7 @@ class CurrentController {
             std::function<void()> exitRedCurrentLevel;
             
             bool yellowCurrentLevelEnabled;
-            units::ampere_t yellowcurrentThreshold;
+            units::ampere_t yellowMaxCurrentThreshold;
             std::function<void()> enterYellowCurrentLevel;
             std::function<void()> exitYellowCurrentLevel;
         };
