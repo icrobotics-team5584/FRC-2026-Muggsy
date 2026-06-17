@@ -6,8 +6,6 @@
 
 #include <frc2/command/Commands.h>
 
-#include <photon/PhotonPoseEstimator.h>
-
 struct ProcessedPose {
   std::string camName;
   frc::Pose2d pose;
