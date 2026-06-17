@@ -10,7 +10,6 @@
 #include <frc/system/plant/LinearSystemId.h>
 #include <frc2/command/SubsystemBase.h>
 
-#include <math.h>
 #include <numbers>
 #include <rev/config/SparkFlexConfig.h>
 #include <units/angular_velocity.h>
