@@ -10,19 +10,19 @@ enum CurrentLevel {
 };
 
 struct CurrentControllerSubsystem {
-  std::string_view name;
-  units::ampere_t greenMaxCurrentThreshold;
-  std::function<units::ampere_t()> getSubsystemCurrent;
-  std::function<void()> enterGreenCurrentLevel;
-  std::function<void()> exitGreenCurrentLevel;
-  std::function<void()> enterRedCurrentLevel;
-  std::function<void()> exitRedCurrentLevel;
+  std::string_view name = "Default Subsystem";
+  units::ampere_t greenMaxCurrentThreshold = 1_A;
+  std::function<units::ampere_t()> getSubsystemCurrent = []{ return 1_A; };
+  std::function<void()> enterGreenCurrentLevel = []{};
+  std::function<void()> exitGreenCurrentLevel = []{};
+  std::function<void()> enterRedCurrentLevel = []{};
+  std::function<void()> exitRedCurrentLevel = []{};
 };
 
 struct YellowCurrentLevel {
-  units::ampere_t currentThreshold;
-  std::function<void()> enterCurrentLevel;
-  std::function<void()> exitCurrentLevel;
+  units::ampere_t currentThreshold = 2_A;
+  std::function<void()> enterCurrentLevel = []{};
+  std::function<void()> exitCurrentLevel = []{};
 };
 
 class CurrentController {
@@ -47,20 +47,20 @@ class CurrentController {
 
  private:
   struct SubsystemData {
-    std::string name;
-    CurrentLevel currentLevel;
+    std::string name = "Default Subsystem";
+    CurrentLevel currentLevel = CurrentLevel::CURRENT_GREEN;
 
-    units::ampere_t greenMaxCurrentThreshold;
-    std::function<units::ampere_t()> getSubsystemCurrent;
-    std::function<void()> enterGreenCurrentLevel;
-    std::function<void()> exitGreenCurrentLevel;
-    std::function<void()> enterRedCurrentLevel;
-    std::function<void()> exitRedCurrentLevel;
+    units::ampere_t greenMaxCurrentThreshold = 1_A;
+    std::function<units::ampere_t()> getSubsystemCurrent = []{ return 0_A; };
+    std::function<void()> enterGreenCurrentLevel = []{};
+    std::function<void()> exitGreenCurrentLevel = []{};
+    std::function<void()> enterRedCurrentLevel = []{};
+    std::function<void()> exitRedCurrentLevel = []{};
 
-    bool yellowCurrentLevelEnabled;
-    units::ampere_t yellowMaxCurrentThreshold;
-    std::function<void()> enterYellowCurrentLevel;
-    std::function<void()> exitYellowCurrentLevel;
+    bool yellowCurrentLevelEnabled = false;
+    units::ampere_t yellowMaxCurrentThreshold = 2_A;
+    std::function<void()> enterYellowCurrentLevel = []{};
+    std::function<void()> exitYellowCurrentLevel = []{};
   };
 
   std::map<unsigned int, SubsystemData> _subsystemList{};

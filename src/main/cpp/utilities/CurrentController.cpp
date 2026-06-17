@@ -155,4 +155,6 @@ std::string CurrentController::CurrentLevelToString(enum CurrentLevel level) {
     case CurrentLevel::CURRENT_GREEN:
       return "Green";
   }
+
+  return "Unknown";
 }
