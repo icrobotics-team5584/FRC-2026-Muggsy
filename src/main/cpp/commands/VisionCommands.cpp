@@ -52,8 +52,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose, distance);
         bool timestampValid = fpgaTimestamp - pose.timestamp < 0.2_s;
         logger::Log("Vision/" + name + "/Est pose usable", poseUsable);
-        logger::Log("Vision/" + name + "/Timestamp difference",
-          fpgaTimestamp - pose.timestamp);
+        logger::Log("Vision/" + name + "/Timestamp difference", fpgaTimestamp - pose.timestamp);
         logger::Log("Vision/" + name + "/Valid timestamp", timestampValid);
         if (!poseUsable || !timestampValid) {
           continue;
