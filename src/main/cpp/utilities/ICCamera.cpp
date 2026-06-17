@@ -26,7 +26,7 @@ void ICCamera::Update() {
     return;
   }
 
-  auto result = _latestResults.back();
+  const auto& result = _latestResults.back();
   if (result.targets.size() == 1) {
     _latestEstPose = _poseEstimator.EstimateLowestAmbiguityPose(result);
   } else {
@@ -39,7 +39,7 @@ void ICCamera::Update() {
   logger::Log("Vision/" + _camName + "/targets", targets);
 }
 
-std::string ICCamera::GetCamName() {
+const std::string& ICCamera::GetCamName() {
   return _camName;
 }
 
@@ -51,7 +51,7 @@ photon::PhotonCameraSim* ICCamera::GetCamSim() {
   return &_camSim;
 }
 
-std::vector<photon::PhotonPipelineResult> ICCamera::GetLatestResults() {
+std::vector<photon::PhotonPipelineResult>& ICCamera::GetLatestResults() {
   return _latestResults;
 }
 

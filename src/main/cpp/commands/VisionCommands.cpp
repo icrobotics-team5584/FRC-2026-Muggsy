@@ -39,7 +39,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         if (!pose_value) {
           continue;
         }
-        photon::EstimatedRobotPose pose = pose_value.value();
+        const photon::EstimatedRobotPose& pose = pose_value.value();
 
         /* precompute distance */
         std::optional<units::meter_t> distance =

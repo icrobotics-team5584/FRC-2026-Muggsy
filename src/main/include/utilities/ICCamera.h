@@ -16,11 +16,11 @@ class ICCamera {
 
   void Update();
 
-  std::string GetCamName();
+  const std::string& GetCamName();
   frc::Transform3d GetBotToCam();
   photon::PhotonCameraSim* GetCamSim();
 
-  std::vector<photon::PhotonPipelineResult> GetLatestResults();
+  std::vector<photon::PhotonPipelineResult>& GetLatestResults();
 
   std::optional<photon::EstimatedRobotPose> GetLatestEstPose();
 
