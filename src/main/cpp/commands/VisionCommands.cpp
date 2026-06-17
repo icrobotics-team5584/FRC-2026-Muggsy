@@ -28,7 +28,7 @@ frc2::CommandPtr AddVisionMeasurement() {
 
       std::vector<ProcessedPose> processedResults = {};
 
-      for (auto [name, pose_value] : poses) {
+      for (const auto& [name, pose_value] : poses) {
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", {});
         logger::Log("Vision/" + name + "/Est pose usable", false);
         logger::Log("Vision/" + name + "/Timestamp difference", 0_s);
