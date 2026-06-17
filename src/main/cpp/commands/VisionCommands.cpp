@@ -47,7 +47,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         if (!distance) {
           continue;
         }
-        
+
         // If the pose is usable, or the timestamp is recent
         bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose, distance);
         bool timestampValid = fpgaTimestamp - pose.timestamp < 0.2_s;
@@ -62,7 +62,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         frc::Pose2d botPose = pose.estimatedPose.ToPose2d();
 
         logger::FieldDisplay::GetInstance().DisplayPose("Vision/" + name + "/Est pose", botPose);
-        
+
         processedResults.push_back({name, botPose, pose.timestamp, distance.value()});
       }
 
