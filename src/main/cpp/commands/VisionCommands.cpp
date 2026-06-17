@@ -18,6 +18,7 @@ frc2::CommandPtr AddVisionMeasurement() {
   logger::Log("Vision/Timestamp limit", 0.2_s);
   return Run(
     [] {
+      units::second_t fpgaTimestamp = frc::Timer::GetFPGATimestamp();
       if (!logger::Tune("Vision/Add pose measurement", frc::RobotBase::IsReal())) {
         return;
       }
@@ -49,10 +50,10 @@ frc2::CommandPtr AddVisionMeasurement() {
         
         // If the pose is usable, or the timestamp is recent
         bool poseUsable = SubVision::GetInstance().IsEstimateUsable(pose, distance);
-        bool timestampValid = frc::Timer::GetFPGATimestamp() - pose.timestamp < 0.2_s;
+        bool timestampValid = fpgaTimestamp - pose.timestamp < 0.2_s;
         logger::Log("Vision/" + name + "/Est pose usable", poseUsable);
         logger::Log("Vision/" + name + "/Timestamp difference",
-          frc::Timer::GetFPGATimestamp() - pose.timestamp);
+          fpgaTimestamp - pose.timestamp);
         logger::Log("Vision/" + name + "/Valid timestamp", timestampValid);
         if (!poseUsable || !timestampValid) {
           continue;
