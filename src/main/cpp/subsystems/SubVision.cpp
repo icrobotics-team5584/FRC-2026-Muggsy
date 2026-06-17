@@ -116,7 +116,7 @@ std::optional<int> SubVision::GetClosestTag(frc::Pose2d currentPose) {
   units::meter_t closestDistance = 999_m;
   std::vector<frc::AprilTag> tagList = _tagMap.GetTags();
 
-  for (const frc::AprilTag tag : tagList) {
+  for (const frc::AprilTag& tag : tagList) {
     int id = tag.ID;
     std::optional<frc::Pose2d> aprilTagPoseResult = GetAprilTagPose(id);
     if (!aprilTagPoseResult) {
