@@ -13,6 +13,8 @@
 #include "Constants.h"
 #include "RobotContainer.h"
 
+#include "utilities/CurrentController.h"
+
 class Robot : public frc::TimedRobot {
  public:
   Robot();
@@ -36,4 +38,6 @@ class Robot : public frc::TimedRobot {
   RobotContainer _container;
 
   frc::PowerDistribution _pdh{canid::PDH, frc::PowerDistribution::ModuleType::kRev};
+
+  CurrentController _currentController;
 };

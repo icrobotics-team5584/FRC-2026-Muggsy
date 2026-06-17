@@ -27,6 +27,7 @@ void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
 
   ShiftHandler::GetInstance().Periodic();
+  CurrentController::GetInstance().Periodic();
 
   logger::Log("Robot/RioBrownOut", frc::RobotController::IsBrownedOut());
   logger::Log("Robot/RioInputVoltage", frc::RobotController::GetInputVoltage() * 1_V);

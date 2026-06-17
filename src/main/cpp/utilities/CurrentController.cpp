@@ -71,7 +71,8 @@ void CurrentController::Periodic() {
         break;
     }
 
-    logger::Log("Current Management System/" + data.name + "/CurrentLevel", CurrentLevelToString(cl));
+    logger::Log(
+      "Current Management System/" + data.name + "/CurrentLevel", CurrentLevelToString(cl));
   }
 }
 
@@ -146,12 +147,12 @@ CurrentLevel CurrentController::GetCurrentLevel(unsigned int id, units::ampere_t
 }
 
 std::string CurrentController::CurrentLevelToString(enum CurrentLevel level) {
-    switch(level) {
-        case CurrentLevel::RED:
-            return "Red";
-        case CurrentLevel::YELLOW:
-            return "Yellow";
-        case CurrentLevel::GREEN:
-            return "Green";
-    }
+  switch (level) {
+    case CurrentLevel::RED:
+      return "Red";
+    case CurrentLevel::YELLOW:
+      return "Yellow";
+    case CurrentLevel::GREEN:
+      return "Green";
+  }
 }
