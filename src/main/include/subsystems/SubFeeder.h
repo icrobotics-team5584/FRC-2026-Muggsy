@@ -50,7 +50,7 @@ class SubFeeder : public frc2::SubsystemBase {
   static constexpr double F = 0.001060;
 
   // Simulation components
-  static constexpr double GEARING = 22.0/18.0;
+  static constexpr double GEARING = 22.0 / 18.0;
   static constexpr units::kilogram_square_meter_t MOI = 0.000001_kg_sq_m;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex(1);
 
