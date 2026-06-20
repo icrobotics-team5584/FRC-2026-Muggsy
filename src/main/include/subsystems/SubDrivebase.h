@@ -60,9 +60,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
 
-  frc2::CommandPtr DriveToPose(const std::function<frc::Pose2d()>& pose, double speedScaling = 1,
-    units::meter_t posErrorTolerance = 2_cm, units::degree_t rotErrorTolerance = 2_deg,
-    bool flipForRedAlliance = true);
   void SetPose(frc::Pose2d pose);
   bool IsAtPose(frc::Pose2d pose, units::meter_t posErrorTolerance = 2_cm,
     units::degree_t rotErrorTolerance = 2_deg);
@@ -75,16 +72,17 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Joystick Drive
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller, bool fieldOriented = true,
     double speedScaling = 1.0, double rotationScaling = 1.0);
+  frc2::CommandPtr JoystickDriveWithAngle(frc2::CommandXboxController& controller,
+    const std::function<units::degree_t()>& target, double speedScaling = 1.0);
   frc2::CommandPtr LockWheelsInXShape();
 
-  // Pose drive
+  // Drive
   frc2::CommandPtr Drive(const std::function<frc::ChassisSpeeds()>& speeds, bool fieldOriented);
   frc2::CommandPtr DriveOverBump(
     frc::ChassisSpeeds fieldRelativeSpeeds, frc::Translation2d allianceRelativeEndXY);
-
-  // Rotations
-  frc2::CommandPtr AlignToAngle(
-    frc2::CommandXboxController& controller, const std::function<units::degree_t()>& target);
+  frc2::CommandPtr DriveToPose(const std::function<frc::Pose2d()>& pose, double speedScaling = 1,
+    units::meter_t posErrorTolerance = 2_cm, units::degree_t rotErrorTolerance = 2_deg,
+    bool flipForRedAlliance = true);
 
   // Gyro and sensor
   frc2::CommandPtr SyncSensor();
