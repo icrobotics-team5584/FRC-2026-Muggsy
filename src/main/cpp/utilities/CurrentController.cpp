@@ -2,25 +2,17 @@
 #include <utilities/Logger.h>
 
 std::optional<int> CurrentController::RegisterSubsystem(
-  const CurrentControllerSubsystem& conf, std::optional<YellowCurrentLevel> yellowConf) {
-  SubsystemData data = {nullptr};
-  data.name = conf.name;
-  data.greenMaxCurrentThreshold = conf.greenMaxCurrentThreshold;
-  data.getSubsystemCurrent = conf.getSubsystemCurrent;
-  data.enterGreenCurrentLevel = conf.enterGreenCurrentLevel;
-  data.exitGreenCurrentLevel = conf.exitGreenCurrentLevel;
-  data.enterRedCurrentLevel = conf.enterRedCurrentLevel;
-  data.exitRedCurrentLevel = conf.exitRedCurrentLevel;
+  const CurrentControllerSubsystem& conf, std::optional<YellowCritLevel> yellowConf) {
+  SubsystemData data = {};
+  data.subsystem = conf;
 
   if (yellowConf) {
-    const YellowCurrentLevel& yconf = yellowConf.value();
-    if (yconf.currentThreshold < conf.greenMaxCurrentThreshold) {
+    const YellowCritLevel& yconf = yellowConf.value();
+    if (yconf.yellowMaxCurrentThreshold < conf.greenMaxCurrentThreshold) {
       return std::nullopt;
     }
-    data.yellowCurrentLevelEnabled = true;
-    data.yellowMaxCurrentThreshold = yconf.currentThreshold;
-    data.enterYellowCurrentLevel = yconf.enterCurrentLevel;
-    data.exitYellowCurrentLevel = yconf.exitCurrentLevel;
+    data.yellowCritLevelEnabled = true;
+    data.yellowSubsystem = yconf;
   }
 
   unsigned int id = 0;
@@ -45,10 +37,16 @@ void CurrentController::Periodic() {
      * cld = 0: no change.
      * cld < 0: go down a current level cld times.
      */
-    CurrentLevel cl = GetCurrentLevel(id, data.getSubsystemCurrent());
-    int lcl = static_cast<int>(data.currentLevel);
-    int ccl = static_cast<int>(cl);
-    int cld = std::clamp(ccl - lcl, -2, 2);
+    std::optional<CritLevel> ccl = GetCritLevel(
+      id, data.subsystem.getSubsystemCurrent());
+    if(!ccl) {
+      continue;
+    }
+    
+    int lcl = static_cast<int>(data.critLevel);
+    int cclResult = static_cast<int>(ccl.value());
+
+    int cld = std::clamp(cclResult - lcl, -2, 2);
 
     if (!cld) {
       continue;
@@ -56,103 +54,109 @@ void CurrentController::Periodic() {
 
     switch (cld) {
       case 2:
-        IncreaseCurrentLevel(id);
-        IncreaseCurrentLevel(id);
+        ReallowSubsystemFunctionality(id);
+        ReallowSubsystemFunctionality(id);
         break;
       case 1:
-        IncreaseCurrentLevel(id);
+        ReallowSubsystemFunctionality(id);
         break;
       case -1:
-        DecreaseCurrentLevel(id);
+        LimitSubsystemFunctionality(id);
         break;
       case -2:
-        DecreaseCurrentLevel(id);
-        DecreaseCurrentLevel(id);
+        LimitSubsystemFunctionality(id);
+        LimitSubsystemFunctionality(id);
         break;
+    }
+
+    ccl = GetCritLevel(id, data.subsystem.getSubsystemCurrent());
+    if(!ccl) {
+      continue;
     }
 
     logger::Log(
-      "Current Management System/" + data.name + "/CurrentLevel", CurrentLevelToString(cl));
+      "Current Management System/" + data.subsystem.name + "/CritLevel", 
+      CritLevelToString(ccl.value()));
   }
 }
 
-void CurrentController::DecreaseCurrentLevel(unsigned int id) {
+void CurrentController::LimitSubsystemFunctionality(unsigned int id) {
   if (!_subsystemList.contains(id)) {
     return;
   }
 
-  SubsystemData data = _subsystemList[id];
-  if (data.yellowCurrentLevelEnabled) {
-    if (data.currentLevel == CurrentLevel::CURRENT_RED) {
-      data.exitRedCurrentLevel();
-      data.enterYellowCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_YELLOW;
+  SubsystemData& data = _subsystemList[id];
+  if (data.yellowCritLevelEnabled) {
+    if (data.critLevel == CritLevel::CRIT_RED) {
+      data.subsystem.exitRedCritLevel();
+      data.yellowSubsystem.enterYellowCritLevel();
+      data.critLevel = CritLevel::CRIT_YELLOW;
     }
 
-    if (data.currentLevel == CurrentLevel::CURRENT_YELLOW) {
-      data.exitYellowCurrentLevel();
-      data.enterGreenCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_GREEN;
+    if (data.critLevel == CritLevel::CRIT_YELLOW) {
+      data.yellowSubsystem.exitYellowCritLevel();
+      data.subsystem.enterGreenCritLevel();
+      data.critLevel = CritLevel::CRIT_GREEN;
     }
   } else {
-    if (data.currentLevel == CurrentLevel::CURRENT_RED) {
-      data.exitRedCurrentLevel();
-      data.enterGreenCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_GREEN;
+    if (data.critLevel == CritLevel::CRIT_RED) {
+      data.subsystem.exitRedCritLevel();
+      data.subsystem.enterGreenCritLevel();
+      data.critLevel = CritLevel::CRIT_GREEN;
     }
   }
 }
-void CurrentController::IncreaseCurrentLevel(unsigned int id) {
+void CurrentController::ReallowSubsystemFunctionality(unsigned int id) {
   if (!_subsystemList.contains(id)) {
     return;
   }
 
-  SubsystemData data = _subsystemList[id];
-  if (data.yellowCurrentLevelEnabled) {
-    if (data.currentLevel == CurrentLevel::CURRENT_GREEN) {
-      data.exitGreenCurrentLevel();
-      data.enterYellowCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_YELLOW;
+  SubsystemData& data = _subsystemList[id];
+  if (data.yellowCritLevelEnabled) {
+    if (data.critLevel == CritLevel::CRIT_GREEN) {
+      data.subsystem.exitGreenCritLevel();
+      data.yellowSubsystem.enterYellowCritLevel();
+      data.critLevel = CritLevel::CRIT_YELLOW;
     }
 
-    if (data.currentLevel == CurrentLevel::CURRENT_YELLOW) {
-      data.exitYellowCurrentLevel();
-      data.enterRedCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_RED;
+    if (data.critLevel == CritLevel::CRIT_YELLOW) {
+      data.yellowSubsystem.exitYellowCritLevel();
+      data.subsystem.enterRedCritLevel();
+      data.critLevel = CritLevel::CRIT_RED;
     }
   } else {
-    if (data.currentLevel == CurrentLevel::CURRENT_GREEN) {
-      data.exitGreenCurrentLevel();
-      data.enterRedCurrentLevel();
-      _subsystemList[id].currentLevel = CurrentLevel::CURRENT_RED;
+    if (data.critLevel == CritLevel::CRIT_GREEN) {
+      data.subsystem.exitGreenCritLevel();
+      data.subsystem.enterRedCritLevel();
+      data.critLevel = CritLevel::CRIT_RED;
     }
   }
 }
 
-CurrentLevel CurrentController::GetCurrentLevel(unsigned int id, units::ampere_t current) {
+std::optional<CritLevel> CurrentController::GetCritLevel(unsigned int id, units::ampere_t current) {
   if (!_subsystemList.contains(id)) {
-    return CurrentLevel::CURRENT_GREEN;
+    return std::nullopt;
   }
 
   SubsystemData data = _subsystemList[id];
-  if (current < data.greenMaxCurrentThreshold) {
-    return CurrentLevel::CURRENT_GREEN;
+  if (current < data.subsystem.greenMaxCurrentThreshold) {
+    return std::make_optional<CritLevel>(CritLevel::CRIT_GREEN);
   }
 
-  if (current < data.yellowMaxCurrentThreshold && data.yellowCurrentLevelEnabled) {
-    return CurrentLevel::CURRENT_YELLOW;
+  if (current < data.yellowSubsystem.yellowMaxCurrentThreshold && data.yellowCritLevelEnabled) {
+    return std::make_optional<CritLevel>(CritLevel::CRIT_YELLOW);
   }
 
-  return CurrentLevel::CURRENT_RED;
+  return std::make_optional<CritLevel>(CritLevel::CRIT_RED);
 }
 
-std::string CurrentController::CurrentLevelToString(enum CurrentLevel level) {
+std::string CurrentController::CritLevelToString(enum CritLevel level) {
   switch (level) {
-    case CurrentLevel::CURRENT_RED:
+    case CritLevel::CRIT_RED:
       return "Red";
-    case CurrentLevel::CURRENT_YELLOW:
+    case CritLevel::CRIT_YELLOW:
       return "Yellow";
-    case CurrentLevel::CURRENT_GREEN:
+    case CritLevel::CRIT_GREEN:
       return "Green";
   }
 

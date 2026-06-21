@@ -3,26 +3,26 @@
 #include <optional>
 #include <units/current.h>
 
-enum CurrentLevel {
-  CURRENT_RED = 2, /* Highest Current Level */
-  CURRENT_YELLOW = 1,
-  CURRENT_GREEN = 0, /* Lowest Current Level */
+enum CritLevel {
+  CRIT_RED = 2, /* Highest Current Level */
+  CRIT_YELLOW = 1,
+  CRIT_GREEN = 0, /* Lowest Current Level */
 };
 
 struct CurrentControllerSubsystem {
-  std::string_view name = "Default Subsystem";
+  std::string name = "Default Subsystem";
   units::ampere_t greenMaxCurrentThreshold = 1_A;
   std::function<units::ampere_t()> getSubsystemCurrent = []{ return 1_A; };
-  std::function<void()> enterGreenCurrentLevel = []{};
-  std::function<void()> exitGreenCurrentLevel = []{};
-  std::function<void()> enterRedCurrentLevel = []{};
-  std::function<void()> exitRedCurrentLevel = []{};
+  std::function<void()> enterGreenCritLevel = []{};
+  std::function<void()> exitGreenCritLevel = []{};
+  std::function<void()> enterRedCritLevel = []{};
+  std::function<void()> exitRedCritLevel = []{};
 };
 
-struct YellowCurrentLevel {
-  units::ampere_t currentThreshold = 2_A;
-  std::function<void()> enterCurrentLevel = []{};
-  std::function<void()> exitCurrentLevel = []{};
+struct YellowCritLevel {
+  units::ampere_t yellowMaxCurrentThreshold = 2_A;
+  std::function<void()> enterYellowCritLevel = []{};
+  std::function<void()> exitYellowCritLevel = []{};
 };
 
 class CurrentController {
@@ -36,31 +36,23 @@ class CurrentController {
   CurrentController(CurrentController const&) = delete;
   void operator=(CurrentController const&) = delete;
 
-  int RegisterSubsystem(
-    const CurrentControllerSubsystem& conf, std::optional<YellowCurrentLevel> yellowConf);
+  std::optional<int> RegisterSubsystem(
+    const CurrentControllerSubsystem& conf, std::optional<YellowCritLevel> yellowConf = std::nullopt);
   void UnregisterSubsystem(unsigned int id);
   void Periodic();
-  void DecreaseCurrentLevel(unsigned int id);
-  void IncreaseCurrentLevel(unsigned int id);
-  CurrentLevel GetCurrentLevel(unsigned int id, units::ampere_t current);
-  std::string CurrentLevelToString(enum CurrentLevel level);
+  void LimitSubsystemFunctionality(unsigned int id);
+  void ReallowSubsystemFunctionality(unsigned int id);
+  std::optional<CritLevel> GetCritLevel(unsigned int id, units::ampere_t current);
+  std::string CritLevelToString(enum CritLevel level);
 
  private:
   struct SubsystemData {
-    std::string name = "Default Subsystem";
-    CurrentLevel currentLevel = CurrentLevel::CURRENT_GREEN;
+    CritLevel critLevel = CritLevel::CRIT_GREEN;
 
-    units::ampere_t greenMaxCurrentThreshold = 1_A;
-    std::function<units::ampere_t()> getSubsystemCurrent = []{ return 0_A; };
-    std::function<void()> enterGreenCurrentLevel = []{};
-    std::function<void()> exitGreenCurrentLevel = []{};
-    std::function<void()> enterRedCurrentLevel = []{};
-    std::function<void()> exitRedCurrentLevel = []{};
+    CurrentControllerSubsystem subsystem = {};
 
-    bool yellowCurrentLevelEnabled = false;
-    units::ampere_t yellowMaxCurrentThreshold = 2_A;
-    std::function<void()> enterYellowCurrentLevel = []{};
-    std::function<void()> exitYellowCurrentLevel = []{};
+    bool yellowCritLevelEnabled = false;
+    YellowCritLevel yellowSubsystem = {};
   };
 
   std::map<unsigned int, SubsystemData> _subsystemList{};
