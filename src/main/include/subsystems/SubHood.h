@@ -84,7 +84,7 @@ class SubHood : public frc2::SubsystemBase {
 
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex(1);
   static constexpr units::kilogram_square_meter_t MOI = 0.0001_kg_sq_m;
-  static constexpr double GEAR_RATIO = 10.0;
+  static constexpr double GEAR_RATIO = 1.0;
 
   // Sim
   static constexpr bool SIMULATE_GRAVITY = false;

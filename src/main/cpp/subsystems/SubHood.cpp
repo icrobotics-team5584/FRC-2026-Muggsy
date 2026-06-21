@@ -15,9 +15,9 @@ SubHood::SubHood() {
   config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
   config.closedLoop.Pid(2, 0, 0);
   config.closedLoop.feedForward.kS(0.6);
-  config.SmartCurrentLimit(30);
+  config.SmartCurrentLimit(10);
   config.Inverted(false);
-  config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
   _hoodMotor.OverwriteConfig(config);
 
   logger::Log("Hood/Motor", &_hoodMotor);

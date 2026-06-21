@@ -32,7 +32,7 @@ constexpr int INTAKE_MOTOR_2 = 21; /* Follower */
 
 constexpr int DEPLOY_MOTOR = 58;
 
-constexpr int HOOD_MOTOR = 59;
+constexpr int HOOD_MOTOR = 23;
 
 constexpr int FEEDER_MOTOR = 24;
 
