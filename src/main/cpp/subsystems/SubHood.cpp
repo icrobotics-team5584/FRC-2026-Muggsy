@@ -13,10 +13,10 @@ SubHood::SubHood() {
   rev::spark::SparkBaseConfig config;
   config.encoder.PositionConversionFactor(1 / GEAR_RATIO);
   config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
-  config.closedLoop.Pid(2, 0, 0);
-  config.closedLoop.feedForward.kS(0.6);
-  config.SmartCurrentLimit(10);
-  config.Inverted(false);
+  config.closedLoop.Pid(60, 0, 0);
+  config.closedLoop.feedForward.kS(0);
+  config.SmartCurrentLimit(35);
+  config.Inverted(true);
   config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
   _hoodMotor.OverwriteConfig(config);
 
