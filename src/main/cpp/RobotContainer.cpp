@@ -27,6 +27,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
   _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().SyncSensor());
+  _driverController.RightBumper().WhileTrue(SubIndexer::GetInstance().SpinIndexer());
+  _driverController.LeftBumper().WhileTrue(SubIndexer::GetInstance().ReverseIndexer());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
