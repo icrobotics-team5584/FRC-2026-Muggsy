@@ -2,7 +2,7 @@
 #include <utilities/Logger.h>
 
 std::optional<int> CurrentController::RegisterSubsystem(
-  const CurrentControllerSubsystem& conf, std::optional<YellowCritLevel> yellowConf) {
+  const CurrentControllerSubsystem& conf, const std::optional<YellowCritLevel>& yellowConf) {
   SubsystemData data = {};
   data.subsystem = conf;
 

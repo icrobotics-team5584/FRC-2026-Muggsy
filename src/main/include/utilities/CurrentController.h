@@ -37,7 +37,7 @@ class CurrentController {
   void operator=(CurrentController const&) = delete;
 
   std::optional<int> RegisterSubsystem(const CurrentControllerSubsystem& conf,
-    std::optional<YellowCritLevel> yellowConf = std::nullopt);
+    const std::optional<YellowCritLevel>& yellowConf = std::nullopt);
   void UnregisterSubsystem(unsigned int id);
   void Periodic();
   void LimitSubsystemFunctionality(unsigned int id);
