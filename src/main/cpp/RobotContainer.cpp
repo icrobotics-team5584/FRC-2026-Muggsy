@@ -34,7 +34,10 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().SyncSensor());
   _driverController.RightBumper().WhileTrue(SubIndexer::GetInstance().SpinIndexer());
   _driverController.LeftBumper().WhileTrue(SubIndexer::GetInstance().ReverseIndexer());
-  _driverController.RightBumper().WhileTrue(SubFeeder::GetInstance().Feed());
+  _driverController.Y().WhileTrue(
+    frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer()));
+  _driverController.A().WhileTrue(
+    frc2::cmd::Parallel(SubFeeder::GetInstance().FeedBackwards(), SubIndexer::GetInstance().ReverseIndexer()));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
