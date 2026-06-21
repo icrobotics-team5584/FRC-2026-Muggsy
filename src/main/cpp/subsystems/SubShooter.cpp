@@ -17,16 +17,16 @@ SubShooter::SubShooter() {
   _shooterMotorConfig.CurrentLimits.SupplyCurrentLimit = 60.0_A;
   _shooterMotorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
   _shooterMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-  _shooterMotorConfig.CurrentLimits.StatorCurrentLimit = 20.0_A;
+  _shooterMotorConfig.CurrentLimits.StatorCurrentLimit = 60.0_A;
 
   // PIDs
   _shooterMotorConfig.Slot0.kP = 0.0;
   _shooterMotorConfig.Slot0.kI = 0;
   _shooterMotorConfig.Slot0.kD = 0;
-  _shooterMotorConfig.Slot0.kV = 0.2;
+  _shooterMotorConfig.Slot0.kV = 0.235;
 
   _shooterMotorConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
-  _shooterMotorConfig.MotorOutput.Inverted;
+  _shooterMotorConfig.MotorOutput.Inverted = true;
 
   _shooterMotor2.SetControl(ctre::phoenix6::controls::Follower(
     canid::SHOOTER_MOTOR_1, ctre::phoenix6::signals::MotorAlignmentValue::Aligned));
