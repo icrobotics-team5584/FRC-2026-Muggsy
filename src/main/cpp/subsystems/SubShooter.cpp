@@ -11,6 +11,7 @@
 
 SubShooter::SubShooter() {
   _shooterMotorConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+  _shooterMotorConfig.Voltage.PeakReverseVoltage = 0_V;
 
   _shooterMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
   _shooterMotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A;

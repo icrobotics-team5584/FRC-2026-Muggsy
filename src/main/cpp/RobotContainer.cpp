@@ -40,6 +40,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.POVUp().WhileTrue(SubShooter::GetInstance().SetSpeedTarget([]{return 1000_rpm;}));
   _driverController.POVDown().WhileTrue(SubShooter::GetInstance().Stop());
   _driverController.POVLeft().WhileTrue(SubShooter::GetInstance().SetSpeedTarget([]{return 3000_rpm;}));
+  _driverController.POVRight().WhileTrue(SubDrivebase::GetInstance().ZeroRotation([] {return 0_deg;}));
   _driverController.Back().OnTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.X().OnTrue(SubHood::GetInstance().HoodToEjectAngle());
   _driverController.B().OnTrue(SubHood::GetInstance().HoodToStowAngle());
