@@ -37,12 +37,11 @@ void CurrentController::Periodic() {
      * cld = 0: no change.
      * cld < 0: go down a current level cld times.
      */
-    std::optional<CritLevel> ccl = GetCritLevel(
-      id, data.subsystem.getSubsystemCurrent());
-    if(!ccl) {
+    std::optional<CritLevel> ccl = GetCritLevel(id, data.subsystem.getSubsystemCurrent());
+    if (!ccl) {
       continue;
     }
-    
+
     int lcl = static_cast<int>(data.critLevel);
     int cclResult = static_cast<int>(ccl.value());
 
@@ -70,12 +69,11 @@ void CurrentController::Periodic() {
     }
 
     ccl = GetCritLevel(id, data.subsystem.getSubsystemCurrent());
-    if(!ccl) {
+    if (!ccl) {
       continue;
     }
 
-    logger::Log(
-      "Current Management System/" + data.subsystem.name + "/CritLevel", 
+    logger::Log("Current Management System/" + data.subsystem.name + "/CritLevel",
       CritLevelToString(ccl.value()));
   }
 }
