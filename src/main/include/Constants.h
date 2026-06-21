@@ -20,8 +20,8 @@ constexpr int DRIVEBASE_BACK_LEFT_ENCODER = 12;
 constexpr int PIGEON_2 = 13;
 
 constexpr int SHOOTER_MOTOR_1 = 14;
-constexpr int SHOOTER_MOTOR_2 = 15;
-constexpr int SHOOTER_MOTOR_3 = 16;
+constexpr int SHOOTER_MOTOR_2 = 16;
+constexpr int SHOOTER_MOTOR_3 = 15;
 constexpr int SHOOTER_MOTOR_4 = 17;
 
 constexpr int INDEXER_MOTOR = 18;
@@ -30,13 +30,13 @@ constexpr int INDEXER_FOLLOW_MOTOR = 19;
 constexpr int INTAKE_MOTOR_1 = 20;
 constexpr int INTAKE_MOTOR_2 = 21; /* Follower */
 
-constexpr int DEPLOY_MOTOR = 22;
+constexpr int DEPLOY_MOTOR = 58;
 
-constexpr int HOOD_MOTOR = 23;
+constexpr int HOOD_MOTOR = 59;
 
 constexpr int FEEDER_MOTOR = 24;
 
-constexpr int PDH = 40;
+constexpr int PDH = 60;
 }  // namespace canid
 
 namespace dio {
