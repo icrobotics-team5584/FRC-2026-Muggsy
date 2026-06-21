@@ -34,6 +34,8 @@ constexpr int DEPLOY_MOTOR = 22;
 
 constexpr int HOOD_MOTOR = 23;
 
+constexpr int FEEDER_MOTOR = 24;
+
 constexpr int PDH = 40;
 }  // namespace canid
 

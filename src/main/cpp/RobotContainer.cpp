@@ -6,9 +6,13 @@
 
 #include "subsystems/SubDeploy.h"
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubFeeder.h"
 #include "subsystems/SubHood.h"
 #include "subsystems/SubIndexer.h"
 #include "subsystems/SubIntake.h"
+#include "subsystems/SubVision.h"
+
+#include "commands/VisionCommands.h"
 
 #include "utilities/Logger.h"
 
@@ -16,6 +20,7 @@
 
 RobotContainer::RobotContainer() {
   ConfigureBindings();
+  SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
   SubDrivebase::GetInstance().SetDefaultCommand(
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
@@ -29,6 +34,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().SyncSensor());
   _driverController.RightBumper().WhileTrue(SubIndexer::GetInstance().SpinIndexer());
   _driverController.LeftBumper().WhileTrue(SubIndexer::GetInstance().ReverseIndexer());
+  _driverController.RightBumper().WhileTrue(SubFeeder::GetInstance().Feed());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
