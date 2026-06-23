@@ -9,15 +9,15 @@
 SubFeeder::SubFeeder() {
   logger::Log("Feeder/FeederMotor", &_feederMotor);
 
-  static constexpr double P = 0.005;
-  static constexpr double I = 0.0;
-  static constexpr double D = 0.0;
-  static constexpr double F = 0.0024;
+  static constexpr double p = 0.005;
+  static constexpr double i = 0.0;
+  static constexpr double d = 0.0;
+  static constexpr double f = 0.0024;
 
   _feederMotorConfig.SmartCurrentLimit(60);
   _feederMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-  _feederMotorConfig.closedLoop.Pid(P, I, D);
-  _feederMotorConfig.closedLoop.feedForward.kV(F);
+  _feederMotorConfig.closedLoop.Pid(p, i, d);
+  _feederMotorConfig.closedLoop.feedForward.kV(f);
   _feederMotorConfig.encoder.PositionConversionFactor(1 / GEARING);
   _feederMotorConfig.encoder.VelocityConversionFactor(1 / GEARING);
   _feederMotor.OverwriteConfig(_feederMotorConfig);
