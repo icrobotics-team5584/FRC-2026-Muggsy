@@ -24,7 +24,9 @@ frc2::CommandPtr ReverseIntakeSequence() {
 frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {}
 
 bool IsReadyToShoot() {
-  return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&
+  return SubHood::GetInstance().IsAtTarget() &&
+         SubShooter::GetInstance().IsReadyToShoot() &&
+         
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
 
