@@ -15,24 +15,18 @@ class ShotPlanner {
     bool isPassing;
   };
 
-  enum Override {
-    PASS = 0,
-    SCORE = 1,
-    NONE = 2
-  };
+  enum Override { PASS = 0, SCORE = 1, NONE = 2 };
 
-  
   ShotPlanner();
   static ShotPlannerResults CalculateShotTarget(frc::Pose2d robotPos);
   static bool IsWithinZone(
-  frc::Translation2d topRightCorner, frc::Translation2d bottomLeftCorner, frc::Pose2d robotPos);
+    frc::Translation2d topRightCorner, frc::Translation2d bottomLeftCorner, frc::Pose2d robotPos);
   static bool IsInTopHalf(frc::Pose2d robotPos);
   static bool IsInAllianceZone(frc::Pose2d robotPos);
   static frc::Pose2d ConvertToPose2d(frc::Translation3d translation3d);
   static void SetOverride(Override override);
   static bool GetOverrideEnabled();
-    
-   private:
-    static inline Override _overrideStatus = Override::NONE;
 
+ private:
+  static inline Override _overrideStatus = Override::NONE;
 };
