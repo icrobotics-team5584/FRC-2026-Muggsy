@@ -5,6 +5,17 @@
 namespace GeneralMotor {
     KrakenIO::KrakenIO(int canID) : _motor(canID) {}
 
+    void KrakenIO::setIdleMode(GeneralMotor::IdleMode idleMode) {
+        ctre::phoenix6::configs::TalonFXConfiguration ctreConfig;
+        ctreConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+
+        if(idleMode == IdleMode::idleCoast) {
+            ctreConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+        }
+
+        _motor.GetConfigurator().Apply(ctreConfig);
+    }
+
     void KrakenIO::SetPos(units::turn_t pos) {
         _motor.SetPosition(pos);
     }

@@ -6,15 +6,21 @@ namespace GeneralMotor{
     class KrakenIO : public IO {
         public:
             KrakenIO(int canID);
-            void SetPos(units::turn_t pos);    
-            void SetPosTarg(units::turn_t targ);    
-            void SetSpeed(double speed);    
-            void SetConfig(Config config);    
-            units::turn_t GetPos();    
-            units::turn_t GetPosTarg();    
-            units::turn_t GetPosErr();  
+            void setIdleMode(GeneralMotor::IdleMode idleMode);
+            void SetPos(units::turn_t pos);
+            void SetPosTarg(units::turn_t targ);
+            void SetVelocityTarg(units::tps vel);
+            void SetSpeed(double speed);
+            void SetConfig(Config config);
+            void SetVoltage(units::volt_t volts);
+            GeneralMotor::IdleMode GetIdleMode();
+            units::tps GetVelocity();
+            units::turn_t GetPos();
+            units::turn_t GetPosTarg();
+            units::turns_per_second_t GetVelocityTarg();
+            units::turn_t GetPosErr();
             double GetSpeed();
-            units::volt_t GetVolts();   
+            units::volt_t GetVolts();
             units::ampere_t GetAmps();
             units::celsius_t GetTemp();
 
