@@ -48,7 +48,7 @@ class SubDeploy : public frc2::SubsystemBase {
   bool _hasZeroed = false;
   bool _zeroing = false;
 
-  static constexpr units::ampere_t ZERO_CURRENT_LIMIT = 40_A;
+  static constexpr units::ampere_t ZERO_CURRENT_LIMIT = 20_A;
   static constexpr units::meter_t MAX_LENGTH = 0.308_m;
   static constexpr units::meter_t STOW_LENGTH = 0_m;
   static constexpr units::meter_t PINION_RAD = 1_in / 2.0;

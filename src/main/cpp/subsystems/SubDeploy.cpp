@@ -12,10 +12,11 @@
 #include <frc2/command/Commands.h>
 
 SubDeploy::SubDeploy() {
-  _motorConfig.SmartCurrentLimit(10);
+  _motorConfig.SmartCurrentLimit(25);
   _motorConfig.encoder.PositionConversionFactor(1 / GEARING);
   _motorConfig.encoder.VelocityConversionFactor(1 / GEARING);
   _motorConfig.closedLoop.Pid(1.0, 0.0, 0.0);
+  _motorConfig.Inverted(true);
   _motorConfig.SetIdleMode(rev::spark::SparkBaseConfig::kCoast);
 
   _motor.OverwriteConfig(_motorConfig);
