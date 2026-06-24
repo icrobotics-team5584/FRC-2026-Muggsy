@@ -9,8 +9,9 @@ std::optional<int> CurrentController::RegisterSubsystem(
   if (yellowConf) {
     const YellowCritLevel& yconf = yellowConf.value();
     if (yconf.yellowMaxCurrentThreshold < conf.greenMaxCurrentThreshold) {
-      logger::Log("Current Management System/" + data.subsystem.name + 
-        "/Misconfigured Yellow-Green current thresholds", true);
+      logger::Log("Current Management System/" + data.subsystem.name +
+                    "/Misconfigured Yellow-Green current thresholds",
+        true);
       return std::nullopt;
     }
     data.yellowCritLevelEnabled = true;

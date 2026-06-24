@@ -8,7 +8,6 @@
 #include "utilities/Logger.h"
 #include "utilities/ShiftHandler.h"
 
-
 #include <frc/DataLogManager.h>
 #include <frc/Filesystem.h>
 #include <frc/smartdashboard/SmartDashboard.h>
