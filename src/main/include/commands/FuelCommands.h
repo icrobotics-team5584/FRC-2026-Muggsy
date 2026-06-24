@@ -6,7 +6,7 @@ namespace cmd {
 frc2::CommandPtr IntakeSequence();
 frc2::CommandPtr ReverseIntakeSequence();
 
-frc2::CommandPtr StationaryShootAt();
+frc2::CommandPtr StationaryShootAt(frc::Translation2d target, frc2::CommandXboxController& controller);
 bool IsReadyToShoot();
 
 frc2::CommandPtr ToggleBrakeCoast();

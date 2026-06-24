@@ -10,6 +10,7 @@
 
 #include "utilities/PoseHandler.h"
 #include "utilities/ShotPlanner.h"
+#include "utilities/Logger.h"
 
 namespace cmd {
 frc2::CommandPtr IntakeSequence() {
@@ -21,7 +22,7 @@ frc2::CommandPtr ReverseIntakeSequence() {
     SubIntake::GetInstance().RunReverseIntake());
 }
 
-frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
+frc2::CommandPtr StationaryShootAt(frc::Translation2d target, frc2::CommandXboxController& controller) {
   auto distanceToTarget = [target] {
     auto curPose = PoseHandler::GetInstance().GetPose();
     auto shooterPose = curPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
@@ -32,7 +33,7 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
     return target.Distance(shooterPose.Translation());
   };
 
-  return frc2::cmd::Parallel(
+  return frc2::cmd::Parallel(SubDrivebase::GetInstance().JoystickDriveWithAngle(controller, target, 0.05),
     SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, []{return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;}),
     SubHood::GetInstance().SetHoodPositionTargetFromDist(distanceToTarget)
     
