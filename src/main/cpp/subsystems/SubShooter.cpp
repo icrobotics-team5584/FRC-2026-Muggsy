@@ -45,7 +45,6 @@ SubShooter::SubShooter() {
   _flyWheelSpeedTableScoring.insert(1_m, 5_tps);
   _flyWheelSpeedTableScoring.insert(5_m, 10_tps);
 
-
   //_flyWheelSpeedTablePassing.insert(x_m, y_tps);
 }
 
