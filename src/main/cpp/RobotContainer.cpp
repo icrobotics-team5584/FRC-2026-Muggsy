@@ -23,9 +23,6 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.A().OnTrue(frc2::cmd::RunOnce([] {
-    SubDrivebase::GetInstance().SetPose(frc::Pose2d{3.478_m, 7.450_m, 0.0_deg});
-  }));
 
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }));
   _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
