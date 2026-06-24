@@ -12,7 +12,7 @@
 #include <frc2/command/Commands.h>
 
 SubDeploy::SubDeploy() {
-  _motorConfig.SmartCurrentLimit(60);
+  _motorConfig.SmartCurrentLimit(10);
   _motorConfig.encoder.PositionConversionFactor(1 / GEARING);
   _motorConfig.encoder.VelocityConversionFactor(1 / GEARING);
   _motorConfig.closedLoop.Pid(1.0, 0.0, 0.0);
