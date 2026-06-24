@@ -21,7 +21,23 @@ frc2::CommandPtr ReverseIntakeSequence() {
     SubIntake::GetInstance().RunReverseIntake());
 }
 
-frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {}
+frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
+  auto distanceToTarget = [target] {
+    auto curPose = PoseHandler::GetInstance().GetPose();
+    auto shooterPose = curPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
+
+    Logger::FieldDisplay::GetInstance().DisplayPose("Shooter/shooterPose", shooterPose);
+    Logger::Log("Shooter/distToTargetInner", target.Distance(shooterPose.Translation()));
+
+    return target.Distance(shooterPose.Translation());
+  };
+
+  return frc2::cmd::Parallel(
+    SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, []{return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;}),
+    SubHood::GetInstance().SetHoodPositionTargetFromDist(distanceToTarget)
+    
+  )
+}
 
 bool IsReadyToShoot() {
   return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&

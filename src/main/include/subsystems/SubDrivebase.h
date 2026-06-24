@@ -99,6 +99,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   }
 
  private:
+  static constexpr frc::Transform2d ROBOT_CENTRE_TO_SHOOTER{-177.43095_mm, 0_mm, 0_deg};
+  
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
     units::turns_per_second_t rot, bool fieldRelative,
     std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
