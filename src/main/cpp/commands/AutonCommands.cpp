@@ -1,6 +1,6 @@
 #include "commands/AutonCommands.h"
 
-#include "Subsystems/SubShooter.h"
+#include "subsystems/SubShooter.h"
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubIndexer.h"
 #include "subsystems/SubIntake.h"
