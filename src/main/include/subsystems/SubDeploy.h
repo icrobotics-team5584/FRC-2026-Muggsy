@@ -49,10 +49,10 @@ class SubDeploy : public frc2::SubsystemBase {
   bool _zeroing = false;
 
   static constexpr units::ampere_t ZERO_CURRENT_LIMIT = 40_A;
-  static constexpr units::meter_t MAX_LENGTH = 0.3_m;
+  static constexpr units::meter_t MAX_LENGTH = 0.308_m;
   static constexpr units::meter_t STOW_LENGTH = 0_m;
-  static constexpr units::meter_t PINION_RAD = 0.05_m;
-  static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * std::numbers::pi;
+  static constexpr units::meter_t PINION_RAD = 1_in / 2.0;
+    static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * std::numbers::pi;
   static constexpr double GEARING = 5.0;
 
   /* Since ConvertLengthToPosition is defined in a class, it cannot be defined
