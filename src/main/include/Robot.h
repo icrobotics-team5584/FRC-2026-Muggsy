@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "utilities/CurrentController.h"
-
 #include <frc/PowerDistribution.h>
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
@@ -38,6 +36,4 @@ class Robot : public frc::TimedRobot {
   RobotContainer _container;
 
   frc::PowerDistribution _pdh{canid::PDH, frc::PowerDistribution::ModuleType::kRev};
-
-  CurrentController _currentController;
 };
