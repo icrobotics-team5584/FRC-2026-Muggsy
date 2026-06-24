@@ -27,7 +27,7 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
+  _driverController.Start().WhileTrue(SubDeploy::GetInstance().Zero());
   // _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
   // _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().ManualExtendDown());
   _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
