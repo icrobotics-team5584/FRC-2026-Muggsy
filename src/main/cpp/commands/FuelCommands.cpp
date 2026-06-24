@@ -30,6 +30,17 @@ bool IsReadyToShoot() {
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
 
+frc2::CommandPtr ShootWhenReady() {
+  return frc2::cmd::WaitUntil([] { return IsReadyToShoot(); })
+    .AndThen(frc2::cmd::Parallel(
+      SubFeeder::GetInstance().Feed(),
+      SubIndexer::GetInstance().SpinIndexer(),
+      SubIntake::GetInstance().RunIntake()
+    ).Until([] {
+      return !IsReadyToShoot();
+    })).Repeatedly();
+};
+
 frc2::CommandPtr ToggleBrakeCoast() {
   return frc2::cmd::StartEnd(
     [] {
