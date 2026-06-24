@@ -26,7 +26,7 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {}
 bool IsReadyToShoot() {
   return SubHood::GetInstance().IsAtTarget() &&
          SubShooter::GetInstance().IsReadyToShoot() &&
-         
+         SubDrivebase::GetInstance().CalcAngleToShotTarget() < 5_deg &&
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
 
