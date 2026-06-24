@@ -18,6 +18,8 @@
 
 #include <frc2/command/Commands.h>
 
+#include <commands/AutonCommands.h>
+
 RobotContainer::RobotContainer() {
   ConfigureBindings();
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
@@ -26,6 +28,7 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }));
   _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
   _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
   _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().ManualExtendDown());
@@ -36,7 +39,7 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+  return cmd::AutonCommand();
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {

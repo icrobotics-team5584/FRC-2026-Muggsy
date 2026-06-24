@@ -1,5 +1,4 @@
 #pragma once
-
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation3d.h>
 
@@ -14,4 +13,7 @@ frc::Pose2d XYPoseFlip(frc::Pose2d pose);
 
 frc::Rotation2d PoseDirection(frc::Pose2d origin, frc::Pose2d destination);
 frc::Pose2d GetFieldRelativePose(frc::Pose2d allianceRelativePose);
+
+std::function<frc::Pose2d()> MaybeFlip(frc::Pose2d pose, bool shouldFlip);
+
 }  // namespace icGeometry
