@@ -27,17 +27,23 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target, frc2::CommandXboxC
     auto curPose = PoseHandler::GetInstance().GetPose();
     auto shooterPose = curPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
 
-    Logger::FieldDisplay::GetInstance().DisplayPose("Shooter/shooterPose", shooterPose);
-    Logger::Log("Shooter/distToTargetInner", target.Distance(shooterPose.Translation()));
+    logger::FieldDisplay::GetInstance().DisplayPose("Shooter/shooterPose", shooterPose);
+    logger::Log("Shooter/distToTargetInner", target.Distance(shooterPose.Translation()));
 
-    return target.Distance(shooterPose.Translation());
+    return target.Distance(shooterPose.Translation());  
   };
 
-  return frc2::cmd::Parallel(SubDrivebase::GetInstance().JoystickDriveWithAngle(controller, target, 0.05),
+  auto angleToTarget = [] {return SubDrivebase::GetInstance().CalcAngleToShotTarget();};
+
+  return frc2::cmd::Parallel(SubDrivebase::GetInstance().JoystickDriveWithAngle(controller, angleToTarget, 0.05),
     SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, []{return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;}),
-    SubHood::GetInstance().SetHoodPositionTargetFromDist(distanceToTarget)
-    
-  )
+    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget)
+  ).Until([] {
+    return IsReadyToShoot();
+  }).AndThen(frc2::cmd::Parallel(
+    SubFeeder::GetInstance().Feed(),
+    SubIndexer::GetInstance().SpinIndexer()
+  ));
 }
 
 bool IsReadyToShoot() {
