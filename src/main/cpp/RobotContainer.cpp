@@ -23,7 +23,6 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }));
   _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
   _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
