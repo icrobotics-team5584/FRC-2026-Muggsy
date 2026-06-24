@@ -36,9 +36,8 @@ void RobotContainer::ConfigureBindings() {
     frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer()));
   _driverController.A().WhileTrue(frc2::cmd::Parallel(
     SubFeeder::GetInstance().FeedBackwards(), SubIndexer::GetInstance().ReverseIndexer()));
-  _driverController.POVUp().WhileTrue(
-    SubShooter::GetInstance().SetSpeedTarget([] { return 1000_rpm; }));
-  _driverController.POVDown().WhileTrue(SubShooter::GetInstance().Stop());
+  _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
+  _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().ManualExtendDown());
   _driverController.POVLeft().WhileTrue(
     SubShooter::GetInstance().SetSpeedTarget([] { return 3000_rpm; }));
   _driverController.POVRight().WhileTrue(

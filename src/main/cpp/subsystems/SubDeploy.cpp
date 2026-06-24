@@ -12,10 +12,10 @@
 #include <frc2/command/Commands.h>
 
 SubDeploy::SubDeploy() {
-  _motorConfig.SmartCurrentLimit(25);
+  _motorConfig.SmartCurrentLimit(45);
   _motorConfig.encoder.PositionConversionFactor(1 / GEARING);
   _motorConfig.encoder.VelocityConversionFactor(1 / GEARING);
-  _motorConfig.closedLoop.Pid(1.0, 0.0, 0.0);
+  _motorConfig.closedLoop.Pid(0.25, 0.0, 0.0);
   _motorConfig.Inverted(true);
   _motorConfig.SetIdleMode(rev::spark::SparkBaseConfig::kCoast);
 
@@ -51,18 +51,20 @@ frc2::CommandPtr SubDeploy::Zero() {
   return frc2::cmd::RunOnce([this] {
     _zeroing = true;
     _hasZeroed = false;
-    _motor.SetVoltage(-1_V);
+    _motor.SetVoltage(1_V);
   })
     .AndThen(frc2::cmd::WaitUntil([this] {
       return units::math::abs(_motor.GetStatorCurrent()) > ZERO_CURRENT_LIMIT ||
              frc::RobotBase::IsSimulation();
     }))
     .AndThen([this] {
-      _motor.SetPosition(0_deg);
+      _motor.SetPosition(ConvertLengthToPosition(MAX_LENGTH));
       _motor.StopMotor();
       _hasZeroed = true;
     })
-    .FinallyDo([this] { _zeroing = false; });
+    .FinallyDo([this] { 
+      _motor.StopMotor();
+      _zeroing = false; });
 }
 
 frc2::CommandPtr SubDeploy::ExtendTo(units::meter_t length) {
