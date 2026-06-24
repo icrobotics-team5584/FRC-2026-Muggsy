@@ -9,6 +9,8 @@ std::optional<int> CurrentController::RegisterSubsystem(
   if (yellowConf) {
     const YellowCritLevel& yconf = yellowConf.value();
     if (yconf.yellowMaxCurrentThreshold < conf.greenMaxCurrentThreshold) {
+      logger::Log("Current Management System/" + data.subsystem.name + 
+        "/Misconfigured Yellow-Green current thresholds", true);
       return std::nullopt;
     }
     data.yellowCritLevelEnabled = true;
@@ -89,18 +91,21 @@ void CurrentController::LimitSubsystemFunctionality(unsigned int id) {
       data.subsystem.exitRedCritLevel();
       data.yellowSubsystem.enterYellowCritLevel();
       data.critLevel = CritLevel::CRIT_YELLOW;
+      return;
     }
 
     if (data.critLevel == CritLevel::CRIT_YELLOW) {
       data.yellowSubsystem.exitYellowCritLevel();
       data.subsystem.enterGreenCritLevel();
       data.critLevel = CritLevel::CRIT_GREEN;
+      return;
     }
   } else {
     if (data.critLevel == CritLevel::CRIT_RED) {
       data.subsystem.exitRedCritLevel();
       data.subsystem.enterGreenCritLevel();
       data.critLevel = CritLevel::CRIT_GREEN;
+      return;
     }
   }
 }
@@ -115,18 +120,21 @@ void CurrentController::ReallowSubsystemFunctionality(unsigned int id) {
       data.subsystem.exitGreenCritLevel();
       data.yellowSubsystem.enterYellowCritLevel();
       data.critLevel = CritLevel::CRIT_YELLOW;
+      return;
     }
 
     if (data.critLevel == CritLevel::CRIT_YELLOW) {
       data.yellowSubsystem.exitYellowCritLevel();
       data.subsystem.enterRedCritLevel();
       data.critLevel = CritLevel::CRIT_RED;
+      return;
     }
   } else {
     if (data.critLevel == CritLevel::CRIT_GREEN) {
       data.subsystem.exitGreenCritLevel();
       data.subsystem.enterRedCritLevel();
       data.critLevel = CritLevel::CRIT_RED;
+      return;
     }
   }
 }
