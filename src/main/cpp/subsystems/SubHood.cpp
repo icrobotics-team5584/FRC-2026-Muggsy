@@ -9,7 +9,6 @@
 #include "frc/RobotBase.h"
 
 SubHood::SubHood() {
-  //_hoodPitchTable.insert(x_m, y_deg);
   rev::spark::SparkBaseConfig config;
   config.encoder.PositionConversionFactor(1 / GEAR_RATIO);
   config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
@@ -21,6 +20,8 @@ SubHood::SubHood() {
   _hoodMotor.OverwriteConfig(config);
 
   logger::Log("Hood/Motor", &_hoodMotor);
+
+  _hoodPitchTable.insert(1_m, PASSING_ANGLE);
 }
 
 // This method will be called once per scheduler run
