@@ -102,8 +102,12 @@ frc2::CommandPtr SubDeploy::ManualExtendUp() {
     .FinallyDo([this] { _motor.SetVoltage(0_V); });
 }
 
-frc2::CommandPtr SubDeploy::Stow() {
+frc2::CommandPtr SubDeploy::ExtendToStow() {
   return ExtendTo(STOW_LENGTH);
+}
+
+frc2::CommandPtr SubDeploy::ExtendToDeploy() {
+  return ExtendTo(DEPLOY_LENGTH);
 }
 
 /* Instant Functions*/
