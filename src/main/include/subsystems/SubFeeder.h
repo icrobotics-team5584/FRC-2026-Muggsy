@@ -44,11 +44,6 @@ class SubFeeder : public frc2::SubsystemBase {
   ICSparkFlex _feederMotor{canid::FEEDER_MOTOR};
   rev::spark::SparkFlexConfig _feederMotorConfig;
 
-  static constexpr double P = 0.000005;
-  static constexpr double I = 0.0;
-  static constexpr double D = 0.0;
-  static constexpr double F = 0.001060;
-
   // Simulation components
   static constexpr double GEARING = 22.0 / 18.0;
   static constexpr units::kilogram_square_meter_t MOI = 0.000001_kg_sq_m;
