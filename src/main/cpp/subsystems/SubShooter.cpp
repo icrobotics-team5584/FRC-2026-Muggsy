@@ -44,9 +44,9 @@ SubShooter::SubShooter() {
   // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 
-  //_flyWheelSpeedTableScoring.insert(x_m, y_tps);
+  _flyWheelSpeedTableScoring.insert(1_m, 40_tps);
 
-  //_flyWheelSpeedTablePassing.insert(x_m, y_tps);
+  _flyWheelSpeedTablePassing.insert(1_m, 40_tps);
 }
 
 // This method will be called once per scheduler run
