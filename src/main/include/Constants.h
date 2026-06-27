@@ -36,7 +36,7 @@ constexpr int HOOD_MOTOR = 23;
 
 constexpr int FEEDER_MOTOR = 24;
 
-constexpr int PDH = 60;
+constexpr int PDH = 40;
 }  // namespace canid
 
 namespace dio {
