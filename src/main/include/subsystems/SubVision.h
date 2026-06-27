@@ -45,7 +45,7 @@ class SubVision : public frc2::SubsystemBase {
   frc::AprilTagFieldLayout _tagMap{_tagMapFilePath};
 
   frc::Transform3d _shooterBotToCam{
-    {-295.779_mm, 252.927_mm, 320.249_mm}, {0_deg, -30_deg, 90_deg}};
+    {-295.779_mm, 252.927_mm, 320.249_mm}, {0_deg, -30_deg, 180_deg}};
 
   static constexpr std::string_view SHOOTER_CAM_NAME = "shooter";
   ICCamera _shooterCam{SHOOTER_CAM_NAME, _shooterBotToCam, _tagMap};
@@ -61,4 +61,4 @@ class SubVision : public frc2::SubsystemBase {
 };
 
 // Link to photon vision
-// http://10.55.84.11:5800
+// http://10.99.93.11:5800/#/dashboard
