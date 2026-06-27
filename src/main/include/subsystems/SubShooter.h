@@ -108,7 +108,7 @@ class SubShooter : public frc2::SubsystemBase {
   // Sim
   static constexpr units::kilogram_square_meter_t MOI = 0.05_kg_sq_m;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::KrakenX60FOC(4);
-  static constexpr double GEAR_RATIO = 10;
+  static constexpr double GEAR_RATIO = 2;
 
   frc::LinearSystem<1, 1, 1> _flywheelSystem =
     frc::LinearSystemId::FlywheelSystem(MOTOR_MODEL, MOI, GEAR_RATIO);
