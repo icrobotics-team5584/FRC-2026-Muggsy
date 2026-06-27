@@ -8,9 +8,9 @@
 #include "subsystems/SubIntake.h"
 #include "subsystems/SubShooter.h"
 
+#include "utilities/Logger.h"
 #include "utilities/PoseHandler.h"
 #include "utilities/ShotPlanner.h"
-#include "utilities/Logger.h"
 
 namespace cmd {
 frc2::CommandPtr IntakeSequence() {
@@ -22,46 +22,47 @@ frc2::CommandPtr ReverseIntakeSequence() {
     SubIntake::GetInstance().RunReverseIntake());
 }
 
-frc2::CommandPtr StationaryShootAt(frc::Translation2d target, frc2::CommandXboxController& controller) {
-  auto distanceToTarget = [target] {
-    auto curPose = PoseHandler::GetInstance().GetPose();
-    auto shooterPose = curPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
+frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
+  units::degree_t angleToTarget = SubDrivebase::GetInstance().CalcAngleToShotTarget();
 
-    logger::FieldDisplay::GetInstance().DisplayPose("Shooter/shooterPose", shooterPose);
-    logger::Log("Shooter/distToTargetInner", target.Distance(shooterPose.Translation()));
+  frc::Pose2d curPose = PoseHandler::GetInstance().GetPose();
+  frc::Pose2d aimmingPose = frc::Pose2d(curPose.Translation(), angleToTarget);
 
-    return target.Distance(shooterPose.Translation());  
-  };
+  units::length::meter_t distanceToTarget = curPose.Translation().Distance(target);
+  logger::Log("Shooter/distToTargetInner", distanceToTarget);
 
-  auto angleToTarget = [] {return SubDrivebase::GetInstance().CalcAngleToShotTarget();};
+  bool isPassing = ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
 
-  return frc2::cmd::Parallel(SubDrivebase::GetInstance().JoystickDriveWithAngle(controller, angleToTarget, 0.05),
-    SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, []{return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;}),
-    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget)
-  ).Until([] {
-    return IsReadyToShoot();
-  }).AndThen(frc2::cmd::Parallel(
-    SubFeeder::GetInstance().Feed(),
-    SubIndexer::GetInstance().SpinIndexer()
-  ));
+  return frc2::cmd::StartEnd(
+    [aimmingPose, distanceToTarget, isPassing] {
+      frc2::cmd::Parallel(
+        SubDrivebase::GetInstance().DriveToPose([aimmingPose] { return aimmingPose; }),
+        SubShooter::GetInstance().SetSpeedFromDistanceTarget(
+          [distanceToTarget] { return distanceToTarget; }, [isPassing] { return isPassing; }),
+        SubHood::GetInstance().SetPositionFromDistanceToTarget(
+          [distanceToTarget] { return distanceToTarget; }))
+        .Until([] { return IsReadyToShoot(); })
+        .AndThen(frc2::cmd::Parallel(
+          SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer()));
+    },
+    [] {
+      return frc2::cmd::Parallel(
+        SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop());
+    });
 }
 
 bool IsReadyToShoot() {
-  return SubHood::GetInstance().IsAtTarget() &&
-         SubShooter::GetInstance().IsReadyToShoot() &&
+  return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&
          SubDrivebase::GetInstance().CalcAngleToShotTarget() < 5_deg &&
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
 
 frc2::CommandPtr ShootWhenReady() {
   return frc2::cmd::WaitUntil([] { return IsReadyToShoot(); })
-    .AndThen(frc2::cmd::Parallel(
-      SubFeeder::GetInstance().Feed(),
-      SubIndexer::GetInstance().SpinIndexer(),
-      SubIntake::GetInstance().RunIntake()
-    ).Until([] {
-      return !IsReadyToShoot();
-    })).Repeatedly();
+    .AndThen(frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(),
+      SubIndexer::GetInstance().SpinIndexer(), SubIntake::GetInstance().RunIntake())
+        .Until([] { return !IsReadyToShoot(); }))
+    .Repeatedly();
 };
 
 frc2::CommandPtr ToggleBrakeCoast() {
