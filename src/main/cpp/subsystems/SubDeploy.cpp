@@ -62,9 +62,10 @@ frc2::CommandPtr SubDeploy::Zero() {
       _motor.StopMotor();
       _hasZeroed = true;
     })
-    .FinallyDo([this] { 
+    .FinallyDo([this] {
       _motor.StopMotor();
-      _zeroing = false; });
+      _zeroing = false;
+    });
 }
 
 frc2::CommandPtr SubDeploy::ExtendTo(units::meter_t length) {
