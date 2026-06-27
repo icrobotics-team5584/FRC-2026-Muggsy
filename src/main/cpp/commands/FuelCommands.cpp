@@ -33,21 +33,21 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
     return dis;
   };
 
-  // auto aimmingPose = [] {
-  //   units::degree_t angleToTarget = SubDrivebase::GetInstance().CalcAngleToShotTarget();
-  //   frc::Pose2d aimmingPose =
-  //     frc::Pose2d(PoseHandler::GetInstance().GetPose().Translation(), angleToTarget);
-  //   logger::FieldDisplay::GetInstance().DisplayPose("Shooter/StationaryShootAt/Aiming Pose", aimmingPose);
+  auto aimmingSpeeds = [] {
+    units::degree_t angleToTarget = SubDrivebase::GetInstance().CalcAngleToShotTarget();
+    logger::Log("Shooter/StationaryShootAt/Angle to Target", angleToTarget);
 
-  //   return aimmingPose;
-  // };
+    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(SubDrivebase::GetInstance().GetGyroAngle().Degrees() - angleToTarget);
+
+    return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
+  };
 
   auto isPassing = [] {
     return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
   };
 
   return frc2::cmd::Parallel(
-    // SubDrivebase::GetInstance().DriveToPose(aimmingPose),
+    SubDrivebase::GetInstance().Drive(aimmingSpeeds, true),
     SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, isPassing),
     SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget))
     .Until([] { 
@@ -60,7 +60,7 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
 
 bool IsReadyToShoot() {
   return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&
-        //  SubDrivebase::GetInstance().CalcAngleToShotTarget() < 5_deg &&
+         SubDrivebase::GetInstance().CalcAngleToShotTarget() < 5_deg &&
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
 

@@ -298,7 +298,7 @@ units::degree_t SubDrivebase::CalcAngleToShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   frc::Translation2d target = ShotPlanner::CalculateShotTarget(currentPose).targetPosition.ToTranslation2d();
   frc::Translation2d robotToTarget = target - currentPose.Translation();
-  return robotToTarget.Angle().Degrees();
+  return robotToTarget.Angle().Degrees() - 180_deg;
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
