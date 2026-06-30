@@ -10,6 +10,7 @@
 
 #include "utilities/PoseHandler.h"
 #include "utilities/ShotPlanner.h"
+#include "utilities/Logger.h"
 
 namespace cmd {
 frc2::CommandPtr IntakeSequence() {
@@ -21,7 +22,9 @@ frc2::CommandPtr ReverseIntakeSequence() {
     SubIntake::GetInstance().RunReverseIntake());
 }
 
-frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {}
+frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
+  return frc2::cmd::Idle();
+}
 
 bool IsReadyToShoot() {
   return SubHood::GetInstance().IsAtTarget() &&
@@ -39,7 +42,42 @@ frc2::CommandPtr ShootWhenReady() {
     ).Until([] {
       return !IsReadyToShoot();
     })).Repeatedly();
-};
+}
+
+frc2::CommandPtr CalcFutureDrumPose() {
+  units::millisecond_t offset = logger::Tune("SOTM/LatencyOffset", LATENCY_OFFSET);
+  
+  // Calculate distance to target from robot
+  auto target = GetShotTarget();
+  auto robot = PoseHandler::GetInstance().GetPose();
+  logger::FieldDisplay::GetInstance().DisplayPose("SOTM/Robot pose", robot);
+  units::meter_t distance = target.Distance(robot.Translation());
+
+  // Calculate field relative robot velocity
+  frc::ChassisSpeeds robotVel = SubDrivebase::GetInstance().GetChassisSpeeds();
+  units::meters_per_second_t robotVelX = robotVel.vx;
+  units::meters_per_second_t robotVelY = robotVel.vy;
+  units::degrees_per_second_t robotVelRot = SubDrivebase::GetInstance().GetDesiredAngularVelocity();
+
+  // Account for latency
+  frc::ChassisSpeeds robotRelativeVel = SubDrivebase::GetInstance().GetChassisSpeeds(false);
+  units::meters_per_second_t robotRelativeVelX = robotRelativeVel.vx;
+  units::meters_per_second_t robotRelativeVelY = robotRelativeVel.vy;
+  frc::Transform2d latencyTransform = frc::Transform2d(robotRelativeVelX * offset, robotRelativeVelY * offset, robotVelRot * offset);
+  robot = robot.TransformBy(latencyTransform);
+
+  logger::Log("SOTM/velX", robotVelX);
+  logger::Log("SOTM/velY", robotVelY);
+  logger::Log("SOTM/velRot", robotVelRot);
+  logger::Log("SOTM/robotRelativeVelX", robotRelativeVelX);
+  logger::Log("SOTM/robotRelativeVelY", robotRelativeVelY);
+
+  // Estimate time of flight
+  units::second_t TOF;
+  frc::Pose2d futurePose;
+  
+  return frc2::cmd::Idle();
+}
 
 frc2::CommandPtr ToggleBrakeCoast() {
   return frc2::cmd::StartEnd(
@@ -60,4 +98,16 @@ frc2::CommandPtr EjectFuel() {
     SubIntake::GetInstance().RunReverseIntake(), SubIndexer::GetInstance().SpinIndexer(),
     SubFeeder::GetInstance().Feed(), SubHood::GetInstance().HoodToEjectAngle());
 }
+
+frc::Translation2d GetShotTarget() {
+  frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
+  return ShotPlanner::CalculateShotTarget(currentPose).targetPosition.ToTranslation2d();
+}
+
+units::degree_t CalcAngleToShotTarget() {
+  frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
+  frc::Translation2d robotToTarget = GetShotTarget() - currentPose.Translation();
+  return robotToTarget.Angle().Degrees();
+}
+
 }  // namespace cmd

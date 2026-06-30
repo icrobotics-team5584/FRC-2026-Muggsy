@@ -294,13 +294,6 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationEr
   return omega;
 }
 
-units::degree_t SubDrivebase::CalcAngleToShotTarget() {
-  frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
-  frc::Translation2d target = ShotPlanner::CalculateShotTarget(currentPose).targetPosition.ToTranslation2d();
-  frc::Translation2d robotToTarget = target - currentPose.Translation();
-  return robotToTarget.Angle().Degrees();
-}
-
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Find target and current values
   units::meter_t targetXMeters = targetPose.X();
