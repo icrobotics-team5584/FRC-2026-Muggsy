@@ -56,8 +56,8 @@ class SubHood : public frc2::SubsystemBase {
   static constexpr units::degree_t TOLERANCE = 1.0_deg;
 
   static constexpr units::degree_t STOW_ANGLE = 5_deg;
-  static constexpr units::degree_t PASSING_ANGLE = 20_deg;
-  static constexpr units::degree_t UPPER_LIMIT = 30_deg;
+  static constexpr units::degree_t PASSING_ANGLE = 25_deg;
+  static constexpr units::degree_t UPPER_LIMIT = 28_deg;
   static constexpr units::degree_t LOWER_LIMIT = 5_deg;
 
   static constexpr units::ampere_t ZEROING_CURRENT_LIMIT = 20_A;
@@ -84,7 +84,7 @@ class SubHood : public frc2::SubsystemBase {
 
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::NeoVortex(1);
   static constexpr units::kilogram_square_meter_t MOI = 0.0001_kg_sq_m;
-  static constexpr double GEAR_RATIO = 10.0;
+  static constexpr double GEAR_RATIO = 158.38;
 
   // Sim
   static constexpr bool SIMULATE_GRAVITY = false;
