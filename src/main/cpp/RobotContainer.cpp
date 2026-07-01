@@ -47,7 +47,11 @@ void RobotContainer::ConfigureBindings() {
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
 
 
-
+  _driverController.RightTrigger().OnFalse(frc2::cmd::Parallel(
+    SubHood::GetInstance().HoodToStowAngle(),
+    SubShooter::GetInstance().Stop(),
+    SubDeploy::GetInstance().ExtendToDeploy()
+  ));
 
 /*
   _driverController.Start().WhileTrue(SubDeploy::GetInstance().Zero());
@@ -62,13 +66,6 @@ void RobotContainer::ConfigureBindings() {
   _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
   _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
   _driverController.RightBumper().WhileTrue(cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
-*/
-
-  _driverController.RightBumper().OnFalse(frc2::cmd::Parallel(
-    SubHood::GetInstance().HoodToStowAngle(),
-    SubShooter::GetInstance().Stop()
-  ));
-  
 
   _driverController.POVLeft().WhileTrue(
     SubShooter::GetInstance().SetSpeedTarget([] { return 3000_rpm; }));
@@ -81,6 +78,8 @@ void RobotContainer::ConfigureBindings() {
     [] {
       frc2::CommandScheduler::GetInstance().Schedule(SubHood::GetInstance().HoodToStowAngle());
     }));
+
+*/
 }
 
 
