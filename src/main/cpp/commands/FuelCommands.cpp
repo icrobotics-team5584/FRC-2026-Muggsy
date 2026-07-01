@@ -36,9 +36,10 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
   };
 
   auto aimingSpeeds = [] {
-    units::degree_t angleToTarget = CalcAngleToShotTarget();
-    logger::Log("Shooter/StationaryShootAt/Angle to Target", angleToTarget);
-    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(angleToTarget);
+    units::degree_t desiredAngle = CalcAngleToShotTarget();
+    units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
+    logger::Log("Shooter/StationaryShootAt/Angle to Target", desiredAngle);
+    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
 
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
@@ -139,12 +140,10 @@ frc::Translation2d GetShotTarget() {
 units::degree_t CalcAngleToShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   frc::Translation2d target = GetShotTarget();
-  frc::Translation2d delta = target - currentPose.Translation();
-  frc::Rotation2d desiredHeading = delta.Angle();
-  frc::Rotation2d currentHeading = SubDrivebase::GetInstance().GetGyroAngle();
-  frc::Rotation2d error = desiredHeading - currentHeading;
 
-  return error.Degrees();
+  units::degree_t desired = units::radian_t(std::atan2((target.Y() - currentPose.Y()).value(), (target.X() - currentPose.X()).value()));
+
+  return desired + 180_deg;
 }
 
 }  // namespace cmd

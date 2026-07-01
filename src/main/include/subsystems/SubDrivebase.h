@@ -60,7 +60,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::Trigger CheckCoastButton();
 
   units::degree_t CalcAngleToShotTarget();
-  units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
+  units::turns_per_second_t CalcRotateSpeed(units::turn_t current, units::turn_t desired);
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
 
