@@ -289,8 +289,9 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
-units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t current, units::turn_t desired) {
-  auto omega = _rotationP2pController.Calculate(current.value(), desired.value()) * 1_rad_per_s;
+units::turns_per_second_t SubDrivebase::CalcRotateSpeed(
+  units::turn_t current, units::turn_t desired) {
+  auto omega = _rotationP2pController.Calculate(current.value(), desired.value()) * 1_tps;
   return omega;
 }
 
