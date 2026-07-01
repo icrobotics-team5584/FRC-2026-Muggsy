@@ -54,6 +54,7 @@ void RobotContainer::ConfigureBindings() {
     [] {
       frc2::CommandScheduler::GetInstance().Schedule(SubHood::GetInstance().HoodToStowAngle());
     }));
+  _driverController.LeftBumper().WhileTrue(cmd::TuneShooterAndHoodTables());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
