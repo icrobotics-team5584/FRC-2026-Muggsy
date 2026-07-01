@@ -11,6 +11,7 @@ frc2::CommandPtr ReverseIntakeSequence();
 
 frc2::CommandPtr StationaryShootAt(frc::Translation2d target);
 bool IsReadyToShoot();
+frc2::CommandPtr ShootWhenReady();
 
 frc2::CommandPtr ToggleBrakeCoast();
 frc2::CommandPtr EjectFuel();
