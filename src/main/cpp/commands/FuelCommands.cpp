@@ -54,6 +54,27 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
     SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady());
 }
 
+frc2::CommandPtr TuneShooterAndHoodTables() {
+  auto aimingSpeeds = [] {
+    units::degree_t desiredAngle = CalcAngleToShotTarget();
+    units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
+    units::angular_velocity::turns_per_second_t rotationSpeeds =
+      SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
+    logger::Log(
+      "Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
+
+    return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
+  };
+
+  return SubDrivebase::GetInstance().Drive(aimingSpeeds, true).Until([] {
+    return units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 5_deg;
+  }).AndThen(frc2::cmd::Parallel(
+    SubFeeder::GetInstance().Feed(),
+    SubIndexer::GetInstance().SpinIndexer(),
+    SubIntake::GetInstance().RunIntake(),
+    SubDeploy::GetInstance().ExtendToStow()));
+}
+
 bool IsReadyToShoot() {
   return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&
          units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 5_deg &&

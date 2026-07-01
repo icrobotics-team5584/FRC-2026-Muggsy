@@ -20,5 +20,8 @@ frc2::CommandPtr EjectFuel();
 frc::Translation2d GetShotTarget();
 units::degree_t CalcAngleToShotTarget();
 
+frc2::CommandPtr TuneShooterAndHoodTables();
+frc2::CommandPtr CalcFutureDrumPose();
+
 static constexpr units::millisecond_t LATENCY_OFFSET = 100_ms;
 }  // namespace cmd

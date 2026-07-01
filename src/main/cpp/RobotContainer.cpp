@@ -45,10 +45,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.RightBumper().OnFalse(
     frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop(),
       SubDeploy::GetInstance().ExtendToDeploy()));
-  _driverController.POVLeft().WhileTrue(
-    SubShooter::GetInstance().SetSpeedTarget([] { return 3000_rpm; }));
-  _driverController.POVRight().WhileTrue(
-    SubShooter::GetInstance().SetSpeedTarget([] { return 0_rpm; }));
+  _driverController.POVLeft().OnTrue(SubHood::GetInstance().MoveHoodUp1Degree());
+  _driverController.POVRight().OnTrue(SubHood::GetInstance().MoveHoodDown1Degree());
   _driverController.A().ToggleOnTrue(frc2::cmd::StartEnd(
     [] {
       frc2::CommandScheduler::GetInstance().Schedule(SubHood::GetInstance().HoodToPassingAngle());
