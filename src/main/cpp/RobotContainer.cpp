@@ -16,8 +16,8 @@
 #include "commands/FuelCommands.h"
 #include "commands/VisionCommands.h"
 
-#include "utilities/Logger.h"
 #include "utilities/FieldConstants.h"
+#include "utilities/Logger.h"
 
 #include <frc2/command/Commands.h>
 
@@ -40,12 +40,11 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(SubDeploy::GetInstance().ExtendToDeploy());
   _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
   _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
-  _driverController.RightBumper().WhileTrue(cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
-  _driverController.RightBumper().OnFalse(frc2::cmd::Parallel(
-    SubHood::GetInstance().HoodToStowAngle(),
-    SubShooter::GetInstance().Stop(),
-    SubDeploy::GetInstance().ExtendToDeploy()
-  ));
+  _driverController.RightBumper().WhileTrue(
+    cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
+  _driverController.RightBumper().OnFalse(
+    frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop(),
+      SubDeploy::GetInstance().ExtendToDeploy()));
   _driverController.POVLeft().WhileTrue(
     SubShooter::GetInstance().SetSpeedTarget([] { return 3000_rpm; }));
   _driverController.POVRight().WhileTrue(

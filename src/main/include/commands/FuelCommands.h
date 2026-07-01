@@ -1,9 +1,10 @@
 #pragma once
 
-#include <frc2/command/CommandPtr.h>
 #include <frc/geometry/Translation2d.h>
-#include <units/angle.h>
+#include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
+
+#include <units/angle.h>
 
 namespace cmd {
 frc2::CommandPtr IntakeSequence();
