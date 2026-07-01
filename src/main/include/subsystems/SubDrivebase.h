@@ -61,6 +61,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   units::degree_t CalcAngleToShotTarget();
   units::turns_per_second_t CalcRotateSpeed(units::turn_t current, units::turn_t desired);
+  units::degree_t GetRotationError();
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
 

@@ -38,8 +38,8 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
   auto aimingSpeeds = [] {
     units::degree_t desiredAngle = CalcAngleToShotTarget();
     units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
-    logger::Log("Shooter/StationaryShootAt/Angle to Target", desiredAngle);
     units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
+    logger::Log("Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
 
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
@@ -60,7 +60,7 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
 
 bool IsReadyToShoot() {
   return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&
-         units::math::abs(CalcAngleToShotTarget()) < 5_deg &&
+         units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 5_deg &&
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
 

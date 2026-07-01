@@ -295,6 +295,10 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t current, u
   return omega;
 }
 
+units::degree_t SubDrivebase::GetRotationError() {
+  return units::turn_t(_rotationTeleopController.GetError());
+}
+
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Find target and current values
   units::meter_t targetXMeters = targetPose.X();
