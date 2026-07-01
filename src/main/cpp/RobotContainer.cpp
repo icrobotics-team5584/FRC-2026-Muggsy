@@ -43,7 +43,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.RightBumper().WhileTrue(cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
   _driverController.RightBumper().OnFalse(frc2::cmd::Parallel(
     SubHood::GetInstance().HoodToStowAngle(),
-    SubShooter::GetInstance().Stop()
+    SubShooter::GetInstance().Stop(),
+    SubDeploy::GetInstance().ExtendToDeploy()
   ));
   _driverController.POVLeft().WhileTrue(
     SubShooter::GetInstance().SetSpeedTarget([] { return 3000_rpm; }));

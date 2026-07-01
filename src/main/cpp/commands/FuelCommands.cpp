@@ -69,7 +69,8 @@ frc2::CommandPtr ShootWhenReady() {
     .AndThen(frc2::cmd::Parallel(
       SubFeeder::GetInstance().Feed(),
       SubIndexer::GetInstance().SpinIndexer(),
-      SubIntake::GetInstance().RunIntake()
+      SubIntake::GetInstance().RunIntake(),
+      SubDeploy::GetInstance().ExtendToStow()
     ).Until([] {
       return !IsReadyToShoot();
     })).Repeatedly();
