@@ -12,7 +12,6 @@ SubDrivebase::SubDrivebase() {
   logger::Log("Drivebase/P2P/Translation Controller", &_translationP2pController);
 
   _rotationP2pController.EnableContinuousInput(0, 1);
-  _rotationTeleopController.EnableContinuousInput(-0.5, 0.5);
 
   ctre::phoenix6::configs::Pigeon2Configuration gyroConfig;
   gyroConfig.MountPose.MountPosePitch = 0_deg;
@@ -291,12 +290,12 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
 }
 
 units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t current, units::turn_t desired) {
-  auto omega = _rotationTeleopController.Calculate(current.value(), desired.value()) * 1_rad_per_s;
+  auto omega = _rotationP2pController.Calculate(current.value(), desired.value()) * 1_rad_per_s;
   return omega;
 }
 
 units::degree_t SubDrivebase::GetRotationError() {
-  return units::turn_t(_rotationTeleopController.GetError());
+  return units::turn_t(_rotationP2pController.GetError());
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
