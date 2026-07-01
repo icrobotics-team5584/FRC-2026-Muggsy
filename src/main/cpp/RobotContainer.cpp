@@ -13,9 +13,11 @@
 #include "subsystems/SubShooter.h"
 #include "subsystems/SubVision.h"
 
+#include "commands/FuelCommands.h"
 #include "commands/VisionCommands.h"
 
 #include "utilities/Logger.h"
+#include "utilities/FieldConstants.h"
 
 #include <frc2/command/Commands.h>
 
@@ -29,7 +31,6 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureBindings() {
   _driverController.Start().WhileTrue(SubDeploy::GetInstance().Zero());
   _driverController.Back().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
-
   _driverController.Y().OnTrue(
     frc2::cmd::Parallel(frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); }),
       frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().SyncSensors(); })));
@@ -39,10 +40,11 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(SubDeploy::GetInstance().ExtendToDeploy());
   _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
   _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
-  _driverController.RightBumper().WhileTrue(
-    frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer()));
-  _driverController.LeftBumper().WhileTrue(frc2::cmd::Parallel(
-    SubFeeder::GetInstance().FeedBackwards(), SubIndexer::GetInstance().ReverseIndexer()));
+  _driverController.RightBumper().WhileTrue(cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
+  _driverController.RightBumper().OnFalse(frc2::cmd::Parallel(
+    SubHood::GetInstance().HoodToStowAngle(),
+    SubShooter::GetInstance().Stop()
+  ));
   _driverController.POVLeft().WhileTrue(
     SubShooter::GetInstance().SetSpeedTarget([] { return 3000_rpm; }));
   _driverController.POVRight().WhileTrue(

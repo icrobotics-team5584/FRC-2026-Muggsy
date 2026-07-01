@@ -8,6 +8,7 @@
 #include "subsystems/SubIntake.h"
 #include "subsystems/SubShooter.h"
 
+#include "utilities/Logger.h"
 #include "utilities/PoseHandler.h"
 #include "utilities/ShotPlanner.h"
 #include "utilities/Logger.h"
@@ -23,12 +24,43 @@ frc2::CommandPtr ReverseIntakeSequence() {
 }
 
 frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
-  return frc2::cmd::Idle();
+  logger::FieldDisplay::GetInstance().DisplayPose(
+    "Shooter/StationaryShootAt/Target", frc::Pose2d(target, frc::Rotation2d(0_deg)));
+
+  auto distanceToTarget = [target] {
+    units::meter_t dis = PoseHandler::GetInstance().GetPose().Translation().Distance(target);
+    logger::Log("Shooter/StationaryShootAt/Distance To Target", dis);
+
+    return dis;
+  };
+
+  auto aimmingSpeeds = [] {
+    units::degree_t angleToTarget = CalcAngleToShotTarget();
+    logger::Log("Shooter/StationaryShootAt/Angle to Target", angleToTarget);
+
+    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(SubDrivebase::GetInstance().GetGyroAngle().Degrees() - angleToTarget);
+
+    return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
+  };
+
+  auto isPassing = [] {
+    return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
+  };
+
+  return frc2::cmd::Parallel(
+    SubDrivebase::GetInstance().Drive(aimmingSpeeds, true),
+    SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, isPassing),
+    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget))
+    .Until([] { 
+      bool ready = IsReadyToShoot();
+      logger::Log("Shooter/StationaryShootAt/Ready to shoot", ready);
+      return ready; })
+    .AndThen(frc2::cmd::Parallel(
+      SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer()));
 }
 
 bool IsReadyToShoot() {
-  return SubHood::GetInstance().IsAtTarget() &&
-         SubShooter::GetInstance().IsReadyToShoot() &&
+  return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&
          SubDrivebase::GetInstance().CalcAngleToShotTarget() < 5_deg &&
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
