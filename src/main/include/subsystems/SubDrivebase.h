@@ -138,6 +138,10 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::PIDController _rotationP2pController =
     frc::PIDController(drivebaseConfig::P2P_ROTATION_PID[0], drivebaseConfig::P2P_ROTATION_PID[1],
       drivebaseConfig::P2P_ROTATION_PID[2]);
+  frc::PIDController _rotationTeleopController =
+    frc::PIDController(drivebaseConfig::TELEOP_ROTATION_PID[0], drivebaseConfig::TELEOP_ROTATION_PID[1],
+      drivebaseConfig::TELEOP_ROTATION_PID[2]);
+
   frc::SlewRateLimiter<units::meters_per_second> _xP2pLimiter{drivebaseConfig::MAX_P2P_ACCEL};
   frc::SlewRateLimiter<units::meters_per_second> _yP2pLimiter{drivebaseConfig::MAX_P2P_ACCEL};
   frc::SlewRateLimiter<units::turns_per_second> _rotP2pLimiter{
