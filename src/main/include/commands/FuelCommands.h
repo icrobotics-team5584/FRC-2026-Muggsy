@@ -23,5 +23,9 @@ frc::Rotation2d CalcAngleToShotTarget();
 frc2::CommandPtr TuneShooterAndHoodTables();
 frc::Pose2d CalcFutureDrumPose();
 
+units::degree_t CalcShootOnTheMoveAngle();
+units::meter_t CalcShootOnTheMoveDistance();
+frc2::CommandPtr ShootOnTheMove(frc2::CommandXboxController& controller);
+
 static constexpr units::millisecond_t LATENCY_OFFSET = 100_ms;
 }  // namespace cmd

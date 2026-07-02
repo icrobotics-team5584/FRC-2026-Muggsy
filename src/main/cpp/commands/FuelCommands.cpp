@@ -152,7 +152,7 @@ units::degree_t CalcShootOnTheMoveAngle() {
   return angleFromFutureToTarget;
 }
 
-frc2::CommandPtr ShootOnTheMove() {
+frc2::CommandPtr ShootOnTheMove(frc2::CommandXboxController& controller) {
   return frc2::cmd::Parallel(
     SubShooter::GetInstance().SetSpeedFromDistanceTarget(
       [] { return CalcShootOnTheMoveDistance(); },
@@ -165,7 +165,7 @@ frc2::CommandPtr ShootOnTheMove() {
       [] {
         return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
       }),
-    SubDrivebase::GetInstance().RotateTo([] { return CalcShootOnTheMoveAngle(); }),
+    SubDrivebase::GetInstance().JoystickDriveWithAngle(controller, [] { return CalcShootOnTheMoveAngle(); }, 1.0),
     ShootWhenReady());
 }
 
