@@ -11,7 +11,7 @@ SubDrivebase::SubDrivebase() {
   logger::Log("Drivebase/P2P/Rotation Controller", &_rotationP2pController);
   logger::Log("Drivebase/P2P/Translation Controller", &_translationP2pController);
 
-  _rotationP2pController.EnableContinuousInput(0, 1);
+  _rotationP2pController.EnableContinuousInput(-0.5, 0.5);
 
   ctre::phoenix6::configs::Pigeon2Configuration gyroConfig;
   gyroConfig.MountPose.MountPosePitch = 0_deg;
@@ -289,8 +289,8 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
-units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) {
-  auto omega = _rotationP2pController.Calculate(rotationError.value(), 0) * 1_rad_per_s;
+units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t currentAngle, units::turn_t targetAngle) {
+  auto omega = _rotationP2pController.Calculate(currentAngle.value(), targetAngle.value()) * 1_rad_per_s;
   return omega;
 }
 
@@ -307,7 +307,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   units::meter_t currentXMeters = currentPose.X();
   units::meter_t currentYMeters = currentPose.Y();
-  units::turn_t currentRotation = frc::InputModulus(GetGyroAngle(true).Degrees(), 0_deg, 360_deg);
+  units::turn_t currentRotation = frc::InputModulus(GetGyroAngle(true).Degrees(), -180_deg, 180_deg);
 
   // Create a vector between current position and target position
   frc::Translation2d translationVector =
@@ -477,7 +477,7 @@ frc2::CommandPtr SubDrivebase::JoystickDriveWithAngle(frc2::CommandXboxControlle
   return Drive(
     [this, &controller, target, speedScaling] {
       units::angle::degree_t currentAngle = GetGyroAngle(true).Degrees();
-      units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(currentAngle - target());
+      units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(currentAngle, target());
       frc::ChassisSpeeds joystickSpeeds = CalcJoystickSpeeds(controller);
 
       joystickSpeeds.vx *= speedScaling;

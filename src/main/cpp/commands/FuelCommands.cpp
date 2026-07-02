@@ -38,11 +38,10 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
   };
 
   auto aimingSpeeds = [] {
-    units::degree_t angleToTarget = CalcAngleToShotTarget();
-    logger::Log("Shooter/StationaryShootAt/Angle to Target", angleToTarget);
-
-    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(SubDrivebase::GetInstance().GetGyroAngle().Degrees() - angleToTarget);
-
+    frc::Rotation2d targetAngle = CalcAngleToShotTarget();
+    frc::Rotation2d currentAngle = SubDrivebase::GetInstance().GetGyroAngle();
+    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle.Degrees(), targetAngle.Degrees());
+    logger::Log("Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
 
@@ -57,11 +56,9 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
 
 frc2::CommandPtr TuneShooterAndHoodTables() {
   auto aimingSpeeds = [] {
-    units::degree_t desiredAngle = CalcAngleToShotTarget();
-    units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
-    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle-desiredAngle);
-    logger::Log(
-      "StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
+    auto targetAngle = CalcAngleToShotTarget();
+    auto currentAngle = SubDrivebase::GetInstance().GetGyroAngle();
+    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle.Degrees(), targetAngle.Degrees());
 
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
@@ -154,12 +151,12 @@ frc::Translation2d GetShotTarget() {
   return target;
 }
 
-units::degree_t CalcAngleToShotTarget() {
+frc::Rotation2d CalcAngleToShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   frc::Translation2d target = GetShotTarget();
 
   frc::Translation2d robotToTarget = target - currentPose.Translation();
-  return robotToTarget.Angle().Degrees() - 180_deg;
+  return robotToTarget.Angle().RotateBy({180_deg});
 }
 
 }  // namespace cmd
