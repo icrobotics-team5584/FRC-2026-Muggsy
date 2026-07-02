@@ -11,7 +11,7 @@ SubDrivebase::SubDrivebase() {
   logger::Log("Drivebase/P2P/Rotation Controller", &_rotationP2pController);
   logger::Log("Drivebase/P2P/Translation Controller", &_translationP2pController);
 
-  _rotationP2pController.EnableContinuousInput(0, 1);
+  _rotationP2pController.EnableContinuousInput(-0.5, 0.5);
 
   ctre::phoenix6::configs::Pigeon2Configuration gyroConfig;
   gyroConfig.MountPose.MountPosePitch = 0_deg;
@@ -289,9 +289,10 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
-units::turns_per_second_t SubDrivebase::CalcRotateSpeed(
-  units::turn_t current, units::turn_t desired) {
-  auto omega = _rotationP2pController.Calculate(current.value(), desired.value()) * 1_tps;
+units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t current, units::turn_t target) {
+  current = units::turn_t(frc::AngleModulus(current));
+  target = units::turn_t(frc::AngleModulus(target));
+  auto omega = _rotationP2pController.Calculate(current.value(), target.value()) * 1_tps;
   return omega;
 }
 
@@ -301,18 +302,13 @@ units::degree_t SubDrivebase::GetRotationError() {
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Find target and current values
-  units::meter_t targetXMeters = targetPose.X();
-  units::meter_t targetYMeters = targetPose.Y();
-  units::turn_t targetRotation = targetPose.Rotation().Radians();
+  units::turn_t targetRotation = frc::AngleModulus(targetPose.Rotation().Degrees());
 
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
-  units::meter_t currentXMeters = currentPose.X();
-  units::meter_t currentYMeters = currentPose.Y();
-  units::turn_t currentRotation = frc::InputModulus(GetGyroAngle(true).Degrees(), 0_deg, 360_deg);
+  units::turn_t currentRotation = frc::AngleModulus(GetGyroAngle(true).Degrees());
 
   // Create a vector between current position and target position
-  frc::Translation2d translationVector =
-    frc::Translation2d(targetXMeters - currentXMeters, targetYMeters - currentYMeters);
+  frc::Translation2d translationVector = targetPose.Translation() - currentPose.Translation();
 
   // Use PID controllers to calculate speeds
   auto translationSpeed =
@@ -345,12 +341,9 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   logger::Log(logPath + "Calc x speed", xSpeed);
   logger::Log(logPath + "Calc y speed", ySpeed);
   logger::Log(logPath + "Calc rot speed", rotationSpeed);
-  logger::Log(logPath + "Target pose Y", targetYMeters);
-  logger::Log(logPath + "Target pose X", targetXMeters);
-  logger::Log(logPath + "Target rotation", targetRotation);
-  logger::Log(logPath + "Current pose X", currentXMeters);
-  logger::Log(logPath + "Current pose Y", currentYMeters);
-  logger::Log(logPath + "Current rotation", currentRotation);
+  logger::FieldDisplay::GetInstance().DisplayPose(logPath + "Current pose", currentPose);
+  logger::FieldDisplay::GetInstance().DisplayPose(logPath + "Target pose", targetPose);
+
   return frc::ChassisSpeeds{xSpeed, ySpeed, rotationSpeed};
 }
 
