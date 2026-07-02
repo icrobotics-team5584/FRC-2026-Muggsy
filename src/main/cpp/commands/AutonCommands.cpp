@@ -90,6 +90,8 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{8.253_m, 5.138_m, -120.0_deg}, flip), 0.3, 40_cm, 15_deg), // 5
     SubDrivebase::GetInstance().DriveToPose(
+      icGeometry::MaybeFlip(frc::Pose2d{8.274_m, 4.665_m, -130.0_deg}, flip), 0.5, 80_cm, 15_deg),
+    SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{5.588_m, 5.495_m, -180.0_deg}, flip), 0.5, 80_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{3.468_m, 5.570_m, -180.0_deg}, flip), 0.7, 80_cm, 15_deg),
