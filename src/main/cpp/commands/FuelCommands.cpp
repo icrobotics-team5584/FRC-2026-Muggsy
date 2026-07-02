@@ -153,14 +153,16 @@ frc::Translation2d GetShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   frc::Translation2d target =
     ShotPlanner::CalculateShotTarget(currentPose).targetPosition.ToTranslation2d();
+  logger::FieldDisplay::GetInstance().DisplayPose("Shot target", frc::Pose2d{target, {0_deg}});
   return target;
 }
 
 units::degree_t CalcAngleToShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
-  frc::Translation2d target = ShotPlanner::CalculateShotTarget(currentPose).targetPosition.ToTranslation2d();
+  frc::Translation2d target = GetShotTarget();
+
   frc::Translation2d robotToTarget = target - currentPose.Translation();
-  return robotToTarget.Angle().Degrees() + 180_deg;
+  return frc::InputModulus(robotToTarget.Angle().Degrees() + 180_deg, 0_deg, 360_deg);
 }
 
 }  // namespace cmd
