@@ -1,9 +1,10 @@
 #pragma once
 
+#include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
-#include <frc/geometry/Pose2d.h>
+
 #include <units/angle.h>
 
 namespace cmd {

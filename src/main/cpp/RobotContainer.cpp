@@ -40,11 +40,9 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(SubDeploy::GetInstance().ExtendToDeploy());
   _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
   _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
-  _driverController.Y().WhileTrue(
-    cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
-  _driverController.Y().OnFalse(
-    frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop(),
-      SubDeploy::GetInstance().ExtendToDeploy()));
+  _driverController.Y().WhileTrue(cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
+  _driverController.Y().OnFalse(frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(),
+    SubShooter::GetInstance().Stop(), SubDeploy::GetInstance().ExtendToDeploy()));
   _driverController.POVLeft().OnTrue(SubHood::GetInstance().MoveHoodUp1Degree());
   _driverController.POVRight().OnTrue(SubHood::GetInstance().MoveHoodDown1Degree());
   _driverController.A().ToggleOnTrue(frc2::cmd::StartEnd(

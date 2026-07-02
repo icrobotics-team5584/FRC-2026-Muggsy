@@ -289,8 +289,10 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
-units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t currentAngle, units::turn_t targetAngle) {
-  auto omega = _rotationP2pController.Calculate(currentAngle.value(), targetAngle.value()) * 1_rad_per_s;
+units::turns_per_second_t SubDrivebase::CalcRotateSpeed(
+  units::turn_t currentAngle, units::turn_t targetAngle) {
+  auto omega =
+    _rotationP2pController.Calculate(currentAngle.value(), targetAngle.value()) * 1_rad_per_s;
   return omega;
 }
 
@@ -318,7 +320,8 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   units::meter_t currentXMeters = currentPose.X();
   units::meter_t currentYMeters = currentPose.Y();
-  units::turn_t currentRotation = frc::InputModulus(GetGyroAngle(true).Degrees(), -180_deg, 180_deg);
+  units::turn_t currentRotation =
+    frc::InputModulus(GetGyroAngle(true).Degrees(), -180_deg, 180_deg);
 
   // Create a vector between current position and target position
   frc::Translation2d translationVector =
