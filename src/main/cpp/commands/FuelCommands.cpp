@@ -24,12 +24,15 @@ frc2::CommandPtr ReverseIntakeSequence() {
 
 frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
   logger::FieldDisplay::GetInstance().DisplayPose(
-    "Shooter/StationaryShootAt/Target", frc::Pose2d(target, frc::Rotation2d(0_deg)));
+    "StationaryShootAt/Target", frc::Pose2d(target, frc::Rotation2d(0_deg)));
 
   auto distanceToTarget = [target] {
     auto currentPose = PoseHandler::GetInstance().GetPose();
-    units::meter_t dis = target.Distance(currentPose.Translation());
-    logger::Log("Shooter/StationaryShootAt/Distance To Target", dis);
+    auto shooterPose = currentPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
+    units::meter_t dis = target.Distance(shooterPose.Translation());
+    logger::FieldDisplay::GetInstance().DisplayPose("StationaryShootAt/ShooterPose", shooterPose);
+
+    logger::Log("StationaryShootAt/Distance To Target", dis);
 
     return dis;
   };
@@ -40,7 +43,7 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
     units::angular_velocity::turns_per_second_t rotationSpeeds =
       SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
     logger::Log(
-      "Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
+      "StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
 
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
@@ -61,7 +64,7 @@ frc2::CommandPtr TuneShooterAndHoodTables() {
     units::angular_velocity::turns_per_second_t rotationSpeeds =
       SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
     logger::Log(
-      "Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
+      "StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
 
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
@@ -158,10 +161,8 @@ units::degree_t CalcAngleToShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   frc::Translation2d target = GetShotTarget();
 
-  units::degree_t desired = units::radian_t(
-    std::atan2((target.Y() - currentPose.Y()).value(), (target.X() - currentPose.X()).value()));
-
-  return desired + 180_deg;
+  frc::Translation2d robotToTarget = target - currentPose.Translation();
+  return frc::InputModulus(robotToTarget.Angle().Degrees() + 180_deg, 0_deg, 360_deg);
 }
 
 }  // namespace cmd
