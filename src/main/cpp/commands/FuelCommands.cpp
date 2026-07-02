@@ -38,12 +38,10 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
   };
 
   auto aimingSpeeds = [] {
-    units::degree_t desiredAngle = CalcAngleToShotTarget();
-    units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
-    units::angular_velocity::turns_per_second_t rotationSpeeds =
-      SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
-    logger::Log(
-      "StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
+    units::degree_t angleToTarget = CalcAngleToShotTarget();
+    logger::Log("Shooter/StationaryShootAt/Angle to Target", angleToTarget);
+
+    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(SubDrivebase::GetInstance().GetGyroAngle().Degrees() - angleToTarget);
 
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
@@ -61,8 +59,7 @@ frc2::CommandPtr TuneShooterAndHoodTables() {
   auto aimingSpeeds = [] {
     units::degree_t desiredAngle = CalcAngleToShotTarget();
     units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
-    units::angular_velocity::turns_per_second_t rotationSpeeds =
-      SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
+    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle-desiredAngle);
     logger::Log(
       "StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
 
@@ -162,7 +159,7 @@ units::degree_t CalcAngleToShotTarget() {
   frc::Translation2d target = GetShotTarget();
 
   frc::Translation2d robotToTarget = target - currentPose.Translation();
-  return frc::InputModulus(robotToTarget.Angle().Degrees() + 180_deg, 0_deg, 360_deg);
+  return robotToTarget.Angle().Degrees() - 180_deg;
 }
 
 }  // namespace cmd

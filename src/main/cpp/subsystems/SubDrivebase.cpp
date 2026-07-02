@@ -289,9 +289,8 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
-units::turns_per_second_t SubDrivebase::CalcRotateSpeed(
-  units::turn_t current, units::turn_t desired) {
-  auto omega = _rotationP2pController.Calculate(current.value(), desired.value()) * 1_tps;
+units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) {
+  auto omega = _rotationP2pController.Calculate(rotationError.value(), 0) * 1_rad_per_s;
   return omega;
 }
 
@@ -478,7 +477,7 @@ frc2::CommandPtr SubDrivebase::JoystickDriveWithAngle(frc2::CommandXboxControlle
   return Drive(
     [this, &controller, target, speedScaling] {
       units::angle::degree_t currentAngle = GetGyroAngle(true).Degrees();
-      units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(currentAngle, target());
+      units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(currentAngle - target());
       frc::ChassisSpeeds joystickSpeeds = CalcJoystickSpeeds(controller);
 
       joystickSpeeds.vx *= speedScaling;
