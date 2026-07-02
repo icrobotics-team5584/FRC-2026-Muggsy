@@ -37,19 +37,11 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
     return dis;
   };
 
-  auto aimingSpeeds = [] {
-    frc::Rotation2d targetAngle = CalcAngleToShotTarget();
-    frc::Rotation2d currentAngle = SubDrivebase::GetInstance().GetGyroAngle();
-    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle.Degrees(), targetAngle.Degrees());
-    logger::Log("Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
-    return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
-  };
-
   auto isPassing = [] {
     return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
   };
 
-  return frc2::cmd::Parallel(SubDrivebase::GetInstance().Drive(aimingSpeeds, true),
+  return frc2::cmd::Parallel(SubDrivebase::GetInstance().RotateTo([] { return CalcAngleToShotTarget().Radians(); }),
     SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, isPassing),
     SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady());
 }
@@ -87,7 +79,7 @@ frc2::CommandPtr ShootWhenReady() {
     .Repeatedly();
 }
 
-frc2::CommandPtr CalcFutureDrumPose() {
+frc::Pose2d CalcFutureDrumPose() {
   units::millisecond_t offset = logger::Tune("SOTM/LatencyOffset", LATENCY_OFFSET);
 
   // Calculate distance to target from robot
@@ -120,7 +112,61 @@ frc2::CommandPtr CalcFutureDrumPose() {
   units::second_t TOF;
   frc::Pose2d futurePose;
 
-  return frc2::cmd::Idle();
+  for (int i = 0; i < 15; i++) {
+    // Get future pose
+    TOF = SubShooter::GetInstance().GetTimeOfFlightFromDistance(distance);
+    logger::Log("SOTM/TimeOfFlight", TOF);
+
+    // calculate offset due to velocity
+    units::meter_t offsetX = robotVelX * TOF;
+    units::meter_t offsetY = robotVelY * TOF;
+    units::degree_t robotRotation = robot.Rotation().Degrees();
+    units::meter_t robotX = robot.X();
+    units::meter_t robotY = robot.Y();
+
+    // calculate future pose by adding offsets to current robot position
+    futurePose = frc::Pose2d(robotX + offsetX, robotY + offsetY, robot.Rotation().Degrees());
+
+    // Re-update distance to target for next calculation
+    distance = target.Distance(futurePose.Translation());
+  }
+
+  frc::Pose2d futureDrumPose = futurePose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
+  return futureDrumPose;
+}
+
+units::meter_t CalcShootOnTheMoveDistance() {
+  // Find distance from future drum pose to target
+  units::meter_t futureDistance = GetShotTarget().Distance(CalcFutureDrumPose().Translation());
+  logger::Log("SOTM/futureDistance", futureDistance);
+
+  return futureDistance;
+}
+
+units::degree_t CalcShootOnTheMoveAngle() {
+  // Find angle from future drum pose to target
+  auto futurePoseToTarget = GetShotTarget() - CalcFutureDrumPose().Translation();
+  units::degree_t angleFromFutureToTarget = futurePoseToTarget.Angle().Degrees();
+
+  logger::Log("SOTM/futureAngle", angleFromFutureToTarget);
+  return angleFromFutureToTarget;
+}
+
+frc2::CommandPtr ShootOnTheMove() {
+  return frc2::cmd::Parallel(
+    SubShooter::GetInstance().SetSpeedFromDistanceTarget(
+      [] { return CalcShootOnTheMoveDistance(); },
+      [] {
+        return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
+      }),
+    frc2::cmd::Either(
+      SubHood::GetInstance().HoodToPassingAngle(),
+      SubHood::GetInstance().SetPositionFromDistanceToTarget([] { return CalcShootOnTheMoveDistance(); }),
+      [] {
+        return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
+      }),
+    SubDrivebase::GetInstance().RotateTo([] { return CalcShootOnTheMoveAngle(); }),
+    ShootWhenReady());
 }
 
 frc2::CommandPtr ToggleBrakeCoast() {

@@ -58,9 +58,10 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::ChassisSpeeds GetDesiredChassisSpeeds(bool fieldRelative = true);
   frc2::Trigger CheckCoastButton();
 
-  units::degree_t CalcAngleToShotTarget();
   units::turns_per_second_t CalcRotateSpeed(units::turn_t currentAngle, units::turn_t targetAngle);
   units::degree_t GetRotationError();
+  frc2::CommandPtr RotateTo(const std::function<units::turn_t()>& targetAngle);
+
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
 

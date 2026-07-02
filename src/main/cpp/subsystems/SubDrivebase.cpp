@@ -298,6 +298,17 @@ units::degree_t SubDrivebase::GetRotationError() {
   return units::turn_t(_rotationP2pController.GetError());
 }
 
+frc2::CommandPtr SubDrivebase::RotateTo(const std::function<units::turn_t()>& targetAngle) {
+  return Drive(
+    [this, targetAngle] {
+      units::turn_t current = frc::AngleModulus(GetGyroAngle().Radians());
+      units::turn_t target = frc::AngleModulus(targetAngle());
+      units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(current, target);
+      return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
+    },
+    true);
+}
+
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Find target and current values
   units::meter_t targetXMeters = targetPose.X();
