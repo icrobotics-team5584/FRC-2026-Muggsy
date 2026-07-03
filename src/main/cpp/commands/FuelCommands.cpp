@@ -126,7 +126,7 @@ frc::Pose2d CalcFutureDrumPose() {
     units::meter_t robotY = robot.Y();
 
     // calculate future pose by adding offsets to current robot position
-    futurePose = frc::Pose2d(robotX + offsetX, robotY + offsetY, robot.Rotation().Degrees());
+    futurePose = frc::Pose2d(robotX + offsetX, robotY + offsetY, robotRotation);
 
     // Re-update distance to target for next calculation
     distance = target.Distance(futurePose.Translation());
