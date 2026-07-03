@@ -14,11 +14,11 @@
 
 namespace cmd {
 frc2::CommandPtr IntakeSequence() {
-  return SubDeploy::GetInstance().ExtendToLerp(1.0).AndThen(SubIntake::GetInstance().RunIntake());
+  return SubDeploy::GetInstance().ExtendToDeploy().AndThen(SubIntake::GetInstance().RunIntake());
 }
 
 frc2::CommandPtr ReverseIntakeSequence() {
-  return SubDeploy::GetInstance().ExtendToLerp(1.0).AndThen(
+  return SubDeploy::GetInstance().ExtendToDeploy().AndThen(
     SubIntake::GetInstance().RunReverseIntake());
 }
 
@@ -27,8 +27,8 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
     "StationaryShootAt/Target", frc::Pose2d(target, frc::Rotation2d(0_deg)));
 
   auto distanceToTarget = [target] {
-    auto currentPose = PoseHandler::GetInstance().GetPose();
-    auto shooterPose = currentPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
+    frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
+    frc::Pose2d shooterPose = currentPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
     units::meter_t dis = target.Distance(shooterPose.Translation());
     logger::FieldDisplay::GetInstance().DisplayPose("StationaryShootAt/ShooterPose", shooterPose);
 
@@ -43,26 +43,16 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
 
   return frc2::cmd::Parallel(
     SubDrivebase::GetInstance().RotateTo([] { return CalcAngleToShotTarget().Radians(); }),
-    SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, isPassing),
+    SubShooter::GetInstance().SetSpeedFromDistanceToTarget(distanceToTarget, isPassing),
     SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady());
 }
 
 frc2::CommandPtr TuneShooterAndHoodTables() {
-  auto aimingSpeeds = [] {
-    auto targetAngle = CalcAngleToShotTarget();
-    auto currentAngle = SubDrivebase::GetInstance().GetGyroAngle();
-    units::angular_velocity::turns_per_second_t rotationSpeeds =
-      SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle.Degrees(), targetAngle.Degrees());
-
-    return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
-  };
-
   return SubDrivebase::GetInstance()
-    .Drive(aimingSpeeds, true)
+    .RotateTo([] { return CalcAngleToShotTarget().Radians(); })
     .Until([] { return units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 5_deg; })
-    .AndThen(
-      frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer(),
-        SubIntake::GetInstance().RunIntake(), SubDeploy::GetInstance().ExtendToStow()));
+    .AndThen(frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(),
+      SubIndexer::GetInstance().SpinIndexer(), SubIntake::GetInstance().RunIntake()));
 }
 
 bool IsReadyToShoot() {
@@ -155,7 +145,7 @@ units::degree_t CalcShootOnTheMoveAngle() {
 
 frc2::CommandPtr ShootOnTheMove(frc2::CommandXboxController& controller) {
   return frc2::cmd::Parallel(
-    SubShooter::GetInstance().SetSpeedFromDistanceTarget(
+    SubShooter::GetInstance().SetSpeedFromDistanceToTarget(
       [] { return CalcShootOnTheMoveDistance(); },
       [] {
         return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
