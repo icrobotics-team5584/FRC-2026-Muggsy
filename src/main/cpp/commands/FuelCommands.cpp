@@ -110,17 +110,17 @@ frc::Pose2d CalcFutureDrumPose() {
   logger::Log("SOTM/robotRelativeVelY", robotRelativeVelY);
 
   // Estimate time of flight
-  units::second_t TOF;
+  units::second_t timeOfFlight;
   frc::Pose2d futurePose;
 
   for (int i = 0; i < 15; i++) {
     // Get future pose
-    TOF = SubShooter::GetInstance().GetTimeOfFlightFromDistance(distance);
-    logger::Log("SOTM/TimeOfFlight", TOF);
+    timeOfFlight = SubShooter::GetInstance().GetTimeOfFlightFromDistance(distance);
+    logger::Log("SOTM/TimeOfFlight", timeOfFlight);
 
     // calculate offset due to velocity
-    units::meter_t offsetX = robotVelX * TOF;
-    units::meter_t offsetY = robotVelY * TOF;
+    units::meter_t offsetX = robotVelX * timeOfFlight;
+    units::meter_t offsetY = robotVelY * timeOfFlight;
     units::degree_t robotRotation = robot.Rotation().Degrees();
     units::meter_t robotX = robot.X();
     units::meter_t robotY = robot.Y();
