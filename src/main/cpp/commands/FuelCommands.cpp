@@ -11,7 +11,6 @@
 #include "utilities/Logger.h"
 #include "utilities/PoseHandler.h"
 #include "utilities/ShotPlanner.h"
-#include "utilities/Logger.h"
 
 namespace cmd {
 frc2::CommandPtr IntakeSequence() {
@@ -38,8 +37,10 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
   auto aimingSpeeds = [] {
     units::degree_t desiredAngle = CalcAngleToShotTarget();
     units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
-    units::angular_velocity::turns_per_second_t rotationSpeeds = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
-    logger::Log("Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
+    units::angular_velocity::turns_per_second_t rotationSpeeds =
+      SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
+    logger::Log(
+      "Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
 
     return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
   };
@@ -50,12 +51,28 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
 
   return frc2::cmd::Parallel(SubDrivebase::GetInstance().Drive(aimingSpeeds, true),
     SubShooter::GetInstance().SetSpeedFromDistanceTarget(distanceToTarget, isPassing),
-    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget)).Until([] { 
-      bool ready = IsReadyToShoot();
-      logger::Log("Shooter/StationaryShootAt/Ready to shoot", ready);
-      return ready; })
-    .AndThen(frc2::cmd::Parallel(
-      SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer()));
+    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady());
+}
+
+frc2::CommandPtr TuneShooterAndHoodTables() {
+  auto aimingSpeeds = [] {
+    units::degree_t desiredAngle = CalcAngleToShotTarget();
+    units::degree_t currentAngle = SubDrivebase::GetInstance().GetGyroAngle().Degrees();
+    units::angular_velocity::turns_per_second_t rotationSpeeds =
+      SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle, desiredAngle);
+    logger::Log(
+      "Shooter/StationaryShootAt/Rotation error", SubDrivebase::GetInstance().GetRotationError());
+
+    return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
+  };
+
+  return SubDrivebase::GetInstance().Drive(aimingSpeeds, true).Until([] {
+    return units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 5_deg;
+  }).AndThen(frc2::cmd::Parallel(
+    SubFeeder::GetInstance().Feed(),
+    SubIndexer::GetInstance().SpinIndexer(),
+    SubIntake::GetInstance().RunIntake(),
+    SubDeploy::GetInstance().ExtendToStow()));
 }
 
 bool IsReadyToShoot() {
@@ -66,18 +83,16 @@ bool IsReadyToShoot() {
 
 frc2::CommandPtr ShootWhenReady() {
   return frc2::cmd::WaitUntil([] { return IsReadyToShoot(); })
-    .AndThen(frc2::cmd::Parallel(
-      SubFeeder::GetInstance().Feed(),
-      SubIndexer::GetInstance().SpinIndexer(),
-      SubIntake::GetInstance().RunIntake()
-    ).Until([] {
-      return !IsReadyToShoot();
-    })).Repeatedly();
+    .AndThen(
+      frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer(),
+        SubIntake::GetInstance().RunIntake(), SubDeploy::GetInstance().ExtendToStow())
+        .Until([] { return !IsReadyToShoot(); }))
+    .Repeatedly();
 }
 
 frc2::CommandPtr CalcFutureDrumPose() {
   units::millisecond_t offset = logger::Tune("SOTM/LatencyOffset", LATENCY_OFFSET);
-  
+
   // Calculate distance to target from robot
   auto target = GetShotTarget();
   auto robot = PoseHandler::GetInstance().GetPose();
@@ -94,7 +109,8 @@ frc2::CommandPtr CalcFutureDrumPose() {
   frc::ChassisSpeeds robotRelativeVel = SubDrivebase::GetInstance().GetChassisSpeeds(false);
   units::meters_per_second_t robotRelativeVelX = robotRelativeVel.vx;
   units::meters_per_second_t robotRelativeVelY = robotRelativeVel.vy;
-  frc::Transform2d latencyTransform = frc::Transform2d(robotRelativeVelX * offset, robotRelativeVelY * offset, robotVelRot * offset);
+  frc::Transform2d latencyTransform =
+    frc::Transform2d(robotRelativeVelX * offset, robotRelativeVelY * offset, robotVelRot * offset);
   robot = robot.TransformBy(latencyTransform);
 
   logger::Log("SOTM/velX", robotVelX);
@@ -106,7 +122,7 @@ frc2::CommandPtr CalcFutureDrumPose() {
   // Estimate time of flight
   units::second_t TOF;
   frc::Pose2d futurePose;
-  
+
   return frc2::cmd::Idle();
 }
 
@@ -132,7 +148,8 @@ frc2::CommandPtr EjectFuel() {
 
 frc::Translation2d GetShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
-  frc::Translation2d target = ShotPlanner::CalculateShotTarget(currentPose).targetPosition.ToTranslation2d();
+  frc::Translation2d target =
+    ShotPlanner::CalculateShotTarget(currentPose).targetPosition.ToTranslation2d();
   logger::FieldDisplay::GetInstance().DisplayPose("Shot target", frc::Pose2d{target, {0_deg}});
   return target;
 }
@@ -141,7 +158,8 @@ units::degree_t CalcAngleToShotTarget() {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   frc::Translation2d target = GetShotTarget();
 
-  units::degree_t desired = units::radian_t(std::atan2((target.Y() - currentPose.Y()).value(), (target.X() - currentPose.X()).value()));
+  units::degree_t desired = units::radian_t(
+    std::atan2((target.Y() - currentPose.Y()).value(), (target.X() - currentPose.X()).value()));
 
   return desired + 180_deg;
 }

@@ -22,7 +22,6 @@
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
-
   static constexpr frc::Transform2d ROBOT_CENTRE_TO_SHOOTER{-177.43095_mm, 0_mm, 0_deg};
 
   // Constructor and instance
@@ -104,7 +103,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   }
 
  private:
-  
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
     units::turns_per_second_t rot, bool fieldRelative,
     std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
@@ -139,9 +137,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::PIDController _rotationP2pController =
     frc::PIDController(drivebaseConfig::P2P_ROTATION_PID[0], drivebaseConfig::P2P_ROTATION_PID[1],
       drivebaseConfig::P2P_ROTATION_PID[2]);
-  frc::PIDController _rotationTeleopController =
-    frc::PIDController(drivebaseConfig::TELEOP_ROTATION_PID[0], drivebaseConfig::TELEOP_ROTATION_PID[1],
-      drivebaseConfig::TELEOP_ROTATION_PID[2]);
 
   frc::SlewRateLimiter<units::meters_per_second> _xP2pLimiter{drivebaseConfig::MAX_P2P_ACCEL};
   frc::SlewRateLimiter<units::meters_per_second> _yP2pLimiter{drivebaseConfig::MAX_P2P_ACCEL};
