@@ -112,10 +112,6 @@ frc2::CommandPtr SubHood::HoodToEjectAngle() {
   return SetPositionTarget([] { return LOWER_LIMIT + 5_deg; });
 }
 
-frc2::CommandPtr SubHood::HoodToPassingAngle() {
-  return SetPositionTarget([] { return PASSING_ANGLE; });
-}
-
 frc2::CommandPtr SubHood::SetPositionFromDistanceToTarget(
   const std::function<units::meter_t()>& distanceToTarget) {
   return SetPositionTarget(

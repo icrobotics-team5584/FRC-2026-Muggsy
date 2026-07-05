@@ -56,7 +56,6 @@ class SubHood : public frc2::SubsystemBase {
   static constexpr units::degree_t TOLERANCE = 1.0_deg;
 
   static constexpr units::degree_t STOW_ANGLE = 5_deg;
-  static constexpr units::degree_t PASSING_ANGLE = 25_deg;
   static constexpr units::degree_t UPPER_LIMIT = 30.5_deg;
   static constexpr units::degree_t LOWER_LIMIT = 5_deg;
 

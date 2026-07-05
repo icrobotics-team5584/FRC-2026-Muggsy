@@ -30,7 +30,7 @@ RobotContainer::RobotContainer() {
 
 void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
-  _driverController.RightTrigger().WhileTrue(cmd::StationaryShootAt(fieldpos::HUB_POSITION.ToTranslation2d()));
+  _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
 
 
   _driverController.LeftBumper().WhileTrue(SubDeploy::GetInstance().ExtendToStow());
@@ -43,7 +43,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.A().WhileTrue(cmd::EjectFuel());
 
 
-  _driverController.POVUp().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
+  _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
 
 
@@ -52,10 +52,6 @@ void RobotContainer::ConfigureBindings() {
     SubShooter::GetInstance().Stop(),
     SubDeploy::GetInstance().ExtendToDeploy()
   ));
-  
-  _driverController.RightBumper().WhileTrue(cmd::TuneShooterAndHoodTables());
-  _driverController.Back().OnTrue(SubHood::GetInstance().MoveHoodDown1Degree());
-  _driverController.Start().OnTrue(SubHood::GetInstance().MoveHoodUp1Degree());
 }
 
 
