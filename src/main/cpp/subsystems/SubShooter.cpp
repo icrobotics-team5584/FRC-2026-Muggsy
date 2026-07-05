@@ -126,7 +126,7 @@ bool SubShooter::IsReadyToShoot() {
   return motor1Ready && motor2Ready && motor3Ready && motor4Ready;
 }
 
-frc2::CommandPtr SubShooter::SetSpeedFromDistanceTarget(
+frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
   const std::function<units::meter_t()>& distance, const std::function<bool()>& isPassing) {
   return SetSpeedTarget([this, distance, isPassing] {
     return isPassing() ? _flyWheelSpeedTablePassing[distance()]

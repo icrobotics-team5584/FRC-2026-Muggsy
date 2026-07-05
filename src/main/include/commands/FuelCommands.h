@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
@@ -18,10 +19,14 @@ frc2::CommandPtr ToggleBrakeCoast();
 frc2::CommandPtr EjectFuel();
 
 frc::Translation2d GetShotTarget();
-units::degree_t CalcAngleToShotTarget();
+frc::Rotation2d CalcAngleToShotTarget();
 
 frc2::CommandPtr TuneShooterAndHoodTables();
-frc2::CommandPtr CalcFutureDrumPose();
+frc::Pose2d CalcFutureDrumPose();
+
+units::degree_t CalcShootOnTheMoveAngle();
+units::meter_t CalcShootOnTheMoveDistance();
+frc2::CommandPtr ShootOnTheMove(frc2::CommandXboxController& controller);
 
 static constexpr units::millisecond_t LATENCY_OFFSET = 100_ms;
 }  // namespace cmd
