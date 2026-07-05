@@ -44,16 +44,14 @@ SubShooter::SubShooter() {
   // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 
-  _flyWheelSpeedTableScoring.insert(1.356_m, 25_tps);
-  _flyWheelSpeedTableScoring.insert(1.98_m, 26_tps);
-  _flyWheelSpeedTableScoring.insert(2.35_m, 28_tps);
-  _flyWheelSpeedTableScoring.insert(3.02_m, 30_tps);
-  _flyWheelSpeedTableScoring.insert(3.41_m, 32_tps);
-  _flyWheelSpeedTableScoring.insert(3.73_m, 35_tps);
-  _flyWheelSpeedTableScoring.insert(4.05_m, 38_tps);
-  _flyWheelSpeedTableScoring.insert(4.19_m, 40_tps);
-
-  _flyWheelSpeedTablePassing.insert(1_m, 40_tps);
+  _flywheelSpeedTable.insert(1.356_m, 25_tps);
+  _flywheelSpeedTable.insert(1.98_m, 26_tps);
+  _flywheelSpeedTable.insert(2.35_m, 28_tps);
+  _flywheelSpeedTable.insert(3.02_m, 30_tps);
+  _flywheelSpeedTable.insert(3.41_m, 32_tps);
+  _flywheelSpeedTable.insert(3.73_m, 35_tps);
+  _flywheelSpeedTable.insert(4.05_m, 38_tps);
+  _flywheelSpeedTable.insert(4.19_m, 40_tps);
 }
 
 // This method will be called once per scheduler run
@@ -134,10 +132,9 @@ bool SubShooter::IsReadyToShoot() {
 }
 
 frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
-  const std::function<units::meter_t()>& distance, const std::function<bool()>& isPassing) {
-  return SetSpeedTarget([this, distance, isPassing] {
-    return isPassing() ? _flyWheelSpeedTablePassing[distance()]
-                       : _flyWheelSpeedTableScoring[distance()] + _manualSpeedOffset;
+  const std::function<units::meter_t()>& distance) {
+  return SetSpeedTarget([this, distance] {
+    return _flywheelSpeedTable[distance()] + _manualSpeedOffset;
   });
 }
 

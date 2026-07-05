@@ -37,13 +37,9 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
     return dis;
   };
 
-  auto isPassing = [] {
-    return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
-  };
-
   return frc2::cmd::Parallel(
     SubDrivebase::GetInstance().RotateTo([] { return CalcAngleToShotTarget().Radians(); }),
-    SubShooter::GetInstance().SetSpeedFromDistanceToTarget(distanceToTarget, isPassing),
+    SubShooter::GetInstance().SetSpeedFromDistanceToTarget(distanceToTarget),
     SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady());
 }
 
@@ -155,18 +151,10 @@ units::degree_t CalcShootOnTheMoveAngle() {
 }
 
 frc2::CommandPtr ShootOnTheMove(frc2::CommandXboxController& controller) {
-  return frc2::cmd::Parallel(
-    SubShooter::GetInstance().SetSpeedFromDistanceToTarget(
-      [] { return CalcShootOnTheMoveDistance(); },
-      [] {
-        return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
-      }),
-    frc2::cmd::Either(SubHood::GetInstance().HoodToPassingAngle(),
-      SubHood::GetInstance().SetPositionFromDistanceToTarget(
-        [] { return CalcShootOnTheMoveDistance(); }),
-      [] {
-        return ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).isPassing;
-      }),
+  return frc2::cmd::Parallel(SubShooter::GetInstance().SetSpeedFromDistanceToTarget(
+                               [] { return CalcShootOnTheMoveDistance(); }),
+    SubHood::GetInstance().SetPositionFromDistanceToTarget(
+      [] { return CalcShootOnTheMoveDistance(); }),
     SubDrivebase::GetInstance().JoystickDriveWithAngle(
       controller, [] { return CalcShootOnTheMoveAngle(); }, 1.0),
     ShootWhenReady());
