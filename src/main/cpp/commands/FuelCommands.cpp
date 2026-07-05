@@ -22,14 +22,11 @@ frc2::CommandPtr ReverseIntakeSequence() {
     SubIntake::GetInstance().RunReverseIntake());
 }
 
-frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
-  logger::FieldDisplay::GetInstance().DisplayPose(
-    "StationaryShootAt/Target", frc::Pose2d(target, frc::Rotation2d(0_deg)));
-
-  auto distanceToTarget = [target] {
+frc2::CommandPtr StationaryShoot() {
+  auto distanceToTarget = [] {
     frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
     frc::Pose2d shooterPose = currentPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
-    units::meter_t dis = target.Distance(shooterPose.Translation());
+    units::meter_t dis = GetShotTarget().Distance(shooterPose.Translation());
     logger::FieldDisplay::GetInstance().DisplayPose("StationaryShootAt/ShooterPose", shooterPose);
 
     logger::Log("StationaryShootAt/Distance To Target", dis);

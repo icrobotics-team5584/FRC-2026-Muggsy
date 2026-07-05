@@ -11,7 +11,7 @@ namespace cmd {
 frc2::CommandPtr IntakeSequence();
 frc2::CommandPtr ReverseIntakeSequence();
 
-frc2::CommandPtr StationaryShootAt(frc::Translation2d target);
+frc2::CommandPtr StationaryShoot();
 bool IsReadyToShoot();
 frc2::CommandPtr ShootWhenReady();
 
