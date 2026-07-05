@@ -12,4 +12,6 @@ frc2::CommandPtr IntakePass(bool flip);
 frc2::CommandPtr DepotAuton(bool flip);
 frc2::CommandPtr AutonCommand();
 frc::Translation2d GetHubPos();
+
+frc2::CommandPtr SetAutonStartPos(std::function<frc::Pose2d()> pose);
 }  // namespace cmd
