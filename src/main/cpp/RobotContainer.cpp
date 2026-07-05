@@ -53,7 +53,9 @@ void RobotContainer::ConfigureBindings() {
     SubDeploy::GetInstance().ExtendToDeploy()
   ));
   
-  _driverController.LeftBumper().WhileTrue(cmd::TuneShooterAndHoodTables());
+  _driverController.RightBumper().WhileTrue(cmd::TuneShooterAndHoodTables());
+  _driverController.Back().OnTrue(SubHood::GetInstance().MoveHoodDown1Degree());
+  _driverController.Start().OnTrue(SubHood::GetInstance().MoveHoodUp1Degree());
 }
 
 
