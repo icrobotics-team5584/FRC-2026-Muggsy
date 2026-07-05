@@ -44,7 +44,14 @@ SubShooter::SubShooter() {
   // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 
-  _flyWheelSpeedTableScoring.insert(1_m, 40_tps);
+  _flyWheelSpeedTableScoring.insert(1.356_m, 25_tps);
+  _flyWheelSpeedTableScoring.insert(1.98_m, 26_tps);
+  _flyWheelSpeedTableScoring.insert(2.35_m, 28_tps);
+  _flyWheelSpeedTableScoring.insert(3.02_m, 30_tps);
+  _flyWheelSpeedTableScoring.insert(3.41_m, 32_tps);
+  _flyWheelSpeedTableScoring.insert(3.73_m, 35_tps);
+  _flyWheelSpeedTableScoring.insert(4.05_m, 38_tps);
+  _flyWheelSpeedTableScoring.insert(4.19_m, 40_tps);
 
   _flyWheelSpeedTablePassing.insert(1_m, 40_tps);
 }
