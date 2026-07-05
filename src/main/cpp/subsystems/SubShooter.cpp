@@ -21,7 +21,7 @@ SubShooter::SubShooter() {
   _shooterMotorConfig.CurrentLimits.StatorCurrentLimit = 60.0_A;
 
   // PIDs
-  _shooterMotorConfig.Slot0.kP = 0.0;
+  _shooterMotorConfig.Slot0.kP = 2;
   _shooterMotorConfig.Slot0.kI = 0;
   _shooterMotorConfig.Slot0.kD = 0;
   _shooterMotorConfig.Slot0.kV = 0.235;

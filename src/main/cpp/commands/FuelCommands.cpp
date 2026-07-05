@@ -48,16 +48,27 @@ frc2::CommandPtr StationaryShootAt(frc::Translation2d target) {
 }
 
 frc2::CommandPtr TuneShooterAndHoodTables() {
-  return SubDrivebase::GetInstance()
-    .RotateTo([] { return CalcAngleToShotTarget().Radians(); })
-    .Until([] { return units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 5_deg; })
-    .AndThen(frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(),
-      SubIndexer::GetInstance().SpinIndexer(), SubIntake::GetInstance().RunIntake()));
+  return frc2::cmd::RunOnce([] { ShotPlanner::SetOverride(ShotPlanner::Override::SCORE); })
+    .AndThen(SubDrivebase::GetInstance()
+        .RotateTo([] { return CalcAngleToShotTarget().Radians(); })
+        .AlongWith(frc2::cmd::Run([] {
+          frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
+          frc::Pose2d shooterPose = currentPose.TransformBy(SubDrivebase::ROBOT_CENTRE_TO_SHOOTER);
+          units::meter_t dis = GetShotTarget().Distance(shooterPose.Translation());
+          logger::FieldDisplay::GetInstance().DisplayPose(
+            "StationaryShootAt/ShooterPose", shooterPose);
+
+          logger::Log("StationaryShootAt/Distance To Target", dis);
+        }))
+        .Until(
+          [] { return units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 2_deg; })
+        .AndThen(frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(),
+          SubIndexer::GetInstance().SpinIndexer(), SubIntake::GetInstance().RunIntake())));
 }
 
 bool IsReadyToShoot() {
   return SubHood::GetInstance().IsAtTarget() && SubShooter::GetInstance().IsReadyToShoot() &&
-         units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 5_deg &&
+         units::math::abs(SubDrivebase::GetInstance().GetRotationError()) < 3_deg &&
          ShotPlanner::CalculateShotTarget(PoseHandler::GetInstance().GetPose()).shouldShoot;
 }
 
