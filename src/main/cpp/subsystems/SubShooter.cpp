@@ -133,9 +133,8 @@ bool SubShooter::IsReadyToShoot() {
 
 frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
   const std::function<units::meter_t()>& distance) {
-  return SetSpeedTarget([this, distance] {
-    return _flywheelSpeedTable[distance()] + _manualSpeedOffset;
-  });
+  return SetSpeedTarget(
+    [this, distance] { return _flywheelSpeedTable[distance()] + _manualSpeedOffset; });
 }
 
 units::turns_per_second_t SubShooter::GetManualSpeedOffset() {

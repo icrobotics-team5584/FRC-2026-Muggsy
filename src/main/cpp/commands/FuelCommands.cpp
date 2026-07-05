@@ -42,7 +42,8 @@ frc2::CommandPtr StationaryShoot() {
 
 frc2::CommandPtr TuneShooterAndHoodTables() {
   return frc2::cmd::RunOnce([] { ShotPlanner::SetOverride(ShotPlanner::Override::SCORE); })
-    .AndThen(SubDrivebase::GetInstance()
+    .AndThen(
+      SubDrivebase::GetInstance()
         .RotateTo([] { return CalcAngleToShotTarget().Radians(); })
         .AlongWith(frc2::cmd::Run([] {
           frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();

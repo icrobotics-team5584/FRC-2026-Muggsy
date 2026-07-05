@@ -32,29 +32,21 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
   _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
 
-
   _driverController.LeftBumper().WhileTrue(SubDeploy::GetInstance().ExtendToStow());
-
 
   _driverController.Y().OnTrue(
     frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); })),
-  _driverController.B().OnTrue(
-    frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().SyncSensors(); }));
+    _driverController.B().OnTrue(
+      frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().SyncSensors(); }));
   _driverController.A().WhileTrue(cmd::EjectFuel());
-
 
   _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
 
-
-  _driverController.RightTrigger().OnFalse(frc2::cmd::Parallel(
-    SubHood::GetInstance().HoodToStowAngle(),
-    SubShooter::GetInstance().Stop(),
-    SubDeploy::GetInstance().ExtendToDeploy()
-  ));
+  _driverController.RightTrigger().OnFalse(
+    frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop(),
+      SubDeploy::GetInstance().ExtendToDeploy()));
 }
-
-
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");
