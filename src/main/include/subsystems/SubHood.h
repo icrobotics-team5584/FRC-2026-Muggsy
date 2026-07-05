@@ -41,7 +41,6 @@ class SubHood : public frc2::SubsystemBase {
 
   frc2::CommandPtr HoodToEjectAngle();
   frc2::CommandPtr HoodToStowAngle();
-  frc2::CommandPtr HoodToPassingAngle();
 
   units::degree_t GetManualAngleOffset();
   void SetManualAngleOffset(units::degree_t offset);

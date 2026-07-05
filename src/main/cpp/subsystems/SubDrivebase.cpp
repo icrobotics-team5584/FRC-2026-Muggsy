@@ -3,7 +3,6 @@
 #include "utilities/ICGeometry.h"
 #include "utilities/Logger.h"
 #include "utilities/PoseHandler.h"
-#include "utilities/ShotPlanner.h"
 
 #include <frc/RobotBase.h>
 
