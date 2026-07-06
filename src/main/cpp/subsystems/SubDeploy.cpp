@@ -48,7 +48,7 @@ void SubDeploy::SimulationPeriodic() {
 
 /* Command Functions*/
 frc2::CommandPtr SubDeploy::Zero() {
-  return frc2::cmd::RunOnce([this] {
+  return RunOnce([this] {
     _zeroing = true;
     _hasZeroed = false;
     _motor.SetVoltage(1_V);
@@ -58,8 +58,8 @@ frc2::CommandPtr SubDeploy::Zero() {
              frc::RobotBase::IsSimulation();
     }))
     .AndThen([this] {
-      _motor.SetPosition(ConvertLengthToPosition(MAX_LENGTH));
       _motor.StopMotor();
+      _motor.SetPosition(ConvertLengthToPosition(MAX_LENGTH));
       _hasZeroed = true;
     })
     .FinallyDo([this] {
@@ -68,13 +68,15 @@ frc2::CommandPtr SubDeploy::Zero() {
     });
 }
 
+void SubDeploy::SetLength(units::meter_t length) {
+  if (_hasZeroed) {
+    units::meter_t clampedLength = std::clamp(length, 0_m, MAX_LENGTH);
+    _motor.SetPositionTarget(ConvertLengthToPosition(clampedLength));
+  }
+}
+
 frc2::CommandPtr SubDeploy::ExtendTo(units::meter_t length) {
-  return frc2::cmd::RunOnce([this, length] {
-    if (_hasZeroed) {
-      units::meter_t clampedLength = std::clamp(length, 0_m, MAX_LENGTH);
-      _motor.SetPositionTarget(ConvertLengthToPosition(clampedLength));
-    }
-  });
+  return RunOnce([this, length] { SetLength(length); });
 }
 
 frc2::CommandPtr SubDeploy::ExtendToLerp(double t) {
@@ -109,6 +111,11 @@ frc2::CommandPtr SubDeploy::ExtendToStow() {
 
 frc2::CommandPtr SubDeploy::ExtendToDeploy() {
   return ExtendTo(DEPLOY_LENGTH);
+}
+
+frc2::CommandPtr SubDeploy::Toggle() {
+  return StartEnd([this] { return SetLength(SubDeploy::DEPLOY_LENGTH); },
+    [this] { SetLength(SubDeploy::STOW_LENGTH); });
 }
 
 /* Instant Functions*/

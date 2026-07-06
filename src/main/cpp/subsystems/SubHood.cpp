@@ -77,6 +77,7 @@ frc2::CommandPtr SubHood::RunZeroingSequence() {
       _hasZeroed = true;
     })  // set both hood motors to zero at lower limit
     .FinallyDo([this] {
+      _hoodMotor.StopMotor(); // ensure motors are stopped whether zeroed or not
       _hoodMotor.SetPositionTarget(LOWER_LIMIT);
       _zeroing = false;
       // ToggleSoftLimit(true); // re-enable soft limit
