@@ -114,8 +114,8 @@ frc2::CommandPtr SubDeploy::ExtendToDeploy() {
 }
 
 frc2::CommandPtr SubDeploy::Toggle() {
-  return StartEnd([this] { return SetLength(SubDeploy::DEPLOY_LENGTH); },
-    [this] { SetLength(SubDeploy::STOW_LENGTH); });
+  return StartEnd([this] { return SetLength(SubDeploy::STOW_LENGTH); },
+    [this] { SetLength(SubDeploy::DEPLOY_LENGTH); });
 }
 
 /* Instant Functions*/
