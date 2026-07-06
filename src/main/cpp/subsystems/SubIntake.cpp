@@ -6,7 +6,7 @@ SubIntake::SubIntake() {
   ctre::phoenix6::configs::TalonFXConfiguration config;
 
   config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
-  config.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
+  config.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
   config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
   config.CurrentLimits.SupplyCurrentLimitEnable = true;
   config.CurrentLimits.SupplyCurrentLimit = 40_A;
