@@ -80,7 +80,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Pose drive
   frc2::CommandPtr Drive(const std::function<frc::ChassisSpeeds()>& speeds, bool fieldOriented);
   frc2::CommandPtr DriveOverBump(
-    frc::ChassisSpeeds fieldRelativeSpeeds, frc::Translation2d allianceRelativeEndXY);
+    frc::ChassisSpeeds allianceRelativeSpeeds, frc::Translation2d allianceRelativeEndXY);
 
   // Rotations
   frc2::CommandPtr AlignToAngle(
