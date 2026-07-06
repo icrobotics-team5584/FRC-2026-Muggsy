@@ -36,8 +36,8 @@ void RobotContainer::ConfigureBindings() {
 
   _driverController.Y().OnTrue(
     frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); }));
-    _driverController.B().OnTrue(
-      frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().SyncSensors(); }));
+  _driverController.B().OnTrue(
+    frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().SyncSensors(); }));
   _driverController.A().WhileTrue(cmd::EjectFuel());
 
   _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
