@@ -1,6 +1,4 @@
 #include "utilities/AlertController.h"
-
-#include <unordered_map>
 namespace alertController {
 
 std::vector<std::weak_ptr<AlertConfig>> configList;
