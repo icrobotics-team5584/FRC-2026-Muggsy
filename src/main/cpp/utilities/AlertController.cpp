@@ -17,11 +17,12 @@ void MotorCheck(MotorVariant motor, AlertConfig& config) {
 
   if (motorTemp >= config.maxDegrees) {
     if (config.shouldRecordTemp) {
-      config.tempuratureReachedCount++;
+      config.temperatureReachedCount++;
+      //Updates the text to the high temperature reach count, if count is higher than 1, then concat " Times" to count else concat " Time" when the value is 1 
       config.reachedTemperatureAlert.SetText(
         config.motorString +
-        " Reached Max Temperature Threshold: " + std::to_string(config.tempuratureReachedCount) +
-        (config.tempuratureReachedCount > 1 ? " Times" : " Time"));
+        " Reached Max Temperature Threshold: " + std::to_string(config.temperatureReachedCount) +
+        (config.temperatureReachedCount > 1 ? " Times" : " Time"));
 
       config.reachedTemperatureAlert.Set(true);
       config.responsiveHighTemperatureAlert.Set(true);
@@ -43,6 +44,8 @@ void MotorCheck(MotorVariant motor, AlertConfig& config) {
 
       if (config.shouldRecordHighCurrent) {
         config.highCurrentReachedCount++;
+
+        //Updates the text to the high current reach count, if count is higher than 1, then concat " Times" to count else  concat " Time" when the value is 1
         config.reachedHighCurrentAlert.SetText(
           config.motorString +
           " Reached Max Current Threshold: " + std::to_string(config.highCurrentReachedCount) +
@@ -84,7 +87,7 @@ frc2::CommandPtr RemoveAlerts() {
         config->responsiveHighTemperatureAlert.Set(false);
         config->responsiveHighCurrentAlert.Set(false);
         config->reachedHighCurrentAlert.Set(false);
-        config->tempuratureReachedCount = 0;
+        config->temperatureReachedCount = 0;
         config->highCurrentReachedCount = 0;
         config->shouldRecordTemp = true;
         config->shouldRecordHighCurrent = true;

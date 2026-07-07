@@ -30,7 +30,7 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
 
   units::ampere_t maxCurrent;
 
-  // Tempurature Alerts//
+  // Temperature Alerts//
   frc::Alert responsiveHighTemperatureAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
   frc::Alert reachedTemperatureAlert = frc::Alert("", frc::Alert::AlertType::kWarning);
 
@@ -42,13 +42,20 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   frc::Timer highCurrentTimer = frc::Timer();
 
   // Counts for how many times the motor has reached the thresholds
-  int tempuratureReachedCount = 0;
+  int temperatureReachedCount = 0;
   int highCurrentReachedCount = 0;
 
   // Booleans to only allow recorded temperatures to record once per alert
   bool shouldRecordTemp = true;
   bool shouldRecordHighCurrent = true;
 
+  /* [Implement In a Subsystem Header file somewhere under private]
+  
+  ALERT CONFIG: A initialized struct that takes the motor's name as a string and the maximum threshold for
+  the motors temperature along with its current, this will then be used to run the alert calculation logic.
+  
+  */
+  
   AlertConfig(const std::string& motorName, units::celsius_t maxTemp, units::ampere_t maxCurr) {
     responsiveHighTemperatureAlert.SetText(motorName + ": " + " HIGH TEMP");
 
