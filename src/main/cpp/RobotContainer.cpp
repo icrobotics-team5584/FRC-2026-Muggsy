@@ -10,11 +10,13 @@
 #include "subsystems/SubHood.h"
 #include "subsystems/SubIndexer.h"
 #include "subsystems/SubIntake.h"
-#include "subsystems/SubVision.h"
 #include "subsystems/SubShooter.h"
+#include "subsystems/SubVision.h"
 
+#include "commands/FuelCommands.h"
 #include "commands/VisionCommands.h"
 
+#include "utilities/FieldConstants.h"
 #include "utilities/Logger.h"
 
 #include <frc2/command/Commands.h>
@@ -26,25 +28,24 @@ RobotContainer::RobotContainer() {
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
 
-
 void RobotContainer::ConfigureBindings() {
-  _driverController.Start().OnTrue(SubDeploy::GetInstance().Zero());
-  // _driverController.POVUp().WhileTrue(SubDeploy::GetInstance().ManualExtendUp());
-  // _driverController.POVDown().WhileTrue(SubDeploy::GetInstance().ManualExtendDown()); 
-  _driverController.RightTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
-  _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunReverseIntake());
-  _driverController.Y().WhileTrue(
-    frc2::cmd::Parallel(SubFeeder::GetInstance().Feed(), SubIndexer::GetInstance().SpinIndexer()));
-  _driverController.A().WhileTrue(
-    frc2::cmd::Parallel(SubFeeder::GetInstance().FeedBackwards(), SubIndexer::GetInstance().ReverseIndexer()));
-  _driverController.POVUp().WhileTrue(SubShooter::GetInstance().SetSpeedTarget([]{return 1000_rpm;}));
-  _driverController.POVDown().WhileTrue(SubShooter::GetInstance().Stop());
-  _driverController.POVLeft().WhileTrue(SubShooter::GetInstance().SetSpeedTarget([]{return 3000_rpm;}));
-  _driverController.POVRight().WhileTrue(SubDrivebase::GetInstance().ZeroRotation([] {return 0_deg;}));
-  _driverController.Back().OnTrue(SubHood::GetInstance().RunZeroingSequence());
-  _driverController.X().OnTrue(SubHood::GetInstance().HoodToEjectAngle());
-  _driverController.B().OnTrue(SubHood::GetInstance().HoodToStowAngle());
-  _driverController.RightBumper().OnTrue(SubHood::GetInstance().HoodToPassingAngle());
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
+  _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
+
+  _driverController.LeftBumper().WhileTrue(SubDeploy::GetInstance().ExtendToStow());
+
+  _driverController.Y().OnTrue(
+    frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); }));
+  _driverController.B().OnTrue(
+    frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().SyncSensors(); }));
+  _driverController.A().WhileTrue(cmd::EjectFuel());
+
+  _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
+  _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
+
+  _driverController.RightTrigger().OnFalse(
+    frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop(),
+      SubDeploy::GetInstance().ExtendToDeploy()));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
