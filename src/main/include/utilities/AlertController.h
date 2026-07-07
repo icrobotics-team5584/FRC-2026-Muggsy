@@ -57,9 +57,9 @@ struct AlertConfig : public std::enable_shared_from_this<AlertConfig> {
   */
   
   AlertConfig(const std::string& motorName, units::celsius_t maxTemp, units::ampere_t maxCurr) {
-    responsiveHighTemperatureAlert.SetText(motorName + ": " + " HIGH TEMP");
+    responsiveHighTemperatureAlert.SetText(motorName + ": HIGH TEMP");
 
-    responsiveHighCurrentAlert.SetText(motorName + ": " + "HIGH CURRENT");
+    responsiveHighCurrentAlert.SetText(motorName + ": HIGH CURRENT");
     reachedHighCurrentAlert.SetText(
       motorName + "Reached Max Current Threshold: " + std::to_string(highCurrentReachedCount) +
       (highCurrentReachedCount > 1 ? " Times" : " Time"));
