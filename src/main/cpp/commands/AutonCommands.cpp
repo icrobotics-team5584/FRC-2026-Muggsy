@@ -154,6 +154,7 @@ frc2::CommandPtr DepotAuton(bool flip) {
 //   ;
 // }
 
+/*
 frc2::CommandPtr TwoPassAuto(bool flip) {
   return frc2::cmd::Sequence(
     // Intake should always be on
@@ -212,6 +213,26 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{5.051_m, 7.435_m, 0.0_deg}, flip), 2, 80_cm, 15_deg)
 
+  )
+    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
+      [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); },
+      [] { return false; }))
+    .AlongWith(SubIntake::GetInstance().RunIntake());
+  ;
+}
+*/
+
+frc2::CommandPtr TwoPassAuto(bool flip) {
+  return frc2::cmd::Sequence(
+    // Intake should always be on
+    SetAutonStartPos(icGeometry::MaybeFlip(frc::Pose2d{4.4_m, 7.435_m, 0_deg}, flip)),
+    SubDrivebase::GetInstance().DriveToPose(
+      icGeometry::MaybeFlip(frc::Pose2d{5.051_m, 7.435_m, -20.0_deg}, flip), 2, 80_cm, 15_deg),
+    SubDrivebase::GetInstance().DriveToPose(
+      icGeometry::MaybeFlip(frc::Pose2d{5.051_m, 7.435_m, -20.0_deg}, flip), 2, 80_cm, 15_deg)
+
+    // Shoot
+    frc2::cmd::Wait(1.5_s),
   )
     .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
       [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); },
