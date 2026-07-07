@@ -17,7 +17,7 @@ struct AlertConfig;
 void RegisterAlertConfig(const std::weak_ptr<AlertConfig>& config);
 
 void MotorCheck(
-  std::variant<ICSpark*, ctre::phoenix6::hardware::TalonFX*> motor, AlertConfig& config);
+ MotorVariant motor, AlertConfig& config);
 
 units::celsius_t GetMotorTemperature(MotorVariant motor);
 units::ampere_t GetMotorCurrent(MotorVariant motor);
