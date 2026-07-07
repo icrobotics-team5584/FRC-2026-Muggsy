@@ -69,6 +69,7 @@ units::celsius_t GetMotorTemperature(MotorVariant motor) {
   } else if (std::holds_alternative<ctre::phoenix6::hardware::TalonFX*>(motor)){
     return std::get<ctre::phoenix6::hardware::TalonFX*>(motor)->GetDeviceTemp().GetValue();
   }
+  return 0_degC; // Default return 
 }
 
 units::ampere_t GetMotorCurrent(MotorVariant motor) {
@@ -77,6 +78,7 @@ units::ampere_t GetMotorCurrent(MotorVariant motor) {
   } else if (std::holds_alternative<ctre::phoenix6::hardware::TalonFX*>(motor)){
     return std::get<ctre::phoenix6::hardware::TalonFX*>(motor)->GetStatorCurrent().GetValue();
   }
+  return 0_A; // Default return 
 }
 // Command to Force Remove All Alerts
 frc2::CommandPtr RemoveAlerts() {
