@@ -227,9 +227,9 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
     // Intake should always be on
     SetAutonStartPos(icGeometry::MaybeFlip(frc::Pose2d{4.4_m, 7.435_m, 0_deg}, flip)),
     SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{6.758_m, 7.413_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
+      icGeometry::MaybeFlip(frc::Pose2d{6.458_m, 7.313_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{7.629_m, 7.289_m, -95.0_deg}, flip), 2, 60_cm, 15_deg),
+      icGeometry::MaybeFlip(frc::Pose2d{7.629_m, 7.189_m, -95.0_deg}, flip), 2, 60_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{7.799_m, 6.554_m, -95.0_deg}, flip), 2, 80_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
@@ -249,7 +249,7 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{5.551_m, 7.435_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{7.226_m, 7.214_m, -90.0_deg}, flip), 2, 80_cm, 15_deg), // 10
+      icGeometry::MaybeFlip(frc::Pose2d{7.456_m, 7.071_m, -90.0_deg}, flip), 2, 80_cm, 15_deg), // 10
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{7.957_m, 5.693_m, -95.0_deg}, flip), 1.7, 80_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
