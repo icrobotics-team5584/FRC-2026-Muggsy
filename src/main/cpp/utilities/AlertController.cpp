@@ -46,7 +46,7 @@ void MotorCheck(MotorVariant motor, AlertConfig& config) {
         config.reachedHighCurrentAlert.SetText(
           config.motorString +
           " Reached Max Current Threshold: " + std::to_string(config.highCurrentReachedCount) +
-          (config.highCurrentReachedCount > 1 ? " Times" : " Time"));
+          (config.highCurrentReachedCount > 1 ? " Times" : " Time")); 
         config.reachedHighCurrentAlert.Set(true);
         config.responsiveHighCurrentAlert.Set(true);
         config.shouldRecordHighCurrent = false;
@@ -61,31 +61,19 @@ void MotorCheck(MotorVariant motor, AlertConfig& config) {
 }
 
 units::celsius_t GetMotorTemperature(MotorVariant motor) {
-  return std::visit(
-    [](auto* m) -> units::celsius_t {
-      using T = std::decay_t<decltype(*m)>;
-
-      if constexpr (std::is_same_v<T, ICSpark>) {
-        return m->GetTemperature();
-      } else {
-        return m->GetDeviceTemp().GetValue();
-      }
-    },
-    motor);
+  if(std::holds_alternative<ICSpark*>(motor)){
+    return std::get<ICSpark*>(motor)->GetTemperature();
+  } else if (std::holds_alternative<ctre::phoenix6::hardware::TalonFX*>(motor)){
+    return std::get<ctre::phoenix6::hardware::TalonFX*>(motor)->GetDeviceTemp().GetValue();
+  }
 }
 
 units::ampere_t GetMotorCurrent(MotorVariant motor) {
-  return std::visit(
-    [](auto* m) -> units::ampere_t {
-      using T = std::decay_t<decltype(*m)>;
-
-      if constexpr (std::is_same_v<T, ICSpark>) {
-        return m->GetStatorCurrent();
-      } else if constexpr (std::is_same_v<T, ctre::phoenix6::hardware::TalonFX>) {
-        return m->GetStatorCurrent().GetValue();
-      }
-    },
-    motor);
+   if(std::holds_alternative<ICSpark*>(motor)){
+    return std::get<ICSpark*>(motor)->GetStatorCurrent();
+  } else if (std::holds_alternative<ctre::phoenix6::hardware::TalonFX*>(motor)){
+    return std::get<ctre::phoenix6::hardware::TalonFX*>(motor)->GetStatorCurrent().GetValue();
+  }
 }
 // Command to Force Remove All Alerts
 frc2::CommandPtr RemoveAlerts() {
