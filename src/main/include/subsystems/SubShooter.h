@@ -31,8 +31,7 @@ class SubShooter : public frc2::SubsystemBase {
 
   frc2::CommandPtr SetSpeedTarget(const std::function<units::turns_per_second_t()>& speed);
   frc2::CommandPtr Stop();
-  frc2::CommandPtr SetSpeedFromDistanceTarget(
-    const std::function<units::meter_t()>& distance, const std::function<bool()>& isPassing);
+  frc2::CommandPtr SetSpeedFromDistanceToTarget(const std::function<units::meter_t()>& distance);
   frc2::CommandPtr SpinSlowly();
 
   frc2::CommandPtr AddManualSpeedOffset(units::turns_per_second_t offset);
@@ -101,14 +100,13 @@ class SubShooter : public frc2::SubsystemBase {
   alertController::MotorAlertConfig _shooter4AlertConfig{_shooter4HighTempAlert,
     _shooter4CurrentAlert, _shooter4StickyTempAlert, _shooter4StickyCurrentAlert, 60_degC, 40_A};
 
-  wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTableScoring;
-  wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flyWheelSpeedTablePassing;
+  wpi::interpolating_map<units::meter_t, units::turns_per_second_t> _flywheelSpeedTable;
   wpi::interpolating_map<units::meter_t, units::second_t> _timeOfFlightTable;
 
   // Sim
   static constexpr units::kilogram_square_meter_t MOI = 0.05_kg_sq_m;
   static constexpr frc::DCMotor MOTOR_MODEL = frc::DCMotor::KrakenX60FOC(4);
-  static constexpr double GEAR_RATIO = 10;
+  static constexpr double GEAR_RATIO = 2;
 
   frc::LinearSystem<1, 1, 1> _flywheelSystem =
     frc::LinearSystemId::FlywheelSystem(MOTOR_MODEL, MOI, GEAR_RATIO);

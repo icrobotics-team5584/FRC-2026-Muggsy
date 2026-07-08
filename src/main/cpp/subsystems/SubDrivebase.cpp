@@ -10,7 +10,7 @@ SubDrivebase::SubDrivebase() {
   logger::Log("Drivebase/P2P/Rotation Controller", &_rotationP2pController);
   logger::Log("Drivebase/P2P/Translation Controller", &_translationP2pController);
 
-  _rotationP2pController.EnableContinuousInput(0, 1);
+  _rotationP2pController.EnableContinuousInput(-0.5, 0.5);
 
   ctre::phoenix6::configs::Pigeon2Configuration gyroConfig;
   gyroConfig.MountPose.MountPosePitch = 0_deg;
@@ -185,22 +185,6 @@ frc2::CommandPtr SubDrivebase::Drive(
   }).FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
 }
 
-/* aligns to an a arbitrary angle while allowing joystick driving */
-frc2::CommandPtr SubDrivebase::AlignToAngle(
-  frc2::CommandXboxController& controller, const std::function<units::degree_t()>& target) {
-  return SubDrivebase::GetInstance().Drive(
-    [&controller, target] {
-      units::angle::degree_t currentAngle =
-        SubDrivebase::GetInstance().GetGyroAngle(true).Degrees();
-      units::turns_per_second_t rotationSpeeds =
-        SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle - target());
-      frc::ChassisSpeeds joystickSpeeds =
-        SubDrivebase::GetInstance().CalcJoystickSpeeds(controller);
-      return frc::ChassisSpeeds(joystickSpeeds.vx, joystickSpeeds.vy, rotationSpeeds);
-    },
-    true);
-}
-
 frc2::CommandPtr SubDrivebase::LockWheelsInXShape() {
   return Run([this] {
     auto fl = frc::SwerveModuleState{0_mps, frc::Rotation2d{45_deg}};
@@ -304,9 +288,26 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
-units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) {
-  auto omega = _rotationP2pController.Calculate(rotationError.value(), 0) * 1_rad_per_s;
+units::turns_per_second_t SubDrivebase::CalcRotateSpeed(
+  units::turn_t currentAngle, units::turn_t targetAngle) {
+  auto omega =
+    _rotationP2pController.Calculate(currentAngle.value(), targetAngle.value()) * 1_rad_per_s;
   return omega;
+}
+
+units::degree_t SubDrivebase::GetRotationError() {
+  return units::turn_t(_rotationP2pController.GetError());
+}
+
+frc2::CommandPtr SubDrivebase::RotateTo(const std::function<units::turn_t()>& targetAngle) {
+  return Drive(
+    [this, targetAngle] {
+      units::turn_t current = frc::AngleModulus(GetGyroAngle().Radians());
+      units::turn_t target = frc::AngleModulus(targetAngle());
+      units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(current, target);
+      return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
+    },
+    true);
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
@@ -318,7 +319,8 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::Pose2d currentPose = PoseHandler::GetInstance().GetPose();
   units::meter_t currentXMeters = currentPose.X();
   units::meter_t currentYMeters = currentPose.Y();
-  units::turn_t currentRotation = frc::InputModulus(GetGyroAngle(true).Degrees(), 0_deg, 360_deg);
+  units::turn_t currentRotation =
+    frc::InputModulus(GetGyroAngle(true).Degrees(), -180_deg, 180_deg);
 
   // Create a vector between current position and target position
   frc::Translation2d translationVector =
@@ -411,10 +413,10 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
     logger::Tune(configPath + "Max Joystick Accel", drivebaseConfig::MAX_JOYSTICK_ACCEL);
   auto maxAngularJoystickAccel = logger::Tune(
     configPath + "Max Joystick Angular Accel", drivebaseConfig::MAX_ANGULAR_JOYSTICK_ACCEL);
-  auto translationScaling =
-    logger::Tune(configPath + "Translation Scaling", drivebaseConfig::TRANSLATION_SCALING);
-  auto rotationScaling =
-    logger::Tune(configPath + "Rotation Scaling", drivebaseConfig::ROTATION_SCALING);
+  auto translationExponent = logger::Tune(
+    configPath + "Joystick Translation Exponent", drivebaseConfig::TRANSLATION_EXPONENT);
+  auto rotationExponent =
+    logger::Tune(configPath + "Joystick Rotation Exponent", drivebaseConfig::ROTATION_EXPONENT);
 
   // Recreate slew rate limiters if limits have changed
   if (maxJoystickAccel != _tunedMaxJoystickAccel) {
@@ -435,13 +437,13 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   // Convert cartesian (x, y) translation stick coordinates to polar (R, theta) and scale R-value
   double rawTranslationR = std::min(1.0, sqrt(pow(rawTranslationX, 2) + pow(rawTranslationY, 2)));
   double translationTheta = atan2(rawTranslationY, rawTranslationX);
-  double scaledTranslationR = pow(rawTranslationR, translationScaling);
+  double scaledTranslationR = pow(rawTranslationR, translationExponent);
 
   // Convert polar coordinates (with scaled R-value) back to cartesian; scale rotation as well
   double scaledTranslationY = scaledTranslationR * sin(translationTheta);
   double scaledTranslationX = scaledTranslationR * cos(translationTheta);
 
-  double scaledRotation = pow(rawRotation, rotationScaling);
+  double scaledRotation = pow(rawRotation, rotationExponent);
   // Bring back any negatives that may have been lost by applying the exponent
   if (rawRotation < 0 && scaledRotation > 0) {
     scaledRotation *= 1;
@@ -480,6 +482,22 @@ frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& contro
       return frc::ChassisSpeeds{speeds.vx, speeds.vy, speeds.omega};
     },
     fieldOriented);
+}
+
+/* aligns to an a arbitrary angle while allowing joystick driving */
+frc2::CommandPtr SubDrivebase::JoystickDriveWithAngle(frc2::CommandXboxController& controller,
+  const std::function<units::degree_t()>& target, double speedScaling) {
+  return Drive(
+    [this, &controller, target, speedScaling] {
+      units::angle::degree_t currentAngle = GetGyroAngle(true).Degrees();
+      units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(currentAngle, target());
+      frc::ChassisSpeeds joystickSpeeds = CalcJoystickSpeeds(controller);
+
+      joystickSpeeds.vx *= speedScaling;
+      joystickSpeeds.vy *= speedScaling;
+      return frc::ChassisSpeeds(joystickSpeeds.vx, joystickSpeeds.vy, rotationSpeeds);
+    },
+    true);
 }
 
 // Special

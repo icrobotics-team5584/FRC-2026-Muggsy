@@ -23,8 +23,8 @@ constexpr units::turns_per_second_squared_t MAX_P2P_ANGULAR_ACCEL = 6_tr_per_s_s
 constexpr double MAX_JOYSTICK_ACCEL = 5;
 constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
 constexpr double JOYSTICK_DEADBAND = 0.08;
-constexpr double TRANSLATION_SCALING = 2;  // Set to 1 for linear scaling
-constexpr double ROTATION_SCALING = 1;     // Set to 1 for linear scaling
+constexpr double TRANSLATION_EXPONENT = 2;  // Set to 1 for linear scaling
+constexpr double ROTATION_EXPONENT = 1;     // Set to 1 for linear scaling
 
 // Swerve config
 constexpr frc::Translation2d FL_POSITION{+0.281_m, +0.281_m};
@@ -32,14 +32,10 @@ constexpr frc::Translation2d FR_POSITION{+0.281_m, -0.281_m};
 constexpr frc::Translation2d BL_POSITION{-0.281_m, +0.281_m};
 constexpr frc::Translation2d BR_POSITION{-0.281_m, -0.281_m};
 
-const units::turn_t FRONT_RIGHT_MAG_OFFSET =
-  botVars::Choose(-0.94384765625_tr - 0.25_tr, -0.446044921875_tr);
-const units::turn_t FRONT_LEFT_MAG_OFFSET =
-  botVars::Choose(-0.37451171875_tr + 0.25_tr, -0.26611328125_tr);
-const units::turn_t BACK_RIGHT_MAG_OFFSET =
-  botVars::Choose(-0.353515625_tr + 0.25_tr, -0.675048828125_tr);
-const units::turn_t BACK_LEFT_MAG_OFFSET =
-  botVars::Choose(-0.464111328125_tr - 0.25_tr, -0.824951171875_tr);
+const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.51806640625_tr;
+const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.077392578125_tr;
+const units::turn_t BACK_RIGHT_MAG_OFFSET = -0.67333984375_tr;
+const units::turn_t BACK_LEFT_MAG_OFFSET = -0.94482421875_tr;
 
 // PID constants for translation and rotation controllers
 /* We use std::array<T, int> instead of frc::PIDController to avoid the

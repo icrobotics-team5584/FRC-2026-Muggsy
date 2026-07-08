@@ -9,18 +9,26 @@
 #include "frc/RobotBase.h"
 
 SubHood::SubHood() {
-  //_hoodPitchTable.insert(x_m, y_deg);
   rev::spark::SparkBaseConfig config;
   config.encoder.PositionConversionFactor(1 / GEAR_RATIO);
   config.encoder.VelocityConversionFactor(1 / GEAR_RATIO);
-  config.closedLoop.Pid(2, 0, 0);
-  config.closedLoop.feedForward.kS(0.6);
-  config.SmartCurrentLimit(30);
-  config.Inverted(false);
-  config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  config.closedLoop.Pid(60, 0, 0);
+  config.closedLoop.feedForward.kS(0);
+  config.SmartCurrentLimit(60);
+  config.Inverted(true);
+  config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
   _hoodMotor.OverwriteConfig(config);
 
   logger::Log("Hood/Motor", &_hoodMotor);
+
+  _hoodPitchTable.insert(1.356_m, 13_deg);
+  _hoodPitchTable.insert(1.98_m, 17_deg);
+  _hoodPitchTable.insert(2.35_m, 21_deg);
+  _hoodPitchTable.insert(3.02_m, 25_deg);
+  _hoodPitchTable.insert(3.41_m, 27_deg);
+  _hoodPitchTable.insert(3.73_m, 28_deg);
+  _hoodPitchTable.insert(4.05_m, 30_deg);
+  _hoodPitchTable.insert(4.19_m, 30.5_deg);
 }
 
 // This method will be called once per scheduler run
@@ -102,10 +110,6 @@ frc2::CommandPtr SubHood::HoodToStowAngle() {
 
 frc2::CommandPtr SubHood::HoodToEjectAngle() {
   return SetPositionTarget([] { return LOWER_LIMIT + 5_deg; });
-}
-
-frc2::CommandPtr SubHood::HoodToPassingAngle() {
-  return SetPositionTarget([] { return PASSING_ANGLE; });
 }
 
 frc2::CommandPtr SubHood::SetPositionFromDistanceToTarget(
