@@ -21,14 +21,28 @@
 
 #include <frc2/command/Commands.h>
 
+#include <commands/AutonCommands.h>
+
 RobotContainer::RobotContainer() {
   ConfigureBindings();
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
   SubDrivebase::GetInstance().SetDefaultCommand(
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
+
+  _autoManager.AddDefaultAuton(
+    "DepotAuto", autonHelper::MakeCommandPtrAuto(cmd::DepotAuton(false)));
+  _autoManager.AddDefaultAuton(
+    "IntakePass", autonHelper::MakeCommandPtrAuto(cmd::IntakePass(false)));
+
+  frc::SmartDashboard::PutData("CHOSEN AUTON", &_autoManager.GetAutonChooser());
 }
 
 void RobotContainer::ConfigureBindings() {
+
+    _driverController.X().OnTrue(frc2::cmd::RunOnce([] {
+    SubDrivebase::GetInstance().SetPose(frc::Pose2d{3.478_m, 7.450_m, 0.0_deg});
+  }));
+
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
   _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
 
@@ -48,8 +62,9 @@ void RobotContainer::ConfigureBindings() {
       SubDeploy::GetInstance().ExtendToDeploy()));
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
+  autonHelper::AutonPtr chosen = _autoManager.GetChosenAuton();
+  return chosen;
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {

@@ -46,7 +46,7 @@ void Robot::AutonomousInit() {
   _autonomousCommand = _container.GetAutonomousCommand();
 
   if (_autonomousCommand) {
-    frc2::CommandScheduler::GetInstance().Schedule(_autonomousCommand.value());
+    frc2::CommandScheduler::GetInstance().Schedule(_autonomousCommand.get()->get());
   }
 }
 
