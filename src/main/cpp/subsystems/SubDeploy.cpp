@@ -113,7 +113,7 @@ frc2::CommandPtr SubDeploy::ExtendToDeploy() {
   return ExtendTo(DEPLOY_LENGTH);
 }
 
-frc2::CommandPtr SubDeploy::Toggle() {
+frc2::CommandPtr SubDeploy::ToggleStow() {
   return StartEnd([this] { return SetLength(SubDeploy::STOW_LENGTH); },
     [this] { SetLength(SubDeploy::DEPLOY_LENGTH); });
 }

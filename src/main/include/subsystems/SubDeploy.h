@@ -34,7 +34,7 @@ class SubDeploy : public frc2::SubsystemBase {
   frc2::CommandPtr ManualExtendUp();
   frc2::CommandPtr ExtendToStow();
   frc2::CommandPtr ExtendToDeploy();
-  frc2::CommandPtr Toggle();
+  frc2::CommandPtr ToggleStow();
 
   units::meter_t GetLength();
   bool IsAtTarget();
