@@ -15,5 +15,6 @@ frc::Rotation2d PoseDirection(frc::Pose2d origin, frc::Pose2d destination);
 frc::Pose2d GetFieldRelativePose(frc::Pose2d allianceRelativePose);
 
 std::function<frc::Pose2d()> MaybeFlip(frc::Pose2d pose, bool shouldFlip);
+frc::Translation2d MaybeTranslationFlip(frc::Translation2d translation, bool shouldFlip);
 
 }  // namespace icGeometry

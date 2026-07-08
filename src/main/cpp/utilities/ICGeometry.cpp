@@ -61,4 +61,11 @@ std::function<frc::Pose2d()> MaybeFlip(frc::Pose2d pose, bool shouldFlip) {
   };
 }
 
+frc::Translation2d MaybeTranslationFlip(frc::Translation2d translation, bool shouldFlip) {
+  if (shouldFlip) {
+    return frc::Translation2d{translation.X(), FIELD_WIDTH - translation.Y()};
+  }
+  return translation;
+}
+
 }  // namespace icGeometry
