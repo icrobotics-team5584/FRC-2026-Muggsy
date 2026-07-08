@@ -73,7 +73,7 @@ frc2::CommandPtr DepotAuton(bool flip) {
       [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); },
       [] { return false; }))
     .AlongWith(SubIntake::GetInstance().RunIntake());
-  ;
+  
 }
 frc2::CommandPtr AutonCommand() {
   // return cmd::IntakePass(false).AndThen(cmd::IntakePass(false));
