@@ -23,11 +23,11 @@ SubHood::SubHood() {
 
   _hoodPitchTable.insert(1.356_m, 13_deg);
   _hoodPitchTable.insert(1.98_m, 17_deg);
-  _hoodPitchTable.insert(2.35_m, 21_deg);
-  _hoodPitchTable.insert(3.02_m, 25_deg);
-  _hoodPitchTable.insert(3.41_m, 27_deg);
-  _hoodPitchTable.insert(3.73_m, 28_deg);
-  _hoodPitchTable.insert(4.05_m, 30_deg);
+  _hoodPitchTable.insert(2.35_m, 19_deg);
+  _hoodPitchTable.insert(3.02_m, 23_deg);
+  _hoodPitchTable.insert(3.41_m, 26.5_deg);
+  _hoodPitchTable.insert(3.73_m, 26_deg);
+  _hoodPitchTable.insert(4.05_m, 29_deg);
   _hoodPitchTable.insert(4.19_m, 30.5_deg);
 }
 
