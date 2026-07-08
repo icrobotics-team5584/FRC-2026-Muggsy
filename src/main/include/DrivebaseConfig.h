@@ -42,7 +42,7 @@ const units::turn_t BACK_LEFT_MAG_OFFSET = -0.94482421875_tr;
  * static initialization order fiasco. i.e. frc::PIDController gets
  * incorrectly deconstructed and causes a segfaualt when exiting the sim.*/
 constexpr std::array<double, 3> P2P_TRANSLATION_PID{5, 0, 0};
-constexpr std::array<double, 3> P2P_ROTATION_PID{33, 0, 0};
+constexpr std::array<double, 3> P2P_ROTATION_PID{26, 0, 0};
 
 static constexpr units::meter_t CENTRE_TO_BUMPER_EDGE = 0.435_m;
 }  // namespace drivebaseConfig
