@@ -23,8 +23,8 @@ constexpr units::turns_per_second_squared_t MAX_P2P_ANGULAR_ACCEL = 6_tr_per_s_s
 constexpr double MAX_JOYSTICK_ACCEL = 5;
 constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
 constexpr double JOYSTICK_DEADBAND = 0.08;
-constexpr double TRANSLATION_SCALING = 2;  // Set to 1 for linear scaling
-constexpr double ROTATION_SCALING = 1;     // Set to 1 for linear scaling
+constexpr double TRANSLATION_EXPONENT = 2;  // Set to 1 for linear scaling
+constexpr double ROTATION_EXPONENT = 1;     // Set to 1 for linear scaling
 
 // Swerve config
 constexpr frc::Translation2d FL_POSITION{+0.281_m, +0.281_m};

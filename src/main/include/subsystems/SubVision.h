@@ -44,8 +44,7 @@ class SubVision : public frc2::SubsystemBase {
   std::string _tagMapFilePath = frc::filesystem::GetDeployDirectory() + "/2026-rebuilt.json";
   frc::AprilTagFieldLayout _tagMap{_tagMapFilePath};
 
-  frc::Transform3d _shooterBotToCam{
-    {-295.779_mm, 252.927_mm, 320.249_mm}, {0_deg, -30_deg, 180_deg}};
+  frc::Transform3d _shooterBotToCam{{-322.489_mm, 0_mm, 201.939_mm}, {0_deg, -30_deg, 180_deg}};
 
   static constexpr std::string_view SHOOTER_CAM_NAME = "shooter";
   ICCamera _shooterCam{SHOOTER_CAM_NAME, _shooterBotToCam, _tagMap};

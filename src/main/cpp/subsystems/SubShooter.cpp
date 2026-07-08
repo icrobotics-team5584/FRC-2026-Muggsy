@@ -21,7 +21,7 @@ SubShooter::SubShooter() {
   _shooterMotorConfig.CurrentLimits.StatorCurrentLimit = 60.0_A;
 
   // PIDs
-  _shooterMotorConfig.Slot0.kP = 0.0;
+  _shooterMotorConfig.Slot0.kP = 2;
   _shooterMotorConfig.Slot0.kI = 0;
   _shooterMotorConfig.Slot0.kD = 0;
   _shooterMotorConfig.Slot0.kV = 0.235;
@@ -44,11 +44,14 @@ SubShooter::SubShooter() {
   // Shooter tables - to be tuned
   //_timeOfFlightTable.insert(x_m, y_s);
 
-  // Testing Values
-  _flyWheelSpeedTableScoring.insert(1_m, 5_tps);
-  //_flyWheelSpeedTableScoring.insert(5_m, 10_tps);
-
-  //_flyWheelSpeedTablePassing.insert(x_m, y_tps);
+  _flywheelSpeedTable.insert(1.356_m, 25_tps);
+  _flywheelSpeedTable.insert(1.98_m, 26_tps);
+  _flywheelSpeedTable.insert(2.35_m, 28_tps);
+  _flywheelSpeedTable.insert(3.02_m, 30_tps);
+  _flywheelSpeedTable.insert(3.41_m, 32_tps);
+  _flywheelSpeedTable.insert(3.73_m, 35_tps);
+  _flywheelSpeedTable.insert(4.05_m, 38_tps);
+  _flywheelSpeedTable.insert(4.19_m, 40_tps);
 }
 
 // This method will be called once per scheduler run
@@ -128,13 +131,10 @@ bool SubShooter::IsReadyToShoot() {
   return motor1Ready && motor2Ready && motor3Ready && motor4Ready;
 }
 
-frc2::CommandPtr SubShooter::SetSpeedFromDistanceTarget(
-  const std::function<units::meter_t()>& distance, const std::function<bool()>& isPassing) {
-  return SetSpeedTarget([this, distance, isPassing] {
-    logger::Log("Shooter/Distance Target", distance());
-    return isPassing() ? _flyWheelSpeedTablePassing[distance()]
-                       : _flyWheelSpeedTableScoring[distance()] + _manualSpeedOffset;
-  });
+frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
+  const std::function<units::meter_t()>& distance) {
+  return SetSpeedTarget(
+    [this, distance] { return _flywheelSpeedTable[distance()] + _manualSpeedOffset; });
 }
 
 units::turns_per_second_t SubShooter::GetManualSpeedOffset() {
