@@ -1,9 +1,13 @@
 #include "commands/AutonCommands.h"
 
+#include "subsystems/SubDeploy.h"
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubHood.h"
 #include "subsystems/SubIndexer.h"
 #include "subsystems/SubIntake.h"
 #include "subsystems/SubShooter.h"
+
+#include "commands/FuelCommands.h"
 
 #include "utilities/FieldConstants.h"
 #include "utilities/ICGeometry.h"
@@ -30,9 +34,8 @@ frc2::CommandPtr IntakePass(bool flip) {
     SubIndexer::GetInstance().SpinIndexer().WithTimeout(1.5_s),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.4_m, 0.5_m, 0_deg}, flip), 1.0, 80_cm, 15_deg))
-    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
-      [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); },
-      [] { return false; }))
+    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceToTarget(
+      [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); }))
     .AlongWith(SubIntake::GetInstance().RunIntake());
 }
 
@@ -69,9 +72,8 @@ frc2::CommandPtr DepotAuton(bool flip) {
       icGeometry::MaybeFlip(frc::Pose2d{5.087_m, 5.289_m, 180.0_deg}, flip), 0.2, 80_cm, 15_deg),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.283_m, 4.552_m, 140.0_deg}, flip), 0.2, 80_cm, 15_deg))
-    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
-      [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); },
-      [] { return false; }))
+    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceToTarget(
+      [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); }))
     .AlongWith(SubIntake::GetInstance().RunIntake());
   ;
 }
@@ -79,61 +81,64 @@ frc2::CommandPtr DepotAuton(bool flip) {
 frc2::CommandPtr TwoPassAuto(bool flip) {
   return frc2::cmd::Sequence(
     // Intake should always be on
-    SetAutonStartPos(icGeometry::MaybeFlip(frc::Pose2d{4.4_m, 7.435_m, 0_deg}, flip)),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{6.458_m, 7.313_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{7.629_m, 7.189_m, -95.0_deg}, flip), 2, 60_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{7.799_m, 6.554_m, -95.0_deg}, flip), 2, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{7.799_m, 4.054_m, -95.0_deg}, flip), 0.5, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{5.416_m, 5.8_m, -180.0_deg}, flip), 1.7, 40_cm, 15_deg),
+    frc2::cmd::Parallel(SubDeploy::GetInstance().Zero(),
+      SubHood::GetInstance().RunZeroingSequence(),
+      frc2::cmd::Sequence(
+        SetAutonStartPos(icGeometry::MaybeFlip(frc::Pose2d{4.4_m, 7.435_m, 0_deg}, flip)),
+        SubDrivebase::GetInstance().DriveToPose(
+          icGeometry::MaybeFlip(frc::Pose2d{6.458_m, 7.313_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
+        SubDrivebase::GetInstance().DriveToPose(
+          icGeometry::MaybeFlip(frc::Pose2d{7.629_m, 7.189_m, -95.0_deg}, flip), 2, 60_cm,
+          15_deg))),
+
+    SubIntake::GetInstance().RunIntake().WithDeadline(frc2::cmd::Sequence(
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{7.799_m, 6.554_m, -95.0_deg}, flip), 2, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{7.799_m, 4.054_m, -95.0_deg}, flip), 0.5, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{5.416_m, 5.8_m, -180.0_deg}, flip), 1.7, 40_cm, 15_deg))),
+
     SubDrivebase::GetInstance().DriveOverBump(frc::ChassisSpeeds{-3_mps, 0_mps, 0_tps},
       icGeometry::MaybeTranslationFlip(frc::Translation2d{3.5_m, 5.8_m}, true)),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.603_m, 5.571_m, -220.0_deg}, flip), 0.7, 10_cm, 15_deg),
 
     // Shoot
-    frc2::cmd::Wait(1.5_s),
+    cmd::StationaryShoot().WithTimeout(1.5_s),
 
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.603_m, 7.428_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{5.551_m, 7.435_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{7.456_m, 7.071_m, -90.0_deg}, flip), 2, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{7.957_m, 5.693_m, -95.0_deg}, flip), 1.7, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{8.046_m, 4.478_m, -95.0_deg}, flip), 0.8, 50_cm, 15_deg),
-    SubDrivebase::GetInstance()
-      .DriveToPose(
-        icGeometry::MaybeFlip(frc::Pose2d{5.764_m, 4.019_m, -185.0_deg}, flip), 0.5, 30_cm, 15_deg)
-      .WithTimeout(4_s),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{5.764_m, 5.8_m, -180.0_deg}, flip), 1.7, 40_cm, 15_deg),
+
+    SubIntake::GetInstance().RunIntake().WithDeadline(frc2::cmd::Sequence(
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{5.551_m, 7.435_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{7.456_m, 7.071_m, -90.0_deg}, flip), 2, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{7.957_m, 5.693_m, -95.0_deg}, flip), 1.7, 80_cm, 15_deg),
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{8.046_m, 4.478_m, -95.0_deg}, flip), 0.8, 50_cm, 15_deg),
+      SubDrivebase::GetInstance()
+        .DriveToPose(icGeometry::MaybeFlip(frc::Pose2d{5.764_m, 4.019_m, -185.0_deg}, flip), 0.5,
+          30_cm, 15_deg)
+        .WithTimeout(4_s),
+      SubDrivebase::GetInstance().DriveToPose(
+        icGeometry::MaybeFlip(frc::Pose2d{5.764_m, 5.8_m, -180.0_deg}, flip), 1.7, 40_cm, 15_deg))),
+
     SubDrivebase::GetInstance().DriveOverBump(frc::ChassisSpeeds{-3_mps, 0_mps, 0_tps},
       icGeometry::MaybeTranslationFlip(frc::Translation2d{3.5_m, 5.8_m}, true)),
     SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{2.955_m, 5.782_m, -180.0_deg}, flip), 2, 80_cm, 15_deg),
-    SubDrivebase::GetInstance().DriveToPose(
-      icGeometry::MaybeFlip(frc::Pose2d{2.838_m, 5.899_m, -225.0_deg}, flip), 0.7, 10_cm, 15_deg),
+      icGeometry::MaybeFlip(frc::Pose2d{2.838_m, 5.899_m, -225.0_deg}, flip), 2, 10_cm, 15_deg),
 
     // Shoot
-    frc2::cmd::Wait(1.5_s)
+    cmd::StationaryShoot()
 
     // SubDrivebase::GetInstance().DriveToPose(
     //   icGeometry::MaybeFlip(frc::Pose2d{2.603_m, 7.428_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
     // SubDrivebase::GetInstance().DriveToPose(
     //   icGeometry::MaybeFlip(frc::Pose2d{5.051_m, 7.435_m, 0.0_deg}, flip), 2, 80_cm, 15_deg)
-    )
-    .AlongWith(SubShooter::GetInstance().SetSpeedFromDistanceTarget(
-      [] { return PoseHandler::GetInstance().GetPose().Translation().Distance(GetHubPos()); },
-      [] { return false; }))
-    .AlongWith(SubIntake::GetInstance().RunIntake());
-  ;
+  );
 }
 
 frc2::CommandPtr AutonCommand() {
