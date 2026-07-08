@@ -24,7 +24,7 @@ RobotContainer::RobotContainer() {
   _autoManager.AddDefaultAuton(
     "DepotAuto", autonHelper::MakeCommandPtrAuto(cmd::DepotAuton(false)));
   _autoManager.AddDefaultAuton(
-    "IntakePass", autonHelper::MakeCommandPtrAuto(cmd::IntakePassAuton()));
+    "IntakePass", autonHelper::MakeCommandPtrAuto(cmd::IntakePass(false)));
 
   frc::SmartDashboard::PutData("CHOSEN AUTON", &_autoManager.GetAutonChooser());
 }
