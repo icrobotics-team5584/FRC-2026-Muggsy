@@ -160,7 +160,7 @@ frc::Translation2d GetHubPos() {
   return target.ToTranslation2d();
 }
 
-frc2::CommandPtr SetAutonStartPos(std::function<frc::Pose2d()> pose) {
+frc2::CommandPtr SetAutonStartPos(const std::function<frc::Pose2d()>& pose) {
   return frc2::cmd::RunOnce(
     [pose] { SubDrivebase::GetInstance().SetPose(icGeometry::GetFieldRelativePose(pose())); });
 }
