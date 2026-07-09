@@ -37,7 +37,13 @@ frc2::CommandPtr StationaryShoot() {
   return frc2::cmd::Parallel(
     SubDrivebase::GetInstance().RotateTo([] { return CalcAngleToShotTarget().Radians(); }),
     SubShooter::GetInstance().SetSpeedFromDistanceToTarget(distanceToTarget),
-    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady());
+    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady()).FinallyDo(
+      [] {
+        SubShooter::GetInstance().StopShooter();
+        SubHood::GetInstance().ResetPositionAfterShoot();
+        SubDeploy::GetInstance().DeployAfterShoot();
+      }
+    );
 }
 
 frc2::CommandPtr TuneShooterAndHoodTables() {

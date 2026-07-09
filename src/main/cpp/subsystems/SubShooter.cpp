@@ -105,11 +105,6 @@ frc2::CommandPtr SubShooter::SetSpeedTarget(
     [this, speed] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(speed())); });
 }
 
-frc2::CommandPtr SubShooter::Stop() {
-  return RunOnce(
-    [this] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(0_tps)); });
-}
-
 frc2::CommandPtr SubShooter::SpinSlowly() {
   return Run([this] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(10_tps)); });
 }
@@ -135,6 +130,10 @@ frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
   const std::function<units::meter_t()>& distance) {
   return SetSpeedTarget(
     [this, distance] { return _flywheelSpeedTable[distance()] + _manualSpeedOffset; });
+}
+
+void SubShooter::StopShooter() {
+  _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(0_tps));
 }
 
 units::turns_per_second_t SubShooter::GetManualSpeedOffset() {

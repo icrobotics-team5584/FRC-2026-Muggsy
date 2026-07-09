@@ -44,10 +44,6 @@ void RobotContainer::ConfigureBindings() {
 
   _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
-
-  _driverController.RightTrigger().OnFalse(
-    frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop(),
-      SubDeploy::GetInstance().ExtendToDeploy()));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

@@ -45,6 +45,7 @@ class SubHood : public frc2::SubsystemBase {
   units::degree_t GetManualAngleOffset();
   void SetManualAngleOffset(units::degree_t offset);
   frc2::CommandPtr AddManualAngleOffset(units::degree_t offset);
+  void ResetPositionAfterShoot();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.

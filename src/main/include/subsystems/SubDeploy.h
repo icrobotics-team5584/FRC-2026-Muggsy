@@ -37,6 +37,7 @@ class SubDeploy : public frc2::SubsystemBase {
 
   units::meter_t GetLength();
   bool IsAtTarget();
+  void DeployAfterShoot();
 
  private:
   static units::meter_t ConvertPositionToLength(units::turn_t pos);

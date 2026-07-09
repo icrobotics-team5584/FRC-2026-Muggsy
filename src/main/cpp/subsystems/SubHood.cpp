@@ -148,3 +148,9 @@ void SubHood::SetBrakeMode(bool brakeMode) {
   }
   _hoodMotor.AdjustConfigNoPersist(brakeModeConfig);
 }
+
+void SubHood::ResetPositionAfterShoot() {
+  if (_hasZeroed) {
+    _hoodMotor.SetPositionTarget(STOW_ANGLE);
+  } 
+}
