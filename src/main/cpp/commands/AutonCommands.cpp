@@ -48,6 +48,7 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
 
     // Shoot
     cmd::StationaryShoot().WithTimeout(3_s),
+    cmd::ResetAfterShoot(),
 
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.603_m, 7.428_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
@@ -74,7 +75,9 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
       icGeometry::MaybeFlip(frc::Pose2d{2.838_m, 5.899_m, -225.0_deg}, flip), 2, 10_cm, 15_deg),
 
     // Shoot
-    cmd::StationaryShoot());
+    cmd::StationaryShoot()).FinallyDo([] {
+      frc2::CommandScheduler::GetInstance().Schedule(cmd::ResetAfterShoot());
+    });
 }
 
 frc2::CommandPtr AutonCommand() {

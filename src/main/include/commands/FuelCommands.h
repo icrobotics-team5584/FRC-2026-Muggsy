@@ -12,6 +12,7 @@ frc2::CommandPtr IntakeSequence();
 frc2::CommandPtr ReverseIntakeSequence();
 
 frc2::CommandPtr StationaryShoot();
+frc2::CommandPtr ResetAfterShoot();
 bool IsReadyToShoot();
 frc2::CommandPtr ShootWhenReady();
 

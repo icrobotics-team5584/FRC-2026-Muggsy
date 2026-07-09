@@ -40,6 +40,7 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
   _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
+  _driverController.RightTrigger().OnFalse(cmd::ResetAfterShoot());
 
   _driverController.LeftBumper().ToggleOnTrue(SubDeploy::GetInstance().ToggleStow());
 
