@@ -51,7 +51,7 @@ SubShooter::SubShooter() {
   _flywheelSpeedTable.insert(3.41_m, 30_tps);
   _flywheelSpeedTable.insert(3.73_m, 32.5_tps);
   _flywheelSpeedTable.insert(4.05_m, 34_tps);
-  _flywheelSpeedTable.insert(4.19_m, 45_tps);
+  _flywheelSpeedTable.insert(4.19_m, 35_tps);
 }
 
 // This method will be called once per scheduler run

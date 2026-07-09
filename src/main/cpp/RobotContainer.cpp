@@ -28,6 +28,13 @@ RobotContainer::RobotContainer() {
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
   SubDrivebase::GetInstance().SetDefaultCommand(
     SubDrivebase::GetInstance().JoystickDrive(_driverController));
+
+  _autoManager.AddDefaultAuton(
+    "Left Trench", autonHelper::MakeCommandPtrAuto(cmd::TwoPassAuto(false)));
+  _autoManager.AddDefaultAuton(
+    "Right Trench", autonHelper::MakeCommandPtrAuto(cmd::TwoPassAuto(true)));
+
+  frc::SmartDashboard::PutData("CHOSEN AUTON", &_autoManager.GetAutonChooser());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -46,8 +53,9 @@ void RobotContainer::ConfigureBindings() {
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return cmd::AutonCommand();
+std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
+  autonHelper::AutonPtr chosen = _autoManager.GetChosenAuton();
+  return chosen;
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {
