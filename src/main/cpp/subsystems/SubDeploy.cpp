@@ -142,7 +142,5 @@ units::turns_per_second_t SubDeploy::ConvertVelocityToAngularVelocity(
 }
 
 void SubDeploy::DeployAfterShoot() {
-  if (_hasZeroed) {
-    _motor.SetPositionTarget(ConvertLengthToPosition(DEPLOY_LENGTH));
-  }
+  SetLength(DEPLOY_LENGTH);
 }
