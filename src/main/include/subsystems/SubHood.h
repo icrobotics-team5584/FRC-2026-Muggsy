@@ -55,11 +55,11 @@ class SubHood : public frc2::SubsystemBase {
  private:
   static constexpr units::degree_t TOLERANCE = 1.0_deg;
 
-  static constexpr units::degree_t STOW_ANGLE = 5_deg;
+  static constexpr units::degree_t STOW_ANGLE = 8_deg;
   static constexpr units::degree_t UPPER_LIMIT = 30.5_deg;
   static constexpr units::degree_t LOWER_LIMIT = 5_deg;
 
-  static constexpr units::ampere_t ZEROING_CURRENT_LIMIT = 20_A;
+  static constexpr units::ampere_t ZEROING_CURRENT_LIMIT = 40_A;
 
   static constexpr units::degree_t DEFAULT_ANGLE_OFFSET = 0_deg;
   //_manualAngleOffset should only be modified using the SetManualAngleOffset function
