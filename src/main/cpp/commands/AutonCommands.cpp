@@ -22,7 +22,6 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
   return frc2::cmd::Sequence(
     frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); }),
 
-    // Intake should always be on
     frc2::cmd::Parallel(SubDeploy::GetInstance().Zero(),
       SubHood::GetInstance().RunZeroingSequence(),
       frc2::cmd::Sequence(SetAutonStartPos(icGeometry::MaybeFlip(

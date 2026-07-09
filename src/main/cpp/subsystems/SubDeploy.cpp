@@ -140,7 +140,3 @@ units::turns_per_second_t SubDeploy::ConvertVelocityToAngularVelocity(
   units::meters_per_second_t velo) {
   return 1_tps * (velo / PINION_CIRCUM).value();
 }
-
-void SubDeploy::DeployAfterShoot() {
-  SetLength(DEPLOY_LENGTH);
-}

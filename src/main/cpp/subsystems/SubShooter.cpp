@@ -132,8 +132,9 @@ frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
     [this, distance] { return _flywheelSpeedTable[distance()] + _manualSpeedOffset; });
 }
 
-void SubShooter::StopShooter() {
-  _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(0_tps));
+frc2::CommandPtr SubShooter::StopShooter() {
+  return RunOnce(
+    [this] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(0_tps)); });
 }
 
 units::turns_per_second_t SubShooter::GetManualSpeedOffset() {
