@@ -11,6 +11,7 @@
 #include "utilities/Logger.h"
 #include "utilities/PoseHandler.h"
 #include "utilities/ShotPlanner.h"
+
 #include <frc2/command/CommandScheduler.h>
 
 namespace cmd {
@@ -42,7 +43,7 @@ frc2::CommandPtr StationaryShoot() {
     .FinallyDo([] {
       frc2::CommandScheduler::GetInstance().Schedule(SubShooter::GetInstance().StopShooter());
       frc2::CommandScheduler::GetInstance().Schedule(SubHood::GetInstance().HoodToStowAngle());
-      frc2::CommandScheduler::GetInstance().Schedule(SubDeploy::GetInstance().ExtendToDeploy()); 
+      frc2::CommandScheduler::GetInstance().Schedule(SubDeploy::GetInstance().ExtendToDeploy());
     });
 }
 
