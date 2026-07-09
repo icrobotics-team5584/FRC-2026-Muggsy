@@ -32,7 +32,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
   _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
 
-  _driverController.LeftBumper().WhileTrue(SubDeploy::GetInstance().ToggleStow());
+  _driverController.LeftBumper().ToggleOnTrue(SubDeploy::GetInstance().ToggleStow());
 
   _driverController.Y().OnTrue(
     frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); }));
