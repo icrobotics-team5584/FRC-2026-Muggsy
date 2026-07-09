@@ -25,10 +25,10 @@ SubHood::SubHood() {
   _hoodPitchTable.insert(1.98_m, 17_deg);
   _hoodPitchTable.insert(2.35_m, 19_deg);
   _hoodPitchTable.insert(3.02_m, 23_deg);
-  _hoodPitchTable.insert(3.41_m, 26.5_deg);
+  _hoodPitchTable.insert(3.41_m, 25.5_deg);
   _hoodPitchTable.insert(3.73_m, 26_deg);
-  _hoodPitchTable.insert(4.05_m, 29_deg);
-  _hoodPitchTable.insert(4.19_m, 30.5_deg);
+  _hoodPitchTable.insert(4.05_m, 27.5_deg);
+  _hoodPitchTable.insert(4.19_m, 29_deg);
 }
 
 // This method will be called once per scheduler run
