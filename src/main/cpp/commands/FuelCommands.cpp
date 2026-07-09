@@ -12,6 +12,8 @@
 #include "utilities/PoseHandler.h"
 #include "utilities/ShotPlanner.h"
 
+#include <frc2/command/CommandScheduler.h>
+
 namespace cmd {
 frc2::CommandPtr IntakeSequence() {
   return SubDeploy::GetInstance().ExtendToDeploy().AndThen(SubIntake::GetInstance().RunIntake());
@@ -37,7 +39,12 @@ frc2::CommandPtr StationaryShoot() {
   return frc2::cmd::Parallel(
     SubDrivebase::GetInstance().RotateTo([] { return CalcAngleToShotTarget().Radians(); }),
     SubShooter::GetInstance().SetSpeedFromDistanceToTarget(distanceToTarget),
-    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady());
+    SubHood::GetInstance().SetPositionFromDistanceToTarget(distanceToTarget), ShootWhenReady())
+    .FinallyDo([] {
+      frc2::CommandScheduler::GetInstance().Schedule(SubShooter::GetInstance().StopShooter());
+      frc2::CommandScheduler::GetInstance().Schedule(SubHood::GetInstance().HoodToStowAngle());
+      frc2::CommandScheduler::GetInstance().Schedule(SubDeploy::GetInstance().ExtendToDeploy());
+    });
 }
 
 frc2::CommandPtr TuneShooterAndHoodTables() {

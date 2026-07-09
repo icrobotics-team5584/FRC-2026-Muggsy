@@ -21,6 +21,8 @@
 
 #include <frc2/command/Commands.h>
 
+#include <commands/AutonCommands.h>
+
 RobotContainer::RobotContainer() {
   ConfigureBindings();
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
@@ -32,7 +34,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
   _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
 
-  _driverController.LeftBumper().WhileTrue(SubDeploy::GetInstance().ExtendToStow());
+  _driverController.LeftBumper().ToggleOnTrue(SubDeploy::GetInstance().ToggleStow());
 
   _driverController.Y().OnTrue(
     frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); }));
@@ -42,14 +44,10 @@ void RobotContainer::ConfigureBindings() {
 
   _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
-
-  _driverController.RightTrigger().OnFalse(
-    frc2::cmd::Parallel(SubHood::GetInstance().HoodToStowAngle(), SubShooter::GetInstance().Stop(),
-      SubDeploy::GetInstance().ExtendToDeploy()));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+  return cmd::AutonCommand();
 }
 
 frc2::CommandPtr RobotContainer::Rumble(double force, units::second_t duration) {

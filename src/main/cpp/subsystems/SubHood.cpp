@@ -23,12 +23,12 @@ SubHood::SubHood() {
 
   _hoodPitchTable.insert(1.356_m, 13_deg);
   _hoodPitchTable.insert(1.98_m, 17_deg);
-  _hoodPitchTable.insert(2.35_m, 21_deg);
-  _hoodPitchTable.insert(3.02_m, 25_deg);
-  _hoodPitchTable.insert(3.41_m, 27_deg);
-  _hoodPitchTable.insert(3.73_m, 28_deg);
-  _hoodPitchTable.insert(4.05_m, 30_deg);
-  _hoodPitchTable.insert(4.19_m, 30.5_deg);
+  _hoodPitchTable.insert(2.35_m, 19_deg);
+  _hoodPitchTable.insert(3.02_m, 23_deg);
+  _hoodPitchTable.insert(3.41_m, 25.5_deg);
+  _hoodPitchTable.insert(3.73_m, 26_deg);
+  _hoodPitchTable.insert(4.05_m, 27.5_deg);
+  _hoodPitchTable.insert(4.19_m, 29_deg);
 }
 
 // This method will be called once per scheduler run
@@ -83,8 +83,9 @@ frc2::CommandPtr SubHood::RunZeroingSequence() {
       _hoodMotor.StopMotor();  // stop motors
       _hoodMotor.SetPosition(LOWER_LIMIT);
       _hasZeroed = true;
-    })  // set both hood motors to zero at lower limit
+    })  // set hood motor to zero at lower limit
     .FinallyDo([this] {
+      _hoodMotor.StopMotor();  // ensure motor is stopped whether zeroed or not
       _hoodMotor.SetPositionTarget(LOWER_LIMIT);
       _zeroing = false;
       // ToggleSoftLimit(true); // re-enable soft limit

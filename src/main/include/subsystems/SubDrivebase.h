@@ -83,7 +83,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Drive
   frc2::CommandPtr Drive(const std::function<frc::ChassisSpeeds()>& speeds, bool fieldOriented);
   frc2::CommandPtr DriveOverBump(
-    frc::ChassisSpeeds fieldRelativeSpeeds, frc::Translation2d allianceRelativeEndXY);
+    frc::ChassisSpeeds allianceRelativeSpeeds, frc::Translation2d allianceRelativeEndXY);
+
+  // Rotations
   frc2::CommandPtr DriveToPose(const std::function<frc::Pose2d()>& pose, double speedScaling = 1,
     units::meter_t posErrorTolerance = 2_cm, units::degree_t rotErrorTolerance = 2_deg,
     bool flipForRedAlliance = true);

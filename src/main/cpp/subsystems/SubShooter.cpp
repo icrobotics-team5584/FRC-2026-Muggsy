@@ -46,12 +46,12 @@ SubShooter::SubShooter() {
 
   _flywheelSpeedTable.insert(1.356_m, 25_tps);
   _flywheelSpeedTable.insert(1.98_m, 26_tps);
-  _flywheelSpeedTable.insert(2.35_m, 28_tps);
-  _flywheelSpeedTable.insert(3.02_m, 30_tps);
-  _flywheelSpeedTable.insert(3.41_m, 32_tps);
-  _flywheelSpeedTable.insert(3.73_m, 35_tps);
-  _flywheelSpeedTable.insert(4.05_m, 38_tps);
-  _flywheelSpeedTable.insert(4.19_m, 40_tps);
+  _flywheelSpeedTable.insert(2.35_m, 27_tps);
+  _flywheelSpeedTable.insert(3.02_m, 28_tps);
+  _flywheelSpeedTable.insert(3.41_m, 30_tps);
+  _flywheelSpeedTable.insert(3.73_m, 32.5_tps);
+  _flywheelSpeedTable.insert(4.05_m, 34_tps);
+  _flywheelSpeedTable.insert(4.19_m, 45_tps);
 }
 
 // This method will be called once per scheduler run
@@ -105,11 +105,6 @@ frc2::CommandPtr SubShooter::SetSpeedTarget(
     [this, speed] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(speed())); });
 }
 
-frc2::CommandPtr SubShooter::Stop() {
-  return RunOnce(
-    [this] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(0_tps)); });
-}
-
 frc2::CommandPtr SubShooter::SpinSlowly() {
   return Run([this] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(10_tps)); });
 }
@@ -135,6 +130,11 @@ frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
   const std::function<units::meter_t()>& distance) {
   return SetSpeedTarget(
     [this, distance] { return _flywheelSpeedTable[distance()] + _manualSpeedOffset; });
+}
+
+frc2::CommandPtr SubShooter::StopShooter() {
+  return RunOnce(
+    [this] { _shooterMotor1.SetControl(_flywheelTargetVelocity.WithVelocity(0_tps)); });
 }
 
 units::turns_per_second_t SubShooter::GetManualSpeedOffset() {

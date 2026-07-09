@@ -34,11 +34,14 @@ class SubDeploy : public frc2::SubsystemBase {
   frc2::CommandPtr ManualExtendUp();
   frc2::CommandPtr ExtendToStow();
   frc2::CommandPtr ExtendToDeploy();
+  frc2::CommandPtr ToggleStow();
 
   units::meter_t GetLength();
   bool IsAtTarget();
 
  private:
+  void SetLength(units::meter_t length);
+
   static units::meter_t ConvertPositionToLength(units::turn_t pos);
   static units::turn_t ConvertLengthToPosition(units::meter_t length);
   static units::turns_per_second_t ConvertVelocityToAngularVelocity(
@@ -51,7 +54,7 @@ class SubDeploy : public frc2::SubsystemBase {
 
   static constexpr units::ampere_t ZERO_CURRENT_LIMIT = 40_A;
   static constexpr units::meter_t MAX_LENGTH = 0.308_m;
-  static constexpr units::meter_t STOW_LENGTH = 0.005_m;
+  static constexpr units::meter_t STOW_LENGTH = 0.01_m;
   static constexpr units::meter_t DEPLOY_LENGTH = MAX_LENGTH - 0.005_m;
   static constexpr units::meter_t PINION_RAD = 1_in / 2.0;
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * std::numbers::pi;

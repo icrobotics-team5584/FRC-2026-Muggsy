@@ -200,31 +200,41 @@ frc2::CommandPtr SubDrivebase::LockWheelsInXShape() {
 }
 
 frc2::CommandPtr SubDrivebase::DriveOverBump(
-  frc::ChassisSpeeds fieldRelativeSpeeds, frc::Translation2d allianceRelativeEndXY) {
-  return Drive([fieldRelativeSpeeds] { return fieldRelativeSpeeds; }, true)
+  frc::ChassisSpeeds allianceRelativeSpeeds, frc::Translation2d allianceRelativeEndXY) {
+  return Drive(
+    [allianceRelativeSpeeds] {
+      units::meters_per_second_t xSpeed = allianceRelativeSpeeds.vx;
+      units::meters_per_second_t ySpeed = allianceRelativeSpeeds.vy;
+      if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
+        xSpeed *= -1;
+        ySpeed *= -1;
+      }
+      return frc::ChassisSpeeds{xSpeed, ySpeed, allianceRelativeSpeeds.omega};
+    },
+    true)
     .WithDeadline(frc2::cmd::Sequence(
-      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", 1); }),
+      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", "Approach"); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() > 5_deg);  // ascending
       }),
-      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", 2); }),
+      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", "Ascent"); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() < 5_deg);  // peak
       }),
-      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", 3); }),
+      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", "Peak"); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() >
                 5_deg);  // descending. note that tilt magnitude is always positive
       }),
-      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", 4); }),
+      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", "Descent"); }),
       frc2::cmd::WaitUntil([this] {
         return (GetApproxTiltMagnitude() < 2_deg);  // done
       }),
-      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", 5); })))
+      frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", "Done"); })))
     .Unless([] { return frc::RobotBase::IsSimulation(); })
     .FinallyDo([this, allianceRelativeEndXY] {
       auto endPose =
-        icGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
+        icGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(true)));
       SetPose(endPose);
     });
 }
