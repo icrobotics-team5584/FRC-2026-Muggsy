@@ -52,7 +52,7 @@ class SubDeploy : public frc2::SubsystemBase {
 
   static constexpr units::ampere_t ZERO_CURRENT_LIMIT = 40_A;
   static constexpr units::meter_t MAX_LENGTH = 0.308_m;
-  static constexpr units::meter_t STOW_LENGTH = 0.005_m;
+  static constexpr units::meter_t STOW_LENGTH = 0.01_m;
   static constexpr units::meter_t DEPLOY_LENGTH = MAX_LENGTH - 0.005_m;
   static constexpr units::meter_t PINION_RAD = 1_in / 2.0;
   static constexpr units::meter_t PINION_CIRCUM = PINION_RAD * 2 * std::numbers::pi;
