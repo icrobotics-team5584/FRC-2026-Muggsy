@@ -153,5 +153,5 @@ void SubHood::SetBrakeMode(bool brakeMode) {
 void SubHood::ResetPositionAfterShoot() {
   if (_hasZeroed) {
     _hoodMotor.SetPositionTarget(STOW_ANGLE);
-  } 
+  }
 }
