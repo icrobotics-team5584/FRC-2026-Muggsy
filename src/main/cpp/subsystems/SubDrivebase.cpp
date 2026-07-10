@@ -296,7 +296,7 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(
 }
 
 units::degree_t SubDrivebase::GetRotationError() {
-  auto error = units::turn_t(_rotationP2pController.GetError());
+  units::degree_t error = units::turn_t(_rotationP2pController.GetError());
   logger::Log("Rotation error", error);
   return error;
 }

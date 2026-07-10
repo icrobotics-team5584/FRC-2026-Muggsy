@@ -62,6 +62,9 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.Y().OnTrue(SubShooter::GetInstance().AddManualSpeedOffset(1_tps));
   _operatorController.A().OnTrue(SubShooter::GetInstance().AddManualSpeedOffset(-1_tps));
 
+  _operatorController.Back().OnTrue(frc2::cmd::RunOnce([] { SubHood::GetInstance().SetManualAngleOffset(0_deg); }));
+  _operatorController.Start().OnTrue(frc2::cmd::RunOnce([] { SubShooter::GetInstance().SetManualSpeedOffset(0_tps);  }));
+
   SubDrivebase::GetInstance().CheckCoastButton().WhileTrue(cmd::ToggleBrakeCoast());
 }
 

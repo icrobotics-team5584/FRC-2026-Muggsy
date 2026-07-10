@@ -20,11 +20,12 @@
 namespace cmd {
 frc2::CommandPtr TwoPassAuto(bool flip) {
   return frc2::cmd::Sequence(
-    frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }); }),
+    SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }),
 
     frc2::cmd::Parallel(SubDeploy::GetInstance().Zero(),
       SubHood::GetInstance().RunZeroingSequence(),
-      frc2::cmd::Sequence(
+      frc2::cmd::Sequence(SetAutonStartPos(icGeometry::MaybeFlip(
+                            frc::Pose2d{4.4_m, 7.435_m, 0_deg}, flip)),  // start position
         SubDrivebase::GetInstance().DriveToPose(
           icGeometry::MaybeFlip(frc::Pose2d{6.458_m, 7.313_m, 0.0_deg}, flip), 2, 80_cm,
           15_deg),  // first pose
