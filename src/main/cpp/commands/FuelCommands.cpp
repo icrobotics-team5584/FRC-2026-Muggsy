@@ -192,12 +192,16 @@ frc2::CommandPtr ShootOnTheMove(frc2::CommandXboxController& controller) {
 frc2::CommandPtr ToggleBrakeCoast() {
   return frc2::cmd::StartEnd(
     [] {
+      logger::Log("ToggleBrakeCoast", false);
       SubDrivebase::GetInstance().SetBrakeMode(false);
       SubHood::GetInstance().SetBrakeMode(false);
+      SubDeploy::GetInstance().SetBrakeMode(false);
     },
     [] {
+      logger::Log("ToggleBrakeCoast", true);
       SubDrivebase::GetInstance().SetBrakeMode(true);
       SubHood::GetInstance().SetBrakeMode(true);
+      SubDeploy::GetInstance().SetBrakeMode(true);
     })
     .IgnoringDisable(true)
     .Until([] { return frc::DriverStation::IsEnabled(); });

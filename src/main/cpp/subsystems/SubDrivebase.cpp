@@ -224,7 +224,7 @@ frc2::CommandPtr SubDrivebase::DriveOverBump(
     .Unless([] { return frc::RobotBase::IsSimulation(); })
     .FinallyDo([this, allianceRelativeEndXY] {
       auto endPose =
-        icGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(true)));
+        icGeometry::GetFieldRelativePose(frc::Pose2d(allianceRelativeEndXY, GetGyroAngle(false)));
       SetPose(endPose);
     });
 }

@@ -38,6 +38,7 @@ class SubDeploy : public frc2::SubsystemBase {
 
   units::meter_t GetLength();
   bool IsAtTarget();
+  void SetBrakeMode(bool brakeMode);
 
  private:
   void SetLength(units::meter_t length);

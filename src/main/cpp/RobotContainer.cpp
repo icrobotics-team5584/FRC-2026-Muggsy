@@ -61,6 +61,8 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.Y().OnTrue(SubShooter::GetInstance().AddManualSpeedOffset(1_tps));
   _operatorController.A().OnTrue(SubShooter::GetInstance().AddManualSpeedOffset(-1_tps));
+
+  SubDrivebase::GetInstance().CheckCoastButton().WhileTrue(cmd::ToggleBrakeCoast());
 }
 
 std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {

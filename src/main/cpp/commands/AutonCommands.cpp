@@ -20,12 +20,11 @@
 namespace cmd {
 frc2::CommandPtr TwoPassAuto(bool flip) {
   return frc2::cmd::Sequence(
-    frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ResetGyroHeading(); }),
+    frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }); }),
 
     frc2::cmd::Parallel(SubDeploy::GetInstance().Zero(),
       SubHood::GetInstance().RunZeroingSequence(),
-      frc2::cmd::Sequence(SetAutonStartPos(icGeometry::MaybeFlip(
-                            frc::Pose2d{4.4_m, 7.435_m, 0_deg}, flip)),  // start position
+      frc2::cmd::Sequence(
         SubDrivebase::GetInstance().DriveToPose(
           icGeometry::MaybeFlip(frc::Pose2d{6.458_m, 7.313_m, 0.0_deg}, flip), 2, 80_cm,
           15_deg),  // first pose
@@ -47,8 +46,7 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
       icGeometry::MaybeFlip(frc::Pose2d{2.603_m, 5.571_m, -220.0_deg}, flip), 0.7, 10_cm, 15_deg),
 
     // Shoot
-    cmd::StationaryShoot().WithTimeout(3_s),
-    cmd::ResetAfterShoot(),
+    cmd::StationaryShoot().WithTimeout(3_s), cmd::ResetAfterShoot(),
 
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.603_m, 7.428_m, 0.0_deg}, flip), 2, 80_cm, 15_deg),
@@ -75,9 +73,8 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
       icGeometry::MaybeFlip(frc::Pose2d{2.838_m, 5.899_m, -225.0_deg}, flip), 2, 10_cm, 15_deg),
 
     // Shoot
-    cmd::StationaryShoot()).FinallyDo([] {
-      frc2::CommandScheduler::GetInstance().Schedule(cmd::ResetAfterShoot());
-    });
+    cmd::StationaryShoot())
+    .FinallyDo([] { frc2::CommandScheduler::GetInstance().Schedule(cmd::ResetAfterShoot()); });
 }
 
 frc2::CommandPtr AutonCommand() {

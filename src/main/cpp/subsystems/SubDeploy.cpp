@@ -140,3 +140,13 @@ units::turns_per_second_t SubDeploy::ConvertVelocityToAngularVelocity(
   units::meters_per_second_t velo) {
   return 1_tps * (velo / PINION_CIRCUM).value();
 }
+
+void SubDeploy::SetBrakeMode(bool brakeMode) {
+  rev::spark::SparkBaseConfig brakeModeConfig;
+  if (brakeMode) {
+    brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  } else {
+    brakeModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+  }
+  _motor.AdjustConfigNoPersist(brakeModeConfig);
+}

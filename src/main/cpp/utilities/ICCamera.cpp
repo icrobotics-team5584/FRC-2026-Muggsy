@@ -15,10 +15,10 @@ ICCamera::ICCamera(
     _cam(name),
     _camSim(&_cam),
     _poseEstimator(_tagMap, _botToCam) {
-  logger::Log("Vision/" + _camName + "/Is Connected", _cam.IsConnected());
 }
 
 void ICCamera::Update() {
+  logger::Log("Vision/" + _camName + "/Is Connected", _cam.IsConnected());
   std::string targets = "";
   _latestResults = _cam.GetAllUnreadResults();
   logger::Log("Vision/" + _camName + "/Results count", int(_latestResults.size()));
