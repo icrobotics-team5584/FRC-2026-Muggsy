@@ -53,7 +53,7 @@ class SubShooter : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _shooterMotor3{canid::SHOOTER_MOTOR_3};
   ctre::phoenix6::hardware::TalonFX _shooterMotor4{canid::SHOOTER_MOTOR_4};
 
-  static constexpr units::turns_per_second_t DEFAULT_SPEED_OFFSET = 1.5_tps;
+  static constexpr units::turns_per_second_t DEFAULT_SPEED_OFFSET = 0_tps;
   //_manualSpeedOffset should only be modified using the SetManualSpeedOffset function
   units::turns_per_second_t _manualSpeedOffset{DEFAULT_SPEED_OFFSET};
 
