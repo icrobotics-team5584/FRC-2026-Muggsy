@@ -205,7 +205,7 @@ frc2::CommandPtr ToggleBrakeCoast() {
 
 frc2::CommandPtr EjectFuel() {
   return frc2::cmd::Parallel(SubShooter::GetInstance().SpinSlowly(),
-    SubIntake::GetInstance().RunReverseIntake(), SubIndexer::GetInstance().SpinIndexer(),
+    cmd::ReverseIntakeSequence(), SubIndexer::GetInstance().SpinIndexer(),
     SubFeeder::GetInstance().Feed(), SubHood::GetInstance().HoodToEjectAngle());
 }
 

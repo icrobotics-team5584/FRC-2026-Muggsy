@@ -51,6 +51,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().OnTrue(
     frc2::cmd::RunOnce([] { SubDrivebase::GetInstance().SyncSensors(); }));
   _driverController.A().WhileTrue(cmd::EjectFuel());
+  _driverController.A().OnFalse(cmd::ResetAfterShoot());
 
   _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
