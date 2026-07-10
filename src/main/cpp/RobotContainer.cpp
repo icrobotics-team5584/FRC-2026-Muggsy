@@ -38,7 +38,7 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.LeftTrigger().WhileTrue(cmd::IntakeSequence());
+  _driverController.LeftTrigger().WhileTrue(SubIntake::GetInstance().RunIntake());
   _driverController.RightTrigger().WhileTrue(cmd::StationaryShoot());
   _driverController.RightTrigger().OnFalse(cmd::ResetAfterShoot());
 

@@ -201,17 +201,7 @@ frc2::CommandPtr SubDrivebase::LockWheelsInXShape() {
 
 frc2::CommandPtr SubDrivebase::DriveOverBump(
   frc::ChassisSpeeds allianceRelativeSpeeds, frc::Translation2d allianceRelativeEndXY) {
-  return Drive(
-    [allianceRelativeSpeeds] {
-      units::meters_per_second_t xSpeed = allianceRelativeSpeeds.vx;
-      units::meters_per_second_t ySpeed = allianceRelativeSpeeds.vy;
-      if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
-        xSpeed *= -1;
-        ySpeed *= -1;
-      }
-      return frc::ChassisSpeeds{xSpeed, ySpeed, allianceRelativeSpeeds.omega};
-    },
-    true)
+  return Drive([allianceRelativeSpeeds] { return allianceRelativeSpeeds; }, true)
     .WithDeadline(frc2::cmd::Sequence(
       frc2::cmd::RunOnce([] { logger::Log("Drivebase/DriveOverBump/State", "Approach"); }),
       frc2::cmd::WaitUntil([this] {
@@ -306,13 +296,15 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(
 }
 
 units::degree_t SubDrivebase::GetRotationError() {
-  return units::turn_t(_rotationP2pController.GetError());
+  auto error = units::turn_t(_rotationP2pController.GetError());
+  logger::Log("Rotation error", error);
+  return error;
 }
 
 frc2::CommandPtr SubDrivebase::RotateTo(const std::function<units::turn_t()>& targetAngle) {
   return Drive(
     [this, targetAngle] {
-      units::turn_t current = frc::AngleModulus(GetGyroAngle().Radians());
+      units::turn_t current = frc::AngleModulus(GetGyroAngle(true).Radians());
       units::turn_t target = frc::AngleModulus(targetAngle());
       units::turns_per_second_t rotationSpeeds = CalcRotateSpeed(current, target);
       return frc::ChassisSpeeds{0_mps, 0_mps, rotationSpeeds};
