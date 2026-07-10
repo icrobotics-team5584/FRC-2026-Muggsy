@@ -52,6 +52,12 @@ void RobotContainer::ConfigureBindings() {
 
   _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
+
+  _operatorController.POVUp().OnTrue(SubHood::GetInstance().AddManualAngleOffset(1_deg));
+  _operatorController.POVDown().OnTrue(SubHood::GetInstance().AddManualAngleOffset(-1_deg));
+
+  _operatorController.Y().OnTrue(SubShooter::GetInstance().AddManualSpeedOffset(1_tps));
+  _operatorController.A().OnTrue(SubShooter::GetInstance().AddManualSpeedOffset(-1_tps));
 }
 
 std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
