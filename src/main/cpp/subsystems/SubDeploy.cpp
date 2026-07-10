@@ -51,7 +51,7 @@ frc2::CommandPtr SubDeploy::Zero() {
   return RunOnce([this] {
     _zeroing = true;
     _hasZeroed = false;
-    _motor.SetVoltage(1_V);
+    _motor.SetVoltage(2_V);
   })
     .AndThen(frc2::cmd::WaitUntil([this] {
       return units::math::abs(_motor.GetStatorCurrent()) > ZERO_CURRENT_LIMIT ||
