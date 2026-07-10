@@ -22,7 +22,7 @@ constexpr int PIGEON_2 = 13;
 constexpr int SHOOTER_MOTOR_1 = 14;
 constexpr int SHOOTER_MOTOR_2 = 16;
 constexpr int SHOOTER_MOTOR_3 = 15;
-constexpr int SHOOTER_MOTOR_4 = 17;
+constexpr int SHOOTER_MOTOR_4 = 38;
 
 constexpr int INDEXER_MOTOR = 18;
 constexpr int INDEXER_FOLLOW_MOTOR = 19;
