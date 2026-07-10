@@ -123,7 +123,7 @@ bool SubShooter::IsReadyToShoot() {
                                       _flywheelTargetVelocity.Velocity) < 20_tps;
   bool motor4Ready = units::math::abs(_shooterMotor4.GetVelocity().GetValue() -
                                       _flywheelTargetVelocity.Velocity) < 20_tps;
-  return motor1Ready && motor2Ready && motor3Ready && motor4Ready;
+  return motor1Ready || motor2Ready || motor3Ready || motor4Ready;
 }
 
 frc2::CommandPtr SubShooter::SetSpeedFromDistanceToTarget(
