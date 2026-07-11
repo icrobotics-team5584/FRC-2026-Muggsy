@@ -47,34 +47,14 @@ void SubDeploy::SimulationPeriodic() {
 }
 
 /* Command Functions*/
-frc2::CommandPtr SubDeploy::Zero() {
-  return RunOnce([this] {
-    _zeroing = true;
-    _hasZeroed = false;
-    _motor.SetVoltage(2_V);
-  })
-    .AndThen(frc2::cmd::WaitUntil([this] {
-      return units::math::abs(_motor.GetStatorCurrent()) > ZERO_CURRENT_LIMIT ||
-             frc::RobotBase::IsSimulation();
-    }))
-    .AndThen([this] {
-      _motor.StopMotor();
-      _motor.SetPosition(ConvertLengthToPosition(MAX_LENGTH));
-      _hasZeroed = true;
-    })
-    .FinallyDo([this] {
-      _motor.StopMotor();
-      _zeroing = false;
-    });
-}
 
-frc2::CommandPtr SubDeploy::AutonZero() {
+frc2::CommandPtr SubDeploy::Zero(units::second_t forceActuateTime) {
   return RunOnce([this] {
     _zeroing = true;
     _hasZeroed = false;
     _motor.SetVoltage(2_V);
   })
-    .AndThen(frc2::cmd::Wait(1_s))
+    .AndThen(frc2::cmd::Wait(forceActuateTime))
     .AndThen(frc2::cmd::WaitUntil([this] {
       return units::math::abs(_motor.GetStatorCurrent()) > ZERO_CURRENT_LIMIT ||
              frc::RobotBase::IsSimulation();

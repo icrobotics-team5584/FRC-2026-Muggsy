@@ -53,8 +53,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.A().WhileTrue(cmd::EjectFuel());
   _driverController.A().OnFalse(cmd::ResetAfterShoot());
 
-  _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
-  _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().AutonZero());
+  _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence().AndThen(SubHood::GetInstance().HoodToStowAngle()));
+  _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero(0.5_s));
 
   _operatorController.POVUp().OnTrue(SubHood::GetInstance().AddManualAngleOffset(1_deg));
   _operatorController.POVDown().OnTrue(SubHood::GetInstance().AddManualAngleOffset(-1_deg));
