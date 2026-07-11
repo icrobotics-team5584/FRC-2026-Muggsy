@@ -23,7 +23,7 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
     SubDrivebase::GetInstance().ZeroRotation([] { return 0_deg; }),
 
     frc2::cmd::Parallel(SubDeploy::GetInstance().Zero(1_s),
-      SubHood::GetInstance().RunZeroingSequence().AndThen(SubHood::GetInstance().HoodToStowAngle()),
+      SubHood::GetInstance().RunZeroingSequence().AndThen(SubHood::GetInstance().HoodToStowAngle().WithTimeout(1_ms)),
       frc2::cmd::Sequence(SetAutonStartPos(icGeometry::MaybeFlip(
                             frc::Pose2d{4.4_m, 7.435_m, 0_deg}, flip)),  // start position
         SubDrivebase::GetInstance().DriveToPose(
