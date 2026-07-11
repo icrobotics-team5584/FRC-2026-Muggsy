@@ -56,6 +56,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.POVLeft().WhileTrue(SubHood::GetInstance().RunZeroingSequence());
   _driverController.POVRight().WhileTrue(SubDeploy::GetInstance().Zero());
 
+  (_driverController.Back() && _driverController.Start()).ToggleOnTrue(SubDrivebase::GetInstance().ToggleSlowDrive());
+
   _operatorController.POVUp().OnTrue(SubHood::GetInstance().AddManualAngleOffset(1_deg));
   _operatorController.POVDown().OnTrue(SubHood::GetInstance().AddManualAngleOffset(-1_deg));
 

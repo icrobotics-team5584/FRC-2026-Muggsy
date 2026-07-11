@@ -39,9 +39,9 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
       SubDrivebase::GetInstance().DriveToPose(
         icGeometry::MaybeFlip(frc::Pose2d{7.799_m, 4.054_m, -95.0_deg}, flip), 0.5, 80_cm, 15_deg),
       SubDrivebase::GetInstance().DriveToPose(
-        icGeometry::MaybeFlip(frc::Pose2d{5.416_m, 5.8_m, -180.0_deg}, flip), 1.7, 40_cm, 15_deg))),
+        icGeometry::MaybeFlip(frc::Pose2d{5.6_m, 5.7_m, -135.0_deg}, flip), 1.7, 40_cm, 15_deg))),
 
-    SubDrivebase::GetInstance().DriveOverBump(frc::ChassisSpeeds{-3_mps, 0_mps, 0_tps},
+    SubDrivebase::GetInstance().DriveOverBump(frc::ChassisSpeeds{-3.5_mps, 0_mps, 0_tps},
       icGeometry::MaybeTranslationFlip(frc::Translation2d{3.5_m, 5.8_m}, flip)),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.603_m, 5.571_m, -220.0_deg}, flip), 0.7, 10_cm, 15_deg),
@@ -66,9 +66,9 @@ frc2::CommandPtr TwoPassAuto(bool flip) {
           30_cm, 15_deg)
         .WithTimeout(4_s),
       SubDrivebase::GetInstance().DriveToPose(
-        icGeometry::MaybeFlip(frc::Pose2d{5.764_m, 5.8_m, -180.0_deg}, flip), 1.7, 40_cm, 15_deg))),
+        icGeometry::MaybeFlip(frc::Pose2d{5.764_m, 5.7_m, -135.0_deg}, flip), 1.7, 40_cm, 15_deg))),
 
-    SubDrivebase::GetInstance().DriveOverBump(frc::ChassisSpeeds{-3_mps, 0_mps, 0_tps},
+    SubDrivebase::GetInstance().DriveOverBump(frc::ChassisSpeeds{-3.5_mps, 0_mps, 0_tps},
       icGeometry::MaybeTranslationFlip(frc::Translation2d{3.5_m, 5.8_m}, flip)),
     SubDrivebase::GetInstance().DriveToPose(
       icGeometry::MaybeFlip(frc::Pose2d{2.838_m, 5.899_m, -225.0_deg}, flip), 2, 10_cm, 15_deg),

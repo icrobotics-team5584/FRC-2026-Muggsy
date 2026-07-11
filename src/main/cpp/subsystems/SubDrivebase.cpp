@@ -502,6 +502,22 @@ frc2::CommandPtr SubDrivebase::JoystickDriveWithAngle(frc2::CommandXboxControlle
     true);
 }
 
+frc2::CommandPtr SubDrivebase::ToggleSlowDrive() {
+  return StartEnd([] {
+    logger::Log("Drivebase/Slow drive", true);
+    logger::Log("Drivebase/Config/Max Velocity", 2.5_mps);
+    logger::Log("Drivebase/Config/Max Joystick Accel", 3);
+    logger::Log("Drivebase/Config/Max Angular Velocity", 0.5_tps);
+    logger::Log("Drivebase/Config/Max Joystick Angular Accel", 2);
+  }, [] {
+    logger::Log("Drivebase/Slow drive", false);
+    logger::Log("Drivebase/Config/Max Velocity", drivebaseConfig::MAX_VELOCITY);
+    logger::Log("Drivebase/Config/Max Joystick Accel", drivebaseConfig::MAX_JOYSTICK_ACCEL);
+    logger::Log("Drivebase/Config/Max Angular Velocity", drivebaseConfig::MAX_TELEOP_ANGULAR_VELOCITY);
+    logger::Log("Drivebase/Config/Max Joystick Angular Accel", drivebaseConfig::MAX_ANGULAR_JOYSTICK_ACCEL);
+  });
+}
+
 // Special
 
 frc2::CommandPtr SubDrivebase::CharacteriseWheels() {
