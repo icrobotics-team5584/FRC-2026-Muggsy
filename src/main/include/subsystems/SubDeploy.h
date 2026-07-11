@@ -28,6 +28,7 @@ class SubDeploy : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
   frc2::CommandPtr Zero();
+  frc2::CommandPtr AutonZero();
   frc2::CommandPtr ExtendTo(units::meter_t length);
   frc2::CommandPtr ExtendToLerp(double t);
   frc2::CommandPtr ManualExtendDown();
