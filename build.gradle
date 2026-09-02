@@ -90,25 +90,22 @@ model {
         }
     }
 
-    // Tests disabled, we don't have any tests and it dramatically increases build time. 
-    // Can re-enable and add tests later if desired, if so `./gradlew assemble` can compile without runnings tests so it won't affect build time.
-    // testSuites {
-    //     frcUserProgramTest(GoogleTestTestSuiteSpec) {
-    //         testing $.components.frcUserProgram
+    testSuites {
+        frcUserProgramTest(GoogleTestTestSuiteSpec) {
+            testing $.components.frcUserProgram
 
-    //         sources.cpp {
-    //             source {
-    //                 srcDir 'src/test/cpp'
-    //                 include '**/*.cpp'
-    //             }
-    //         }
+            sources.cpp {
+                source {
+                    srcDir 'src/test/cpp'
+                    include '**/*.cpp'
+                }
+            }
 
-    //         // Enable run tasks for this component
-    //         wpi.cpp.enableExternalTasks(it)
+            wpi.cpp.enableExternalTasks(it)
 
-    //         wpi.cpp.vendor.cpp(it)
-    //         wpi.cpp.deps.wpilib(it)
-    //         wpi.cpp.deps.googleTest(it)
-    //     }
-    // }
+            wpi.cpp.vendor.cpp(it)
+            wpi.cpp.deps.wpilib(it)
+            wpi.cpp.deps.googleTest(it)
+        }
+    }
 }
