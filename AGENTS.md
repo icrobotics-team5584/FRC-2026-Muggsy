@@ -35,8 +35,8 @@ state any remaining hardware-only validation.
 - Ownership: Prefer direct objects. When dynamic creation/delayed initialisation is necessary, use smart pointers: prefer `std::unique_ptr`; use `std::shared_ptr` only when no single deletion owner is clear. Pass large objects by reference. Avoid raw owning pointers and manual `new`/`delete`.
 - Functions: Use PascalCase names, preferably verbs; boolean functions may ask questions (`IsFinished`, `HasRunEnded`). Document every non-trivial function above its header declaration, explaining purpose and relevant constraints, recommendations and edge cases.
 - Includes: Use `"..."` for project headers and `<...>` for external headers.
+- Comments: Always add concise comments to major blocks of code and individual lines where they improve readability. Explain intent, reasoning, or non-obvious behaviour rather than restating the code, and keep comments accurate when changing the implementation.
 - Subsystems: Prefix subsystem classes with `Sub` (e.g. `SubIntake`) to distinguish them from commands.
 - Hardware constants: Centralise all robot and driver-station component IDs/ports in `Constants.h`, using `UPPER_SNAKE_CASE` and appropriate namespaces (e.g. `canid`, `dio`, `pcm`), so wiring changes and duplicate assignments are easy to identify.
 - Structure: Store robot code under `src/main`: headers in `include`, implementations in `cpp`, each organised into `subsystems`, `commands` and `utilities`. Use lowercase folder names and PascalCase filenames.
-
 
