@@ -29,6 +29,7 @@ state any remaining hardware-only validation.
 
 ## ICRobotics Software Standards 2026
 
+- Simplicity: Keep small, single-use logic inline in the existing function. Do not create a separate utility, class, or file for a simple condition; extract an abstraction only when reuse or meaningful complexity justifies it.
 - Git: Use short, clear, logical commit messages; prefix the robot feature when unclear. Create a PascalCase feature branch (e.g. `VisionTargeting`). Before merging, merge latest `main` into it and test all robot features for correct, safe operation. Commit and push the feature branch, then open a PR targeting `main`. Wait for mentor/software team lead approval; do not self-approve.
 - Formatting: Keep `.clang-format` at the project root, using WPILib rules with a 100-column limit. Apply Format Document (`Alt+Shift+F`).
 - Variables: Use `_camelCase` for class members; omit the leading underscore for locals. Define hard-coded constants as `constexpr` or `const` with `UPPER_SNAKE_CASE` names; prefer `static constexpr` for class constants.
